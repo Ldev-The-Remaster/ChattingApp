@@ -17,10 +17,11 @@ WITH
 - Message: The text content of request or alert
 
 ### Details
+- Request parameters must be seperated by new lines (CRLF: `\r\n`), with the parameter keyword (`DO`, `FROM`...etc) starting the line, followed by a space, then followed by the argument (the value associated with the parameter). And finally, the new line characters `\r\n`.
 - Each request must contain and start with the `DO` parameter.
 - Each parameter (`DO`, `FROM`...etc) should be in their own line with their respective arguments (verb, subject...etc).
-- The `WITH` parameter must be in a line of its own, it must also be the last parameter in the request, everything after the line until the end of the request will be considered as the argument (the message body/content).
-- Parameter keywords like `DO` and `FROM`, and verbs are case**IN**sensitive. However, it is advised to use uppercase in order to standardize the format.
+- The `WITH` parameter must be in a line of its own, it must also be the last parameter in the request, everything after the line until the end of the request (EOF) will be considered as the argument (the message body/content), including any subsequent new lines.
+- Parameter keywords like `DO` and `FROM`, and verbs are case**IN**sensitive (can be UPPERCASE or lowercase). However, it is advised to use UPPERCASE in order to standardize the format.
 - Depending on the verb, certain parameters may be omitted. For example, an ALERT is sent from the server and thus doesn't need a `FROM` parameter. The parameter should be ignored in such cases even if provided by the request.
 
 ## Verb list (WIP)
