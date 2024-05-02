@@ -16,6 +16,6 @@
             set { timestamp = value; }
         }
 
-        public abstract string ParseRawMessage();
+        protected abstract void ParseRawMessage(string rawMessage);
     }
 }

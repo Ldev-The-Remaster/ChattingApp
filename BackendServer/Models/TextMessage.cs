@@ -10,6 +10,6 @@
             set { sender = value; }
         }
 
-        public override string ParseRawMessage() { return Content; }
+        protected override void ParseRawMessage(string rawMessage) { }
     }
 }
