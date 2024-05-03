@@ -1,7 +1,7 @@
 # Technical specifications for the League Sockets Messaging Protocol (LSMP)
 This document lists the technical specifications and details for implementing LSMP in your websocket server.  
 LSMP is a custom protocol intended for use on top of the websockets protocol for the purpose of a live chat messaging application.  
-*Version: 0.1.0*
+*Version: 0.2.0*
 
 # Client -> Server
 Websocket messages coming from the client should conform to the following pattern:
