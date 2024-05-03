@@ -146,35 +146,35 @@ When the server receives a `REMEMBER` request from a client, the server is expec
 - ### POPULATE: Send multiple messages at once
    > Required params; `WITH <array-of-messages>`
 
-In the `WITH` argument, seperate message requests should start, end, and be seperated using a sequence of 3 dollar signs `$$$` like so:
+In the `WITH` argument, seperate message requests should start, end, and be seperated using a sequence of 3 dollar signs `/*$*/` like so:
 ```
 DO POPULATE
 WITH
-$$$
+/*$*/
 DO SEND
 FROM Okkio
 AT 1714754642
 WITH
 yoo good morning
 how you been?
-$$$
+/*$*/
 DO SEND
 FROM Psycho
 AT 1714754703
 WITH
 i'm good, just working on the protocol
-$$$
+/*$*/
 DO SEND
 FROM Forki
 AT 1714754754
 WITH
 league? 💀
-$$$
+/*$*/
 DO ALERT
 AT 1714715436
 WITH
 User Forki has been banned
-$$$
+/*$*/
 ```
 It's then up to the client to re-interpret the nested message requests to populate the UI sequentially.
 
