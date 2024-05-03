@@ -136,8 +136,47 @@ Keeping the details mentioned above in mind, besides performing backend operatio
 
 Besides displaying messages and alerts, the server also needs to respond to `AUTH` and `CONNECT` requests, this is done using the following verbs:
 - ### ACCEPT: Accepts the request from the client
+   > No params
 - ### REFUSE: Refuses the request from the client
    > Optional params: `WITH <reason>`
+
+### Multisend
+When the server receives a `REMEMBER` request from a client, the server is expected to forward all the messages that users have sent in the specified period, this is done through the `POPULATE` server verb. When sending a `POPULATE` from the server, the `WITH` parameter will house multiple message requests from the server so the client can populate its UI with the message history.
+
+- ### POPULATE: Send multiple messages at once
+   > Required params; `WITH <array-of-messages>`
+
+In the `WITH` argument, seperate message requests should start, end, and be seperated using a sequence of 3 dollar signs `$$$` like so:
+```
+DO POPULATE
+WITH
+$$$
+DO SEND
+FROM Okkio
+AT 1714754642
+WITH
+yoo good morning
+how you been?
+$$$
+DO SEND
+FROM Psycho
+AT 1714754703
+WITH
+i'm good, just working on the protocol
+$$$
+DO SEND
+FROM Forki
+AT 1714754754
+WITH
+league? 💀
+$$$
+DO ALERT
+AT 1714715436
+WITH
+User Forki has been banned
+$$$
+```
+It's then up to the client to re-interpret the nested message requests to populate the UI sequentially.
 
 ## Examples
 User connects and attempts authentication using the username `Midfield`
@@ -155,7 +194,7 @@ DO ACCEPT
 `Midfield` tries to connect to a channel he does not have permissions for
 ```
 DO CONNECT
-TO 328
+TO eid-drip
 ```
 
 The server refuses the request
