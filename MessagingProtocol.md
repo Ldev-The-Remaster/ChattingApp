@@ -146,7 +146,7 @@ When the server receives a `REMEMBER` request from a client, the server is expec
 - ### POPULATE: Send multiple messages at once
    > Required params; `WITH <array-of-messages>`
 
-In the `WITH` argument, seperate message requests should start, end, and be seperated using a sequence of 3 dollar signs `/*$*/` like so:
+In the `WITH` argument, seperate message requests should start, end, and be seperated using the character sequence `/*$*/` (forward slash, asterisk, dollar sign, asterisk, forward slash) like so:
 ```
 DO POPULATE
 WITH
