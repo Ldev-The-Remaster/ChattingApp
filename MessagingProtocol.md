@@ -48,6 +48,8 @@ WITH
 
    \*Alerts should probably be limited to admins  
    \*If the `IN` parameter is omitted, the alert is global
+- ### REMEMBER: Request message history
+   > Required params: `FROM <timestamp>`, `TO <timestamp>`, `IN <channel-name>`
 - ### MUTE: Mute a user in a channel
    > Required params: `TO <username>`, `IN <channel-name>`  
    > Optional params: `WITH <message>`
