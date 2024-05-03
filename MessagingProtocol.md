@@ -11,23 +11,26 @@ DO <verb>
 FROM <subject>
 TO <object>
 IN <location>
+AT <date>
 WITH
-<message>
+<payload>
 ```
 
 - Verb: The requested action
 - Subject: The entity that requested the action
 - Object: The entity on which the action was requested
 - Location: The channel the request was performed in, and/or for alerts to be sent in
-- Message: The text content of request or alert
+- Date: The date-time stamp associated with the message (in Unix time)
+- Payload: The text content of request or alert
 
 ## Details
 - Request parameters must be seperated by new lines (CRLF: `\r\n`), with the parameter keyword (`DO`, `FROM`...etc) starting the line, followed by a space, then followed by the argument (the value associated with the parameter). And finally, the new line characters `\r\n`.
 - Each request must contain and start with the `DO` parameter.
 - Each parameter (`DO`, `FROM`...etc) should be in their own line with their respective argument (verb, subject...etc).
-- The `WITH` parameter must be in a line of its own, it must also be the last parameter in the request, everything after this line until the end of the request (EOF) will be considered as the argument (the message body/content), including any subsequent new lines.
+- The `WITH` parameter must be in a line of its own, it must also be the last parameter in the request, everything after this line until the end of the request (EOF) will be considered as the argument (the payload, A.K.A message body/content), including any subsequent new lines.
 - Parameter keywords (`DO`, `FROM`...etc) and verbs are case**IN**sensitive (can be UPPERCASE or lowercase). However, it is advised to use UPPERCASE in order to standardize the format.
 - Depending on the verb, certain parameters may be optional or completely omitted. For example, the `FROM` parameter does not need to provided in subsequent requests after `AUTH` as the server is expected to store the username for the current connection. The parameter should be ignored in such cases even if provided by the request. Optional parameters however can alter the functionality of certain actions.
+- If the `AT` parameter is omitted, the timestamp is set to the exact time the request was received.
 - The first request from the client must be an `AUTH` verb with the username passed in the `FROM` parameter. If the first message is anything but `AUTH` the connection will be terminated immediatly. Additionally, the connection will also be terminated if no message was received from the client for 10 seconds after the initial connection. The server will not send any messages to a client while it is not authenticated.
 
 ## Verb list
@@ -37,10 +40,11 @@ WITH
 - ### CONNECT: Connect to a channel
    > Required params: `TO <channel-name>`
 - ### SEND: Send a message in a channel
-   > Required params: `IN <channel-name>`, `WITH <message>`
+   > Required params: `IN <channel-name>`, `WITH <message>`  
+   > Optional params: `AT <timestamp>`
 - ### ALERT: Send a server alert in a channel
    > Required params: `WITH <message>`  
-   > Optional params: `IN <channel-name>`
+   > Optional params: `IN <channel-name>`, `AT <timestamp>`
 
    \*Alerts should probably be limited to admins  
    \*If the `IN` parameter is omitted, the alert is global
@@ -122,9 +126,11 @@ The server sends messages to the client in a similar way, with a few minor diffe
 Keeping the details mentioned above in mind, besides performing backend operations, the server is obligated to notify the users using `SEND` for messages and `ALERT` for server alerts.
 
 - ### SEND: Tells the client that a user has sent a message
-   > Required params: `FROM <username>`, `WITH <message>`
+   > Required params: `FROM <username>`, `WITH <message>`  
+   > Optional params: `AT <timestamp>`
 - ### ALERT: Displays a server message 
-   > Required params: `WITH <message>`
+   > Required params: `WITH <message>`  
+   > Optional params: `AT <timestamp>`
 
 Besides displaying messages and alerts, the server also needs to respond to `AUTH` and `CONNECT` requests, this is done using the following verbs:
 - ### ACCEPT: Accepts the request from the client
