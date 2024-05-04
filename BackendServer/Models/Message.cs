@@ -3,57 +3,18 @@
     internal abstract class Message
     {
         private readonly string _requestString;
-        public string RequestString
-        {
-            get { return _requestString; }
-        }
 
-        private string _do;
-        public string Do
-        {
-            get { return _do; }
-            set { _do = value; }
-        }
-
-        private string _from;
-        public string From
-        {
-            get { return _from; }
-            set { _from = value; }
-        }
-
-        private string _to;
-        public string To
-        {
-            get { return _to; }
-            set { _to = value; }
-        }
-
-        private string _in;
-        public string In
-        {
-            get { return _in; }
-            set { _in = value; }
-        }
-
-        private DateTime _at;
-        public DateTime At
-        {
-            get { return _at; }
-            set { _at = value; }
-        }
-
-        private string _with;
-        public string With
-        {
-            get { return _with; }
-            set { _with = value; }
-        }
+        protected string _do;
+        protected string _from;
+        protected string _to;
+        protected string _in;
+        protected DateTime _at;
+        protected string _with;
 
         public Message(string requestString)
         {
             _requestString = requestString;
-            // Parse requestString here
+            // Parse requestString here (akram kaif tmam?)
             _do = "TEST";
             _from = String.Empty;
             _to = String.Empty;
