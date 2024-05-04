@@ -2,7 +2,7 @@
 {
     internal abstract class Message
     {
-        private readonly string _requestString;
+        private readonly string _rawString;
 
         protected string _do;
         protected string _from;
@@ -11,9 +11,9 @@
         protected DateTime _at;
         protected string _with;
 
-        public Message(string requestString)
+        public Message(string rawString)
         {
-            _requestString = requestString;
+            _rawString = rawString;
             // Parse requestString here (akram kaif tmam?)
             _do = "TEST";
             _from = String.Empty;
