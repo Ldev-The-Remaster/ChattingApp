@@ -1,4 +1,4 @@
-﻿namespace LDEV.Frontend.Models;
+﻿namespace Frontend.Models;
 
 public class LoginInfo
 {

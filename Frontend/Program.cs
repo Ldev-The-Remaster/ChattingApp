@@ -1,4 +1,4 @@
-using LDEV.Frontend.Components;
+using Frontend.Components;
 
 var builder = WebApplication.CreateBuilder(args);
 
