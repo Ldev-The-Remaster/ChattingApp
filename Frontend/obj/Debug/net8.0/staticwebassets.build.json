@@ -1,0 +1,77 @@
+{
+  "Version": 1,
+  "Hash": "3iRhgjINTkI7j70DSyRuogXiOpGq/q37QKp2MOXWOBM=",
+  "Source": "LDEV.Frontend",
+  "BasePath": "_content/LDEV.Frontend",
+  "Mode": "Default",
+  "ManifestType": "Build",
+  "ReferencedProjectsConfiguration": [],
+  "DiscoveryPatterns": [
+    {
+      "Name": "LDEV.Frontend\\wwwroot",
+      "Source": "LDEV.Frontend",
+      "ContentRoot": "C:\\Users\\Mu200\\Documents\\C#\\LDEV\\LDEV.Frontend\\wwwroot\\",
+      "BasePath": "_content/LDEV.Frontend",
+      "Pattern": "**"
+    }
+  ],
+  "Assets": [
+    {
+      "Identity": "C:\\Users\\Mu200\\Documents\\C#\\LDEV\\LDEV.Frontend\\obj\\Debug\\net8.0\\scopedcss\\bundle\\LDEV.Frontend.styles.css",
+      "SourceId": "LDEV.Frontend",
+      "SourceType": "Computed",
+      "ContentRoot": "C:\\Users\\Mu200\\Documents\\C#\\LDEV\\LDEV.Frontend\\obj\\Debug\\net8.0\\scopedcss\\bundle\\",
+      "BasePath": "_content/LDEV.Frontend",
+      "RelativePath": "LDEV.Frontend.styles.css",
+      "AssetKind": "All",
+      "AssetMode": "CurrentProject",
+      "AssetRole": "Primary",
+      "AssetMergeBehavior": "",
+      "AssetMergeSource": "",
+      "RelatedAsset": "",
+      "AssetTraitName": "ScopedCss",
+      "AssetTraitValue": "ApplicationBundle",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "C:\\Users\\Mu200\\Documents\\C#\\LDEV\\LDEV.Frontend\\obj\\Debug\\net8.0\\scopedcss\\bundle\\LDEV.Frontend.styles.css"
+    },
+    {
+      "Identity": "C:\\Users\\Mu200\\Documents\\C#\\LDEV\\LDEV.Frontend\\obj\\Debug\\net8.0\\scopedcss\\projectbundle\\LDEV.Frontend.bundle.scp.css",
+      "SourceId": "LDEV.Frontend",
+      "SourceType": "Computed",
+      "ContentRoot": "C:\\Users\\Mu200\\Documents\\C#\\LDEV\\LDEV.Frontend\\obj\\Debug\\net8.0\\scopedcss\\projectbundle\\",
+      "BasePath": "_content/LDEV.Frontend",
+      "RelativePath": "LDEV.Frontend.bundle.scp.css",
+      "AssetKind": "All",
+      "AssetMode": "Reference",
+      "AssetRole": "Primary",
+      "AssetMergeBehavior": "",
+      "AssetMergeSource": "",
+      "RelatedAsset": "",
+      "AssetTraitName": "ScopedCss",
+      "AssetTraitValue": "ProjectBundle",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "C:\\Users\\Mu200\\Documents\\C#\\LDEV\\LDEV.Frontend\\obj\\Debug\\net8.0\\scopedcss\\projectbundle\\LDEV.Frontend.bundle.scp.css"
+    },
+    {
+      "Identity": "C:\\Users\\Mu200\\Documents\\C#\\LDEV\\LDEV.Frontend\\wwwroot\\app.css",
+      "SourceId": "LDEV.Frontend",
+      "SourceType": "Discovered",
+      "ContentRoot": "C:\\Users\\Mu200\\Documents\\C#\\LDEV\\LDEV.Frontend\\wwwroot\\",
+      "BasePath": "_content/LDEV.Frontend",
+      "RelativePath": "app.css",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "AssetMergeBehavior": "PreferTarget",
+      "AssetMergeSource": "",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot\\app.css"
+    }
+  ]
+}
