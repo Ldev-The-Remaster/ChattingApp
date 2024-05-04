@@ -2,7 +2,25 @@
 {
     internal abstract class Message
     {
-        private readonly string _rawString;
+        struct MessageParams
+        {
+            public string Do;
+            public string From;
+            public string To;
+            public string In;
+            public DateTime At;
+            public string With;
+            public MessageParams(string rawString)
+            {
+                // TODO: Parse requestString here (akram kaif tmam?)
+                Do = "TEST";
+                From = String.Empty;
+                To = String.Empty;
+                In = String.Empty;
+                At = DateTime.Now;
+                With = String.Empty;
+            }
+        }
 
         protected string _do;
         protected string _from;
@@ -13,14 +31,14 @@
 
         public Message(string rawString)
         {
-            _rawString = rawString;
-            // Parse requestString here (akram kaif tmam?)
-            _do = "TEST";
-            _from = String.Empty;
-            _to = String.Empty;
-            _in = String.Empty;
-            _at = DateTime.Now;
-            _with = String.Empty;
+            MessageParams messageParams = new MessageParams(rawString);
+
+            _do = messageParams.Do;
+            _from = messageParams.From;
+            _to = messageParams.To;
+            _in = messageParams.In;
+            _at = messageParams.At;
+            _with = messageParams.With;
         }
     }
 }
