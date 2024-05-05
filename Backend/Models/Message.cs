@@ -2,6 +2,25 @@
 {
     internal abstract class Message
     {
+        public enum MessageType
+        {
+            TextMessage,
+            CommandMessage
+        }
+
+        public static MessageType GetMessageType(string rawString)
+        {
+            string[] messageParams = rawString.Split("\r\n");
+            string doLine = messageParams[0];
+            string[] doParams = doLine.Split(" ");
+            string doArgument = doParams[1];
+            if (doArgument.Equals("SEND"))
+            {
+                return MessageType.TextMessage;
+            }
+            return MessageType.CommandMessage;
+        }
+
         struct MessageParams
         {
             public string Do;
