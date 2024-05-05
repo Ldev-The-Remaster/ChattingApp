@@ -10,10 +10,7 @@
 
         public static MessageType GetMessageType(string rawString)
         {
-            string[] messageParams = rawString.Split("\r\n");
-            string doLine = messageParams[0];
-            string[] doParams = doLine.Split(" ");
-            string doArgument = doParams[1];
+            string doArgument = rawString.Substring(3, 4); // "DO SEND"
             if (doArgument.Equals("SEND"))
             {
                 return MessageType.TextMessage;
