@@ -1,7 +1,7 @@
-# Technical specifications for the League Sockets Messaging Protocol (LSMP)
+# Technical specifications for the **L**eague **S**ockets **M**essaging **P**rotocol (LSMP)
 This document lists the technical specifications and details for implementing LSMP in your websocket server.  
 LSMP is a custom protocol intended for use on top of the websockets protocol for the purpose of a live chat messaging application.  
-*Version: 0.2.0*
+*Version: 0.3.2*
 
 # Client -> Server
 Websocket messages coming from the client should conform to the following pattern:
@@ -19,9 +19,9 @@ WITH
 - Verb: The requested action
 - Subject: The entity that requested the action
 - Object: The entity on which the action was requested
-- Location: The channel the request was performed in, and/or for alerts to be sent in
+- Location: The channel the message was sent in
 - Date: The date-time stamp associated with the message (in Unix time)
-- Payload: The text content of request or alert
+- Payload: The text content of the message
 
 ## Details
 - Request parameters must be seperated by new lines (CRLF: `\r\n`), with the parameter keyword (`DO`, `FROM`...etc) starting the line, followed by a space, then followed by the argument (the value associated with the parameter). And finally, the new line characters `\r\n`.
@@ -39,35 +39,32 @@ WITH
    > Required params: `FROM <username>`
 - ### CONNECT: Connect to a channel
    > Required params: `TO <channel-name>`
+- ### REMEMBER: Request message history
+   > Required params: `FROM <message-order>`, `TO <message-order>`, `IN <channel-name>`
 - ### SEND: Send a message in a channel
    > Required params: `IN <channel-name>`, `WITH <message>`  
-   > Optional params: `AT <timestamp>`
-- ### ALERT: Send a server alert in a channel
-   > Required params: `WITH <message>`  
-   > Optional params: `IN <channel-name>`, `AT <timestamp>`
-
-   \*Alerts should probably be limited to admins  
-   \*If the `IN` parameter is omitted, the alert is global
-- ### REMEMBER: Request message history
-   > Required params: `FROM <timestamp>`, `TO <timestamp>`, `IN <channel-name>`
+---
+### Infractions (Admin only):
 - ### MUTE: Mute a user in a channel
-   > Required params: `TO <username>`, `IN <channel-name>`  
-   > Optional params: `WITH <message>`
+   > Required params: `TO <username>`  
+   > With alert message: `IN <channel-name>`, `WITH <message>`
 - ### KICK: Kick a user
    > Required params: `TO <username>`  
-   > Optional params: `IN <channel-name>`, `WITH <message>`
+   > With alert message: `IN <channel-name>`, `WITH <message>`
 - ### BAN: Ban a user
    > Required params: `TO <username>`  
-   > Optional params: `IN <channel-name>`, `WITH <message>`
+   > With alert message: `IN <channel-name>`, `WITH <message>`
 - ### IPBAN: Ban an IP
    > Required params: `TO <ip>`  
-   > Optional params: `IN <channel-name>`, `WITH <message>`
-- ### CREATE: Create a channel
-   > Required params: `WITH <channel-name>`
-- ### DELETE: Delete a channel
-   > Required params: `TO <channel-name>`
+   > With alert message: `IN <channel-name>`, `WITH <message>`
+- ### UNBAN: Unban a user
+   > Required params: `TO <username>`  
+   > With alert message: `IN <channel-name>`, `WITH <message>`
+- ### UNBANIP: Unban an IP
+   > Required params: `TO <ip>`  
+   > With alert message: `IN <channel-name>`, `WITH <message>`
 
-\* The `IN` parameter for infractions (mutes, kicks, bans...etc) specifies which channel to send the alert in. Thus, the `IN` and `WITH` parameters must either be both present, or both omitted. EXCEPT for mutes; mutes require the `IN` parameter to specify which channel the user is to be muted in.
+\* The `IN` parameter for infractions (mutes, kicks, bans...etc) specifies which channel to send the alert in. Thus, the `IN` and `WITH` parameters must either be both present, or both omitted.
 
 ## Example messages
 
@@ -91,15 +88,6 @@ how you been?
 
 ---
 ```
-DO ALERT
-IN welcome
-WITH
-Okkio connected!
-```
-> Request to send a server alert in channel with name `welcome` with the alert content being `Okkio connected!`
-
----
-```
 DO BAN
 TO Forki
 IN league
@@ -108,43 +96,33 @@ Advertising is prohibited...
 ```
 > Requests a ban on user with username `Forki`, displaying the message `Advertising is prohibited...` in channel with name `league`
 
----
-```
-DO CREATE
-WITH
-general-chat
-```
-> Requests to create a channel with name `general-chat`
-
 # Server -> Client
 The server sends messages to the client in a similar way, with a few minor differences.
 
 ## Details
-- The server does not use the `IN` parameter; this is because the server should only send the message to users connected to the concerned channel. E.g., the server should send an `ALERT` about channel `game-chat` ONLY to users that are connected to channel `game-chat`. So if the client receives a message, it is intended for the channel the user is currently connected to, making the `IN` parameter redundant.
-- The same reasoning above applies to the `TO` parameter. If a user has an action performed on them like a ban or a mute, the server is only obligated to notify other users using an `ALERT` accompanied by a message explaining the details using the `WITH` parameter.
 - The server should store the username given in the `AUTH` request for the current websocket connection. The username can then be used by the server to check for authority level, show message sender names, or to target infractions.
+- When the server receives a `SEND` request from a client, the server should fill in the `FROM` parameter with the username of the sender (stored in the point above) before forwarding the message to all other clients.
 
 ## Verb list
-Keeping the details mentioned above in mind, besides performing backend operations, the server is obligated to notify the users using `SEND` for messages and `ALERT` for server alerts.
+Keeping the details mentioned above in mind, besides performing backend operations, the server is obligated to notify the users using `SEND` WITHOUT a `FROM` parameter to signal that the message is sent from the server.  
+The `AT` parameter for the timestamps is mainly used when the server is sending the message history to a client. Otherwise it is omitted and is to be interpreted as `date.now` by the client.
 
 - ### SEND: Tells the client that a user has sent a message
-   > Required params: `FROM <username>`, `WITH <message>`  
-   > Optional params: `AT <timestamp>`
-- ### ALERT: Displays a server message 
    > Required params: `WITH <message>`  
-   > Optional params: `AT <timestamp>`
+   > From a user (omit for alert): `FROM <username>`  
+   > With a timestamp from history: `AT <timestamp>`
 
 Besides displaying messages and alerts, the server also needs to respond to `AUTH` and `CONNECT` requests, this is done using the following verbs:
 - ### ACCEPT: Accepts the request from the client
    > No params
 - ### REFUSE: Refuses the request from the client
-   > Optional params: `WITH <reason>`
+   > With response message: `WITH <reason>`
 
-### Multisend
+### Multisend (Message history)
 When the server receives a `REMEMBER` request from a client, the server is expected to forward all the messages that users have sent in the specified period, this is done through the `POPULATE` server verb. When sending a `POPULATE` from the server, the `WITH` parameter will house multiple message requests from the server so the client can populate its UI with the message history.
 
 - ### POPULATE: Send multiple messages at once
-   > Required params; `WITH <array-of-messages>`
+   > Required params: `WITH <array-of-messages>`
 
 In the `WITH` argument, seperate message requests should start, end, and be seperated using the character sequence `/*$*/` (forward slash, asterisk, dollar sign, asterisk, forward slash) like so:
 ```
