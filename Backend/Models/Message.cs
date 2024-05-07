@@ -45,6 +45,16 @@
         protected DateTime _at;
         protected string _with;
 
+        protected Message()
+        {
+            _do = String.Empty;
+            _from = String.Empty;
+            _to = String.Empty;
+            _in = String.Empty;
+            _at = DateTime.Now;
+            _with = String.Empty;
+        }
+
         public Message(string rawString)
         {
             MessageParams messageParams = new MessageParams(rawString);

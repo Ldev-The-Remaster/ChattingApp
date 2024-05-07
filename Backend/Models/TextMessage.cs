@@ -1,4 +1,6 @@
-﻿namespace BackendServer.Models
+﻿using Backend.Utils;
+
+namespace BackendServer.Models
 {
     public class TextMessage : Message
     {
@@ -24,6 +26,13 @@
         public string Content
         {
             get { return _content; }
+        }
+
+        private TextMessage ()
+        {
+            _sender = String.Empty;
+            _channel = String.Empty;
+            _content = String.Empty;
         }
 
         public TextMessage(string rawString) : base(rawString)
