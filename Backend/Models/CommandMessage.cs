@@ -7,7 +7,7 @@ namespace BackendServer.Models
         TEST,
     }
 
-    internal class CommandMessage : Message
+    public class CommandMessage : Message
     {
         private CommandType _command;
         private string _sender;

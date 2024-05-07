@@ -1,6 +1,6 @@
 ﻿namespace BackendServer.Models
 {
-    internal class TextMessage : Message
+    public class TextMessage : Message
     {
         private string _sender;
         public string Sender
