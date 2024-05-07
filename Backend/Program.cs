@@ -1,9 +1,12 @@
 ﻿using Backend;
+using Backend.Utils;
 
 internal class Program
 {
     private static void Main(string[] args)
     {
+        TextMessageContext.SetUp();
+
         ServerStartupOptions serverOptions = ServerStartupOptions.GetServerStartupOptions();
         RunServer(serverOptions);
     }
