@@ -44,5 +44,21 @@ namespace BackendServer.Models
             _timestamp = _at;
             _content = _with;
         }
+
+        // Persistence
+        private static TextMessageContext context = new TextMessageContext();
+
+        public void SaveToDb()
+        {
+            context.Add(this);
+            context.SaveChanges();
+        }
+
+        public static TextMessage[] GetMessageHistory(string channel, int from, int to)
+        {
+            // TODO: Implement fetching message history from db
+            TextMessage test = new TextMessage("DO SEND\r\nWITH\r\nTEST");
+            return [test];
+        }
     }
 }
