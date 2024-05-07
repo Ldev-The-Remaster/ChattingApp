@@ -4,6 +4,8 @@ namespace BackendServer.Models
 {
     public class TextMessage : Message
     {
+        public int TextMessageId { get; set; }
+
         private string _sender;
         public string Sender
         {
