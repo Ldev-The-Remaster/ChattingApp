@@ -17,13 +17,14 @@ namespace BackendServer.Models
 
         private CommandType ParseCommandType()
         {
+            // TODO: Implement parser and commandtypes
             return CommandType.TEST;
         }
         
         public CommandMessage(string rawString) : base(rawString)
         {
-            _command = ParseCommandType(); // Should be parsed from rawString
-            _sender = "_from";
+            _command = ParseCommandType();
+            _sender = _from;
             _target = _to;
             _channel = _in;
             _payload = _with;
