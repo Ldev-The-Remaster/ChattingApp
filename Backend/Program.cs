@@ -1,5 +1,4 @@
 ﻿using Backend.ServerModules;
-using WebSocketSharp;
 using WebSocketSharp.Server;
 
 internal class Program
@@ -12,11 +11,10 @@ internal class Program
 
     private static void RunServer(ServerStartupOptions serverOptions)
     {
-        Console.WriteLine($"Server should start on port {serverOptions.Port}");
         WebSocketServer wssv = new WebSocketServer("ws://127.0.0.1:" + serverOptions.Port);
-
         wssv.AddWebSocketService<ServerBehavior>("/");
         wssv.Start();
+        Console.WriteLine($"Server is up and listening on port: {serverOptions.Port}");
         Console.WriteLine("Press Esc to shutdown the server");
 
         while (true)
