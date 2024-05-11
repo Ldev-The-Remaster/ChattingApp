@@ -10,24 +10,28 @@ namespace BackendServer.Models
         public string Sender
         {
             get { return _sender; }
+            set { _sender = value; }
         }
 
         private string _channel;
         public string Channel
         {
             get { return _channel; }
+            set { _channel = value; }
         }
 
         private DateTime _timestamp;
         public DateTime TimeStamp
         {
             get { return _timestamp; }
+            set { _timestamp = value; }
         }
 
         private string _content;
         public string Content
         {
             get { return _content; }
+            set { _content = value; }
         }
 
         private TextMessage ()
