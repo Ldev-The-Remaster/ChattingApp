@@ -1,4 +1,4 @@
-﻿using Backend.Utils;
+﻿using Backend.Database;
 
 namespace BackendServer.Models
 {

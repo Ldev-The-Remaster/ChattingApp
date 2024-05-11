@@ -2,7 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage;
 
-namespace Backend.Utils
+namespace Backend.Database
 {
     public class TextMessageContext : DbContext
     {
