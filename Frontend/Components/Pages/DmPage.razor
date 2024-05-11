@@ -1,3 +1,32 @@
 @page "/dm"
+@using Models
+@inject NavigationManager navMan
 
-<h3>this is the DM page</h3>
+<button class="dmChatButton" @onclick="backToMain"> Main Chat </button>
+<div class="chatMessageDiv">
+    <ul class="message-ul">
+       @* messages to be displayed here when rendered *@
+    </ul>
+</div>
+<EditForm Model="@textMessage" FormName="messageForm" class="messageForm">
+
+    <InputText class="textBox" id="enterMessageBox" placeholder="Message the Chat!" @bind-Value="textMessage.messageText"></InputText>
+</EditForm>
+
+@code {
+    
+    public TextMessage textMessage { get; set; } = new()
+        {
+            messageText = string.Empty,
+        };
+
+
+   // Currently the function is not working,there is a problem with the interactivity settings of the frontend it seems,needs extra digging into documentation,time didn't serve, to be fixed soon.
+     private void backToMain()
+         {
+         navMan.NavigateTo("login");
+
+         }
+    
+
+}

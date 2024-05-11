@@ -5,7 +5,7 @@
 <PageTitle>login</PageTitle>
 <div class="login-div">
     <h1>WELCOME TO LDEV:THE REMASTER</h1>
-    <h1>JOIN CHAT ROOM</h1>
+    <h1>JOIN CHAT ROOM </h1>
     <EditForm Model="@userInfo" FormName="loginForm" class="login-form">
         @* for the IP address field there needs to be validation where either the user gets an error upon entering
         something that does not represent an ip *@
@@ -26,6 +26,7 @@
 
 @code
 {
+    
     public LoginInfo userInfo { get; set; } = new()
         {
             Username = string.Empty,
