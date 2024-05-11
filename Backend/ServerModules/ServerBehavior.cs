@@ -1,8 +1,7 @@
-﻿
-using WebSocketSharp;
+﻿using WebSocketSharp;
 using WebSocketSharp.Server;
 
-namespace Backend
+namespace Backend.ServerModules
 {
     public class ServerBehavior : WebSocketBehavior
     {
