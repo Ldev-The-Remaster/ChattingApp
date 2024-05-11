@@ -20,21 +20,44 @@
 
         struct MessageParams
         {
-            public string Do;
-            public string From;
-            public string To;
-            public string In;
-            public DateTime At;
-            public string With;
+            public string Do = "";
+            public string From = "";
+            public string To = "";
+            public string In = "";
+            public DateTime At = DateTime.Now;
+            public string With = "";
+
             public MessageParams(string rawString)
-            {
-                // TODO: Parse requestString here (akram kaif tmam?)
-                Do = "TEST";
-                From = String.Empty;
-                To = String.Empty;
-                In = String.Empty;
-                At = DateTime.Now;
-                With = String.Empty;
+            {   
+                string[] commandPairs = rawString.Split("\r\n");
+                foreach(string line in commandPairs) 
+                {
+                    string[] commandPair = line.Split(' ');
+                    switch (commandPair[0])
+                    {
+                        case "DO":
+                            Do = commandPair[1];
+                            break;
+                        case "FROM":
+                            From = commandPair[1];
+                            break;
+                        case "TO":
+                            To = commandPair[1];
+                            break;
+                        case "IN":
+                            In = commandPair[1];
+                            break;
+                        case "AT":
+                            long unixTimestamp = long.Parse(commandPair[1]);
+                            DateTimeOffset dateTimeOffset = DateTimeOffset.FromUnixTimeSeconds(unixTimestamp);
+                            DateTime dateTime = dateTimeOffset.UtcDateTime;
+                            At = dateTime;
+                            break;
+                        case "WITH":
+                            With = rawString.Split("WITH\r\n",2)[1];
+                            break;
+                    }
+                }
             }
         }
 
