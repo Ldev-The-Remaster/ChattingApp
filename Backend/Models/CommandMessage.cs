@@ -4,7 +4,13 @@ namespace BackendServer.Models
 {
     enum CommandType
     {
-        TEST,
+        Mute,
+        Kick,
+        Ban,
+        Ipban,
+        Unban,
+        Unbanip,
+        Unknown
     }
 
     internal class CommandMessage : Message
@@ -15,14 +21,31 @@ namespace BackendServer.Models
         private string? _channel;
         private string? _payload;
 
-        private CommandType ParseCommandType()
+        private CommandType GetCommandType()
         {
-            return CommandType.TEST;
+            switch(_do.ToLower())
+            {
+                case "mute":
+                    return CommandType.Mute;
+                case "kick":
+                    return CommandType.Kick;
+                case "ban":
+                    return CommandType.Ban;
+                case "ipban":
+                    return CommandType.Ipban;
+                case "unban":
+                    return CommandType.Unban;
+                case "unbanip":
+                    return CommandType.Unbanip;
+                default:
+                    return CommandType.Unknown;
+
+            }
         }
         
         public CommandMessage(string rawString) : base(rawString)
         {
-            _command = ParseCommandType(); // Should be parsed from rawString
+            _command = GetCommandType();
             _sender = "_from";
             _target = _to;
             _channel = _in;
