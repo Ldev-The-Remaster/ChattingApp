@@ -1,4 +1,4 @@
-﻿namespace BackendServer.Models
+﻿namespace Backend.Models
 {
     public abstract class Message
     {

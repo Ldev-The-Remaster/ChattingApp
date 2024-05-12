@@ -1,6 +1,4 @@
-﻿using System.Threading.Channels;
-
-namespace BackendServer.Models
+﻿namespace Backend.Models
 {
     enum CommandType
     {

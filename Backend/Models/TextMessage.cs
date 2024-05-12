@@ -1,6 +1,6 @@
 ﻿using Backend.Database;
 
-namespace BackendServer.Models
+namespace Backend.Models
 {
     public class TextMessage : Message
     {
