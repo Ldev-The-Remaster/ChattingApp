@@ -58,11 +58,13 @@ namespace Backend.Models
             context.SaveChanges();
         }
 
-        public static TextMessage[] GetMessageHistory(string channel, int from, int to)
+        public static List<TextMessage> GetMessageHistory(string channel, int from, int to)
         {
-            // TODO: Implement fetching message history from db
-            TextMessage test = new TextMessage("DO SEND\r\nWITH\r\nTEST");
-            return [test];
+            List<TextMessage> messageHistory = context.TextMessages
+                .Where(m => m.TextMessageId < from && m.TextMessageId >= to)
+                .ToList();
+
+            return messageHistory;
         }
     }
 }
