@@ -34,10 +34,11 @@ namespace Backend.Models
             set { _content = value; }
         }
 
-        private TextMessage ()
+        private TextMessage()
         {
             _sender = String.Empty;
             _channel = String.Empty;
+            _timestamp = DateTime.Now;
             _content = String.Empty;
         }
 
