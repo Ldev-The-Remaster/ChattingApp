@@ -16,7 +16,7 @@ namespace Backend.Database
         {
             TextMessageContext messageContext = new TextMessageContext();
             // This vvv should be disabled in prod
-            messageContext.Database.EnsureDeleted();
+            // messageContext.Database.EnsureDeleted();
             messageContext.Database.EnsureCreated();
         }
     }

@@ -15,7 +15,6 @@
 
         private CommandType ParseCommandType()
         {
-            // TODO: Implement parser and commandtypes
             return CommandType.TEST;
         }
         
