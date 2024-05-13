@@ -1,4 +1,4 @@
-﻿namespace Backend
+﻿namespace Backend.ServerModules
 {
     public class ServerStartupOptions
     {
