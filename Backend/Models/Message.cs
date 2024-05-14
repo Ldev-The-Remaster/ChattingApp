@@ -1,6 +1,6 @@
-﻿namespace BackendServer.Models
+﻿namespace Backend.Models
 {
-    internal abstract class Message
+    public abstract class Message
     {
         public enum MessageType
         {
@@ -20,44 +20,21 @@
 
         struct MessageParams
         {
-            public string Do = "";
-            public string From = "";
-            public string To = "";
-            public string In = "";
-            public DateTime At = DateTime.Now;
-            public string With = "";
-
+            public string Do;
+            public string From;
+            public string To;
+            public string In;
+            public DateTime At;
+            public string With;
             public MessageParams(string rawString)
-            {   
-                string[] commandPairs = rawString.Split("\r\n");
-                foreach(string line in commandPairs) 
-                {
-                    string[] commandPair = line.Split(' ');
-                    switch (commandPair[0])
-                    {
-                        case "DO":
-                            Do = commandPair[1];
-                            break;
-                        case "FROM":
-                            From = commandPair[1];
-                            break;
-                        case "TO":
-                            To = commandPair[1];
-                            break;
-                        case "IN":
-                            In = commandPair[1];
-                            break;
-                        case "AT":
-                            long unixTimestamp = long.Parse(commandPair[1]);
-                            DateTimeOffset dateTimeOffset = DateTimeOffset.FromUnixTimeSeconds(unixTimestamp);
-                            DateTime dateTime = dateTimeOffset.UtcDateTime;
-                            At = dateTime;
-                            break;
-                        case "WITH":
-                            With = rawString.Split("WITH\r\n",2)[1];
-                            break;
-                    }
-                }
+            {
+                // TODO: Parse requestString here (akram kaif tmam?)
+                Do = "TEST";
+                From = String.Empty;
+                To = String.Empty;
+                In = String.Empty;
+                At = DateTime.Now;
+                With = String.Empty;
             }
         }
 
@@ -67,6 +44,16 @@
         protected string _in;
         protected DateTime _at;
         protected string _with;
+
+        protected Message()
+        {
+            _do = String.Empty;
+            _from = String.Empty;
+            _to = String.Empty;
+            _in = String.Empty;
+            _at = DateTime.Now;
+            _with = String.Empty;
+        }
 
         public Message(string rawString)
         {
