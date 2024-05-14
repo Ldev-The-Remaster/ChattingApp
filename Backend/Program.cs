@@ -1,6 +1,4 @@
-using Backend;
-using Backend.Database;
-using Backend.ServerModules;
+﻿using Backend.ServerModules;
 using WebSocketSharp.Server;
 
 internal class Program
@@ -13,8 +11,6 @@ internal class Program
 
     private static void RunServer(ServerStartupOptions serverOptions)
     {
-        TextMessageContext.SetUp();
-
         WebSocketServer wssv = new WebSocketServer("ws://127.0.0.1:" + serverOptions.Port);
         wssv.AddWebSocketService<ServerBehavior>("/");
         wssv.Start();
