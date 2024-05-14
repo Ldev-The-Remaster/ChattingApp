@@ -1,4 +1,6 @@
-﻿namespace Backend.Models
+﻿using System.Threading.Channels;
+
+namespace BackendServer.Models
 {
     enum CommandType
     {
@@ -11,7 +13,7 @@
         Unknown
     }
 
-    public class CommandMessage : Message
+    internal class CommandMessage : Message
     {
         private CommandType _command;
         private string _sender;
@@ -44,7 +46,7 @@
         public CommandMessage(string rawString) : base(rawString)
         {
             _command = GetCommandType();
-            _sender = _from;
+            _sender = "_from";
             _target = _to;
             _channel = _in;
             _payload = _with;
