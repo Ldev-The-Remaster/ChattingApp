@@ -20,8 +20,8 @@ namespace Backend.Models
             set { _channel = value; }
         }
 
-        private DateTime _timestamp;
-        public DateTime TimeStamp
+        private long _timestamp;
+        public long TimeStamp
         {
             get { return _timestamp; }
             set { _timestamp = value; }
@@ -38,7 +38,7 @@ namespace Backend.Models
         {
             _sender = String.Empty;
             _channel = String.Empty;
-            _timestamp = DateTime.Now;
+            _timestamp = 0;
             _content = String.Empty;
         }
 
