@@ -1,6 +1,6 @@
-﻿namespace BackendServer.Models
+﻿namespace Backend.Models
 {
-    internal abstract class Message
+    public abstract class Message
     {
         public enum MessageType
         {
@@ -26,11 +26,10 @@
             public string In = "";
             public DateTime At = DateTime.Now;
             public string With = "";
-
             public MessageParams(string rawString)
-            {   
+            {
                 string[] commandPairs = rawString.Split("\r\n");
-                foreach(string line in commandPairs) 
+                foreach (string line in commandPairs)
                 {
                     string[] commandPair = line.Split(' ');
                     switch (commandPair[0])
@@ -54,7 +53,7 @@
                             At = dateTime;
                             break;
                         case "WITH":
-                            With = rawString.Split("WITH\r\n",2)[1];
+                            With = rawString.Split("WITH\r\n", 2)[1];
                             break;
                     }
                 }
@@ -67,6 +66,16 @@
         protected string _in;
         protected DateTime _at;
         protected string _with;
+
+        protected Message()
+        {
+            _do = String.Empty;
+            _from = String.Empty;
+            _to = String.Empty;
+            _in = String.Empty;
+            _at = DateTime.Now;
+            _with = String.Empty;
+        }
 
         public Message(string rawString)
         {
