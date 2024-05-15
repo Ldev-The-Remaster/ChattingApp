@@ -1,4 +1,4 @@
-﻿using Backend.Models;
+﻿using Backend.Models.Messages;
 using Microsoft.EntityFrameworkCore;
 
 namespace Backend.Database

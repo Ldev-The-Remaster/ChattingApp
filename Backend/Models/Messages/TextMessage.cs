@@ -1,6 +1,6 @@
 ﻿using Backend.Database;
 
-namespace Backend.Models
+namespace Backend.Models.Messages
 {
     public class TextMessage : Message
     {
@@ -36,10 +36,10 @@ namespace Backend.Models
 
         private TextMessage()
         {
-            _sender = String.Empty;
-            _channel = String.Empty;
+            _sender = string.Empty;
+            _channel = string.Empty;
             _timestamp = ((DateTimeOffset)DateTime.Now).ToUnixTimeSeconds();
-            _content = String.Empty;
+            _content = string.Empty;
         }
 
         public TextMessage(string rawString) : base(rawString)

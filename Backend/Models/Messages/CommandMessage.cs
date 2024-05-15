@@ -1,4 +1,4 @@
-﻿namespace Backend.Models
+﻿namespace Backend.Models.Messages
 {
     enum CommandType
     {
@@ -21,7 +21,7 @@
 
         private CommandType GetCommandType()
         {
-            switch(_do.ToLower())
+            switch (_do.ToLower())
             {
                 case "mute":
                     return CommandType.Mute;
@@ -40,7 +40,7 @@
 
             }
         }
-        
+
         public CommandMessage(string rawString) : base(rawString)
         {
             _command = GetCommandType();
