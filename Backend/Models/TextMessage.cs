@@ -38,7 +38,7 @@ namespace Backend.Models
         {
             _sender = String.Empty;
             _channel = String.Empty;
-            _timestamp = ((DateTimeOffset)DateTime.Now).ToUnixTimeSeconds();
+            _timestamp = 0;
             _content = String.Empty;
         }
 

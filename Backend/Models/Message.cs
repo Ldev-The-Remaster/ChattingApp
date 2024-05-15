@@ -60,7 +60,7 @@
             _from = String.Empty;
             _to = String.Empty;
             _in = String.Empty;
-            _at = ((DateTimeOffset)DateTime.Now).ToUnixTimeSeconds();
+            _at = 0;
             _with = String.Empty;
         }
 
