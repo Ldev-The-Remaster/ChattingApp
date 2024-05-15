@@ -1,4 +1,4 @@
-﻿namespace Backend.Models
+﻿namespace Backend.Models.Messages
 {
     struct MessageParams
     {
@@ -56,12 +56,12 @@
 
         protected Message()
         {
-            _do = String.Empty;
-            _from = String.Empty;
-            _to = String.Empty;
-            _in = String.Empty;
+            _do = string.Empty;
+            _from = string.Empty;
+            _to = string.Empty;
+            _in = string.Empty;
             _at = 0;
-            _with = String.Empty;
+            _with = string.Empty;
         }
 
         public Message(string rawString)
