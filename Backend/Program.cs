@@ -1,4 +1,3 @@
-using Backend;
 using Backend.Database;
 using Backend.ServerModules;
 using WebSocketSharp.Server;
