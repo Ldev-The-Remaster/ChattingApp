@@ -6,7 +6,7 @@
         public string From = "";
         public string To = "";
         public string In = "";
-        public DateTime At = DateTime.Now;
+        public long At = ((DateTimeOffset)DateTime.Now).ToUnixTimeSeconds();
         public string With = "";
         public MessageParams(string rawString)
         {
@@ -29,10 +29,7 @@
                         In = commandPair[1];
                         break;
                     case "AT":
-                        long unixTimestamp = long.Parse(commandPair[1]);
-                        DateTimeOffset dateTimeOffset = DateTimeOffset.FromUnixTimeSeconds(unixTimestamp);
-                        DateTime dateTime = dateTimeOffset.UtcDateTime;
-                        At = dateTime;
+                        At = long.Parse(commandPair[1]);
                         break;
                     case "WITH":
                         With = rawString.Split("WITH\r\n", 2)[1];
@@ -54,7 +51,7 @@
         protected string _from;
         protected string _to;
         protected string _in;
-        protected DateTime _at;
+        protected long _at;
         protected string _with;
 
         protected Message()
@@ -63,7 +60,7 @@
             _from = String.Empty;
             _to = String.Empty;
             _in = String.Empty;
-            _at = DateTime.Now;
+            _at = ((DateTimeOffset)DateTime.Now).ToUnixTimeSeconds();
             _with = String.Empty;
         }
 
