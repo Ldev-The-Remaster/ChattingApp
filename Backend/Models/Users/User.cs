@@ -2,7 +2,7 @@
 
 namespace Backend.Models.Users
 {
-    public class User(WebSocket socket)
+    public class User(WebSocket socket, string ip)
     {
         private WebSocket _socket = socket;
         public WebSocket Socket
@@ -18,7 +18,7 @@ namespace Backend.Models.Users
             set { _username = value; }
         }
 
-        private string _ip = "";
+        private string _ip = ip;
         public string Ip
         {
             get { return _ip; }
