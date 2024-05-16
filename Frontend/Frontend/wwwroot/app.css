@@ -5,7 +5,6 @@ body {
 
 input {
     background-color: #D9D9D9;
-    ;
 }
 
 .login-div {
@@ -20,12 +19,12 @@ input {
     align-items: center;
 }
 
-    .login-items-div label {
-        font-size: 0.9rem;
-        text-align: left;
-        margin-top: 0.9rem;
-        margin-bottom: 0.9rem;
-    }
+.login-items-div label {
+    font-size: 0.9rem;
+    text-align: left;
+    margin-top: 0.9rem;
+    margin-bottom: 0.9rem;
+}
 
 .input-group {
     display: flex;
@@ -50,4 +49,15 @@ input {
     border: 1px;
     border-radius: 6px;
     background-color: #525CEB;
+}
+
+/* Custom CSS to hide arrows in InputNumber */
+.no-arrows::-webkit-inner-spin-button,
+.no-arrows::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+.no-arrows {
+    -moz-appearance: textfield;
 }
