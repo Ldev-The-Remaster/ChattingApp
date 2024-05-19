@@ -2,16 +2,21 @@
 @using Models
 @inject NavigationManager navMan
 
-<button class="dmChatButton" @onclick="backToMain"> Main Chat </button>
+<button class="dmChatButton" @onclick="backToMain"><span class="dmChatButtonArrow">&lt;</span> Main Chat </button>
 <div class="chatMessageDiv">
-    <ul class="message-ul">
+    <ul class="messageUl">
         @* messages to be displayed here when rendered *@
+        <li>Sample message</li>
+        <li>Sample message</li>
+        <li>Sample message</li>
+
     </ul>
 </div>
-<EditForm Model="@textMessage" FormName="messageForm" class="messageForm">
 
+<div class="messageForm">
     <InputText class="textBox" id="enterMessageBox" placeholder="Message the Chat!" @bind-Value="textMessage.messageText"></InputText>
-</EditForm>
+    <button class="sendMessageButton">➤</button>
+</div>
 
 @code {
 
