@@ -6,6 +6,8 @@ namespace Backend.Models.Users
 {
     public class User
     {
+        public int UserId { get; set; }
+
         private WebSocket _socket;
         [NotMapped]
         public WebSocket Socket
