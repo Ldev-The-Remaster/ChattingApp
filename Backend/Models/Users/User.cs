@@ -1,19 +1,21 @@
 ﻿using Backend.Database;
 using System.ComponentModel.DataAnnotations.Schema;
-﻿using WebSocketSharp;
+using WebSocketSharp;
 
 namespace Backend.Models.Users
 {
     public class User
     {
-        private WebSocket _socket = socket;
+        private WebSocket _socket;
+        [NotMapped]
         public WebSocket Socket
         {
             get { return _socket; }
             set { _socket = value; }
         }
 
-        private string _ip = ip;
+        private string _ip;
+        [NotMapped]
         public string Ip
         {
             get { return _ip; }
