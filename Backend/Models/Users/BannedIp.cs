@@ -1,8 +1,10 @@
-﻿namespace Backend.Models.Users
+﻿using Backend.Database;
+
+namespace Backend.Models.Users
 {
     public class BannedIp
     {
-        public int IpId { get; set; }
+        public int BannedIpId { get; set; }
         public string IpAddress { get; set; }
 
         public BannedIp()
@@ -12,6 +14,15 @@
         public BannedIp(string ip)
         {
             IpAddress = ip;
+        }
+
+        //Persistence
+        public static BannedIpContext context = new BannedIpContext();
+
+        public void SaveToDb()
+        {
+            context.Add(this);
+            context.SaveChanges();
         }
     }
 }

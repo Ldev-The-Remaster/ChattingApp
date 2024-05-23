@@ -12,7 +12,11 @@ namespace Backend.Models.Users
         public static void Kick(User user) { }
         public static void Ban(User user) { }
         public static void Unban(User user) { }
-        public static void BanIp(string ip) { }
+        public static void BanIp(string ip)
+        { 
+            BannedIp ipToBan = new BannedIp(ip);
+            ipToBan.SaveToDb();
+        }
         public static void UnbanIp(string ip) { }
 
         // Connection
