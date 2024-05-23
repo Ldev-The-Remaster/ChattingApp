@@ -19,6 +19,27 @@
         private string? _channel;
         private string? _payload;
 
+        public void InvokeCommand()
+        {
+            switch(_command)
+            {
+                case CommandType.Mute:
+                    break;
+                case CommandType.Kick:
+                    break;
+                case CommandType.Ban:
+                    break;
+                case CommandType.Ipban:
+                    break;
+                case CommandType.Unban:
+                    break;
+                case CommandType.Unbanip:
+                    break;
+                case CommandType.Unknown:
+                    break;
+            }
+        }
+
         private CommandType GetCommandType()
         {
             switch (_do.ToLower())
