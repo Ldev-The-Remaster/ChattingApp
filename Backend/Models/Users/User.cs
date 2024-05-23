@@ -11,18 +11,18 @@ namespace Backend.Models.Users
             set { _socket = value; }
         }
 
-        private string _username = "";
-        public string Username
-        {
-            get { return _username; }
-            set { _username = value; }
-        }
-
         private string _ip = ip;
         public string Ip
         {
             get { return _ip; }
             set { _ip = value; }
+        }
+
+        private string _username = "";
+        public string Username
+        {
+            get { return _username; }
+            set { _username = value; }
         }
 
         private bool _isRegistered = false;
