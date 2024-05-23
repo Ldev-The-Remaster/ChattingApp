@@ -1,8 +1,10 @@
+﻿using Backend.Database;
+using System.ComponentModel.DataAnnotations.Schema;
 ﻿using WebSocketSharp;
 
 namespace Backend.Models.Users
 {
-    public class User(WebSocket socket, string ip)
+    public class User
     {
         private WebSocket _socket = socket;
         public WebSocket Socket
@@ -44,6 +46,28 @@ namespace Backend.Models.Users
         {
             get { return _isBanned; }
             set { _isBanned = value; }
+        }
+
+        private User()
+        {
+            // This is needed by EntityFramework
+            _socket = new WebSocket("");
+            _ip = String.Empty;
+        }
+
+        public User(WebSocket socket, string ip)
+        {
+            _socket = socket;
+            _ip = ip;
+        }
+
+        // Persistence
+        private static UserContext context = new UserContext();
+
+        public void SaveToDb()
+        {
+            context.Add(this);
+            context.SaveChanges();
         }
     }
 }
