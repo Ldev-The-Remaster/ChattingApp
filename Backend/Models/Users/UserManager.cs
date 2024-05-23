@@ -1,4 +1,3 @@
-﻿using System.Security.Cryptography;
 using WebSocketSharp;
 
 namespace Backend.Models.Users
