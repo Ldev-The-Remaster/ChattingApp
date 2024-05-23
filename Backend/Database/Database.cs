@@ -35,7 +35,7 @@ namespace Backend.Database
         {
             UserContext userContext = new UserContext();
             // This vvv should be disabled in prod
-            userContext.Database.EnsureDeleted();
+            // userContext.Database.EnsureDeleted();
             userContext.Database.EnsureCreated();
         }
     }
