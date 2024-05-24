@@ -24,6 +24,11 @@ namespace Backend.Models.Users
             return newUser;
         }
 
+        public static bool IsUserAdmin(User user) 
+        {
+            return user.Ip == "127.0.0.1";
+        }
+        public static User? GetUserByUsername(string username) { return null; }
         public static void Authenticate(WebSocket socket, string username) { }
         public static void Disconnect(User user) { }
         private static User? GetUserBySocket(WebSocket socket) { return null; }

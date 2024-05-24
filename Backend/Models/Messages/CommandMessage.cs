@@ -1,4 +1,6 @@
-﻿namespace Backend.Models.Messages
+﻿using Backend.Models.Users;
+
+namespace Backend.Models.Messages
 {
     enum CommandType
     {
@@ -14,7 +16,7 @@
     public class CommandMessage : Message
     {
         private CommandType _command;
-        private string _sender;
+        private User? _sender;
         private string? _target;
         private string? _channel;
         private string? _payload;
@@ -58,14 +60,13 @@
                     return CommandType.Unbanip;
                 default:
                     return CommandType.Unknown;
-
             }
         }
 
         public CommandMessage(string rawString) : base(rawString)
         {
             _command = GetCommandType();
-            _sender = _from;
+            _sender = UserManager.GetUserByUsername(_from);
             _target = _to;
             _channel = _in;
             _payload = _with;
