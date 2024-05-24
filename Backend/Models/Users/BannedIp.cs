@@ -7,7 +7,7 @@ namespace Backend.Models.Users
         public int BannedIpId { get; set; }
         public string IpAddress { get; set; }
 
-        public BannedIp()
+        private BannedIp()
         {
             IpAddress = String.Empty;
         }
