@@ -1,5 +1,4 @@
-﻿using System.Security.Cryptography;
-using WebSocketSharp;
+﻿using WebSocketSharp;
 
 namespace Backend.Models.Users
 {
@@ -20,6 +19,7 @@ namespace Backend.Models.Users
         public static User Connect(WebSocket socket, string ip)
         {
             User newUser = new User(socket, ip);
+            newUser.SaveToDb();
             UsersList.Add(newUser);
             return newUser;
         }

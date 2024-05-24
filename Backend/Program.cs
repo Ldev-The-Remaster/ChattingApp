@@ -12,6 +12,7 @@ internal class Program
 
     private static void RunServer(ServerStartupOptions serverOptions)
     {
+        UserContext.SetUp();
         TextMessageContext.SetUp();
 
         WebSocketServer wssv = new WebSocketServer("ws://127.0.0.1:" + serverOptions.Port);

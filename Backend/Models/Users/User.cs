@@ -1,17 +1,23 @@
-﻿using WebSocketSharp;
+﻿using Backend.Database;
+using System.ComponentModel.DataAnnotations.Schema;
+using WebSocketSharp;
 
 namespace Backend.Models.Users
 {
-    public class User(WebSocket socket, string ip)
+    public class User
     {
-        private WebSocket _socket = socket;
+        public int UserId { get; set; }
+
+        private WebSocket _socket;
+        [NotMapped]
         public WebSocket Socket
         {
             get { return _socket; }
             set { _socket = value; }
         }
 
-        private string _ip = ip;
+        private string _ip;
+        [NotMapped]
         public string Ip
         {
             get { return _ip; }
@@ -44,6 +50,28 @@ namespace Backend.Models.Users
         {
             get { return _isBanned; }
             set { _isBanned = value; }
+        }
+
+        private User()
+        {
+            // This is needed by EntityFramework
+            _socket = new WebSocket("");
+            _ip = String.Empty;
+        }
+
+        public User(WebSocket socket, string ip)
+        {
+            _socket = socket;
+            _ip = ip;
+        }
+
+        // Persistence
+        private static UserContext context = new UserContext();
+
+        public void SaveToDb()
+        {
+            context.Add(this);
+            context.SaveChanges();
         }
     }
 }
