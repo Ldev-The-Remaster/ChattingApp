@@ -24,5 +24,11 @@ namespace Backend.Models.Users
             context.Add(this);
             context.SaveChanges();
         }
+
+        public bool AlreadyExists()
+        {
+            List<BannedIp> ipsFromDb = context.BannedIps.Where(m => m.IpAddress == IpAddress).ToList();
+            return ipsFromDb.Count > 0;
+        }
     }
 }
