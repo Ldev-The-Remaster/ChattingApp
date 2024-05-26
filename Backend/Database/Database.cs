@@ -39,4 +39,22 @@ namespace Backend.Database
             userContext.Database.EnsureCreated();
         }
     }
+
+    public class BannedIpContext : DbContext
+    {
+        public DbSet<BannedIp> BannedIps { get; set; }
+
+        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        {
+            optionsBuilder.UseSqlite($"Data Source=BannedIps.db");
+        }
+
+        public static void SetUp()
+        {
+            BannedIpContext bannedIpContext = new BannedIpContext();
+            // This vvv should be disabled in prod
+            // userContext.Database.EnsureDeleted();
+            bannedIpContext.Database.EnsureCreated();
+        }
+    }
 }

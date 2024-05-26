@@ -12,7 +12,19 @@ namespace Backend.Models.Users
         public static void Kick(User user) { }
         public static void Ban(User user) { }
         public static void Unban(User user) { }
-        public static void BanIp(string ip) { }
+
+        public static void BanIp(string ip)
+        { 
+            BannedIp ipToBan = new BannedIp(ip);
+            if (ipToBan.AlreadyExists())
+            {
+                Console.WriteLine($"Attempt to ban IP {ip} failed: IP already banned");
+                return;
+            }
+            ipToBan.SaveToDb();
+            Console.WriteLine($"IP {ip} was banned successfully");
+        }
+
         public static void UnbanIp(string ip) { }
 
         // Connection
