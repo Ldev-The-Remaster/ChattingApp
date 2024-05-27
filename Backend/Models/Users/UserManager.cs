@@ -16,11 +16,13 @@ namespace Backend.Models.Users
         public static void BanIp(string ip)
         { 
             BannedIp ipToBan = new BannedIp(ip);
+
             if (ipToBan.AlreadyExists())
             {
                 Console.WriteLine($"Attempt to ban IP {ip} failed: IP already banned");
                 return;
             }
+
             ipToBan.SaveToDb();
             Console.WriteLine($"IP {ip} was banned successfully");
         }
@@ -31,7 +33,6 @@ namespace Backend.Models.Users
         public static User Connect(WebSocket socket, string ip)
         {
             User newUser = new User(socket, ip);
-            newUser.SaveToDb();
             UsersList.Add(newUser);
             return newUser;
         }
@@ -40,12 +41,46 @@ namespace Backend.Models.Users
         {
             return user.Ip == "127.0.0.1";
         }
+
         public static User? GetUserByUsername(string username) 
         {
             return UsersList.Find(user => user.Username == username);
         }
-        public static void Authenticate(WebSocket socket, string username) { }
+
+        public static bool Authenticate(WebSocket socket, string username)
+        {
+            User? user = GetUserBySocket(socket);
+            if (user == null)
+            {
+                Console.WriteLine("Invalid authentication attempt");
+                return false;
+            }
+
+            if (user.IsRegistered)
+            {
+                Console.WriteLine($"Double registration prevented from: {user.Username}");
+                return false;
+            }
+
+            bool isUserConnected = GetUserByUsername(username) != null;
+            if (isUserConnected)
+            {
+                return false;
+            }
+
+            user.Username = username;
+            user.IsRegistered = true;
+            user.SaveToDb();
+
+            Console.WriteLine($"User authenticated with username: {username}");
+            return true;
+        }
+
         public static void Disconnect(User user) { }
-        private static User? GetUserBySocket(WebSocket socket) { return null; }
+
+        public static User? GetUserBySocket(WebSocket socket)
+        {
+            return UsersList.Find(user => user.Socket == socket);
+        }
     }
 }

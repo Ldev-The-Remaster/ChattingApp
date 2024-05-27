@@ -1,8 +1,9 @@
 ﻿using Backend.Models.Users;
+using WebSocketSharp;
 
 namespace Backend.Models.Messages
 {
-    enum CommandType
+    public enum CommandType
     {
         Mute,
         Kick,
@@ -16,6 +17,12 @@ namespace Backend.Models.Messages
     public class CommandMessage : Message
     {
         private CommandType _command;
+        public CommandType CommandType
+        {
+            get { return _command; }
+            set { _command = value; }
+        }
+
         private User? _sender;
         private string? _target;
         private string? _channel;
@@ -63,10 +70,10 @@ namespace Backend.Models.Messages
             }
         }
 
-        public CommandMessage(string rawString) : base(rawString)
+        public CommandMessage(WebSocket socket, string rawString) : base(socket, rawString)
         {
             _command = GetCommandType();
-            _sender = UserManager.GetUserByUsername(_from);
+            _sender = UserManager.GetUserBySocket(socket);
             _target = _to;
             _channel = _in;
             _payload = _with;

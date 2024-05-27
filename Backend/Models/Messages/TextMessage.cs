@@ -1,4 +1,5 @@
 ﻿using Backend.Database;
+using WebSocketSharp;
 
 namespace Backend.Models.Messages
 {
@@ -36,13 +37,14 @@ namespace Backend.Models.Messages
 
         private TextMessage()
         {
+            // This is needed by EntityFramework
             _sender = string.Empty;
             _channel = string.Empty;
             _timestamp = 0;
             _content = string.Empty;
         }
 
-        public TextMessage(string rawString) : base(rawString)
+        public TextMessage(WebSocket socket, string rawString) : base(socket, rawString)
         {
             _sender = _from;
             _channel = _in;
