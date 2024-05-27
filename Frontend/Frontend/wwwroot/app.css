@@ -1,4 +1,4 @@
-body, html {
+body {
     background-color: #262527;
     font-family: "Inter","sans-seriff";
     margin: 0;
@@ -7,7 +7,12 @@ body, html {
 * {
     box-sizing: border-box;
 }
-
+html {
+    background-color: #262527;
+    font-family: "Inter","sans-seriff";
+    margin: 0;
+    padding: 0;
+}
 input {
     background-color: #D9D9D9;
 }
@@ -56,36 +61,40 @@ input {
     background-color: #525CEB;
 }
 
-.chatMessageDiv {
+.dmDiv {
+    display: flex;
+    flex-direction: column;
     background-color: #434145;
-    margin-left: 3rem;
-    height: 45rem;
+    margin-left: 7rem;
+    height: 100vh;
     width: 76rem;
     position: relative;
 }
 
-.chatMessageDiv li {
-    list-style: none;
-    background-color: #D9D9D9;
-    border: 2px;
-    border-radius: 6px;
-    height: 2.5rem;
-    width: 60rem;
-    margin-bottom: 1.5rem;
-    padding-top: 1rem;
-    padding-left: 0.5rem;
-}
 
-.messageUl {
-    padding: 1.5rem;
-    position: absolute;
-    bottom: 0;
+.chatMessageContainer {
+    flex-grow: 1;
+    display: flex;
+    flex: 1 0 30%;
+    justify-content: end;
+    flex-direction: column;
 }
+    .chatMessageContainer div {
+        list-style: none;
+        align-items: center;
+        color: white;
+        background-color: #333333;
+        padding: 10px;
+        border-radius: 6px;
+        margin-bottom: 10px;
+        margin-left: 20px;
+        margin-right: 20px;
+    }
 
 .dmChatButton {
-    display: block;
+    order: 0;
     margin-top: 2rem;
-    margin-left: 3rem;
+    margin-bottom: 2px;
     height: 2.8rem;
     font-size: 0.9rem;
     font-weight: bolder;
@@ -129,11 +138,11 @@ input {
 }
 
 .messageForm {
+    flex-grow:0.05;
     display: flex;
-    position: fixed;
-    bottom: 0;
-    margin-bottom: 4rem;
-    margin-left: 3rem;
+    margin-top: 10px;
+    margin-left: 20px;
+    margin-right: 20px;
 }
 
 /* Custom CSS to hide arrows in InputNumber */
@@ -148,7 +157,7 @@ input {
 }
 
 
-/*main-page*/
+/*main-page start*/
 .main-page {
     display: flex;
     width: 100vw;
@@ -206,12 +215,16 @@ input {
         padding: 10px;
         border-radius: 6px;
         margin-bottom: 10px;
+        margin-left: 20px;
+        margin-right: 20px;
     }
 
 .main-chat {
     display: flex;
     padding: 10px;
-    background-color: #333;
+    background-color: #3333;
+    margin-left: 20px;
+    margin-right: 20px;
 }
 
     .main-chat .chat-input {
@@ -221,6 +234,7 @@ input {
         border-radius: 6px;
         border: none;
         padding: 0 10px;
+
     }
 .user-block {
     padding-left: 10px;
@@ -228,7 +242,8 @@ input {
     flex-direction: column;
     align-items: center;
     background-color: #525ceb;
-    border-radius: 6px
+    border-bottom-left-radius: 6px;
+    border-top-left-radius: 6px;
 }
     .user-block h1 {
         padding-top: 1.5rem;
