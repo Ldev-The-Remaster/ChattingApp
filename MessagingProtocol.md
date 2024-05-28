@@ -31,7 +31,7 @@ WITH
 - Parameter keywords (`DO`, `FROM`...etc) and verbs are case**IN**sensitive (can be UPPERCASE or lowercase). However, it is advised to use UPPERCASE in order to standardize the format.
 - Depending on the verb, certain parameters may be optional or completely omitted. For example, the `FROM` parameter does not need to provided in subsequent requests after `AUTH` as the server is expected to store the username for the current connection. The parameter should be ignored in such cases even if provided by the request. Optional parameters however can alter the functionality of certain actions.
 - If the `AT` parameter is omitted, the timestamp is set to the exact time the request was received.
-- The first request from the client must be an `AUTH` verb with the username passed in the `FROM` parameter. If the first message is anything but `AUTH` the connection will be terminated immediatly. Additionally, the connection will also be terminated if no message was received from the client for 10 seconds after the initial connection. The server will not send any messages to a client while it is not authenticated.
+- The first request from the client must be an `AUTH` verb with the username passed in the `FROM` parameter. The server will not send any messages to a client while it is not authenticated. If a message is sent from an unregistered client, the server will reply with a `REFUSE`.
 
 ## Verb list
 \* `DO` is required for all verbs.
@@ -118,7 +118,28 @@ Besides displaying messages and alerts, the server also needs to respond to `AUT
 - ### REFUSE: Refuses the request from the client
    > With response message: `WITH <reason>`
 
-### Multisend (Message history)
+## Multisend verbs
+### User List
+When a new client authenticates using `AUTH`, the server will send the list of users that are currently connected (and authenticated) to this new client. Similarly, the server will also send the updated list to all other clients when the new client joins, or when another client disconnects.
+This is done via the `INTRODUCE` server verb, in which the server will provide the list of connected users in the form of an array.
+- ### INTRODUCE: Send list of online users
+   > Required params: `WITH <array-of-users>`
+
+In the `WITH` argument, the list of usernames should start, end, and be seperated using the character sequence `/*$*/` (forward slash, asterisk, dollar sign, asterisk, forward slash) with the seperator and each username in a different line like so:
+```
+DO INTRODUCE
+WITH
+/*$*/
+Psycho
+/*$*/
+Okkio
+/*$*/
+Asim
+/*$*/
+```
+It's then up to the client to re-interpret the user array to populate the UI.
+
+### Message History
 When the server receives a `REMEMBER` request from a client, the server is expected to forward all the messages that users have sent in the specified period, this is done through the `POPULATE` server verb. When sending a `POPULATE` from the server, the `WITH` parameter will house multiple message requests from the server so the client can populate its UI with the message history.
 
 - ### POPULATE: Send multiple messages at once
@@ -154,7 +175,7 @@ WITH
 User Forki has been banned
 /*$*/
 ```
-It's then up to the client to re-interpret the nested message requests to populate the UI sequentially.
+It's then up to the client to re-interpret the nested message requests to *populate* the UI sequentially.
 
 ## Examples
 User connects and attempts authentication using the username `Midfield`
