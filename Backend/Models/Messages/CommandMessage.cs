@@ -3,7 +3,7 @@ using WebSocketSharp;
 
 namespace Backend.Models.Messages
 {
-    public enum CommandType
+    enum CommandType
     {
         Mute,
         Kick,
@@ -17,12 +17,6 @@ namespace Backend.Models.Messages
     public class CommandMessage : Message
     {
         private CommandType _command;
-        public CommandType CommandType
-        {
-            get { return _command; }
-            set { _command = value; }
-        }
-
         private User? _sender;
         private string? _target;
         private string? _channel;

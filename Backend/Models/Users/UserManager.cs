@@ -16,7 +16,6 @@ namespace Backend.Models.Users
         public static void BanIp(string ip)
         { 
             BannedIp ipToBan = new BannedIp(ip);
-
             if (ipToBan.AlreadyExists())
             {
                 Console.WriteLine($"Attempt to ban IP {ip} failed: IP already banned");
@@ -52,7 +51,7 @@ namespace Backend.Models.Users
             User? user = GetUserBySocket(socket);
             if (user == null)
             {
-                Console.WriteLine("Invalid authentication attempt");
+                Console.WriteLine("User is not connected");
                 return false;
             }
 
@@ -62,8 +61,8 @@ namespace Backend.Models.Users
                 return false;
             }
 
-            bool isUserConnected = GetUserByUsername(username) != null;
-            if (isUserConnected)
+            bool isUsernameConnected = GetUserByUsername(username) != null;
+            if (isUsernameConnected)
             {
                 return false;
             }
