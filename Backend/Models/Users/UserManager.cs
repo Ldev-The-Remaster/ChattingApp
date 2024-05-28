@@ -81,5 +81,10 @@ namespace Backend.Models.Users
         {
             return UsersList.Find(user => user.Socket == socket);
         }
+
+        public static string GetUsernameBySocket(WebSocket socket)
+        {
+            return GetUserBySocket(socket)?.Username ?? String.Empty;
+        }
     }
 }

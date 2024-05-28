@@ -11,8 +11,8 @@ namespace Backend.ServerModules
         protected override void OnMessage(MessageEventArgs e)
         {
             string rawString= e.Data;
-            WebSocket socket = Context.WebSocket;
-            User? user = UserManager.GetUserBySocket(socket);
+            WebSocket currentSocket = Context.WebSocket;
+            User? user = UserManager.GetUserBySocket(currentSocket);
 
             if (user == null)
             {
@@ -31,16 +31,36 @@ namespace Backend.ServerModules
             switch(Message.GetMessageType(rawString))
             {
                 case MessageType.TextMessage:
-                    var textMessage = new TextMessage(socket, rawString);
+                    if (user.IsMuted)
+                    {
+                        Send("DO REFUSE\r\nWITH\r\nYou are muted!");
+                        Console.WriteLine($"Failed send attempt from muted user: {user.Username}");
+                        return;
+                    }
+
+                    var textMessage = new TextMessage(currentSocket, rawString);
+                    Console.WriteLine($"{textMessage.Sender}: {textMessage.Content}");
+
+                    foreach (User client in UserManager.UsersList)
+                    {
+                        if (client.Socket == currentSocket)
+                        {
+                            continue;
+                        }
+
+                        if (!client.IsRegistered)
+                        {
+                            continue;
+                        }
+
+                        client.Socket.Send(textMessage.ToString());
+                    }
                     break;
                 case MessageType.CommandMessage:
-                    var commandMessage = new CommandMessage(socket, rawString);
+                    var commandMessage = new CommandMessage(currentSocket, rawString);
                     commandMessage.InvokeCommand();
                     break;
             }
-
-            Console.WriteLine($"{user.Username}: {rawString}");
-            Send(rawString);
         }
 
         protected override void OnOpen()

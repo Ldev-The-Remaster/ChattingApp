@@ -1,4 +1,5 @@
 ﻿using Backend.Database;
+using Backend.Models.Users;
 using WebSocketSharp;
 
 namespace Backend.Models.Messages
@@ -46,10 +47,37 @@ namespace Backend.Models.Messages
 
         public TextMessage(WebSocket socket, string rawString) : base(socket, rawString)
         {
-            _sender = _from;
-            _channel = _in;
+            _sender = _from != String.Empty ? _from : UserManager.GetUsernameBySocket(socket);
+            _channel = _in != String.Empty ? _in : "general-chat";
             _timestamp = _at;
             _content = _with;
+        }
+
+        public override string ToString()
+        {
+            string msgString = "DO SEND\r\n";
+
+            if (_sender != String.Empty)
+            {
+                msgString += $"FROM {_sender}\r\n"; 
+            }
+
+            if (_channel != String.Empty)
+            {
+                msgString += $"IN {_channel}\r\n";
+            }
+
+            if (_timestamp != 0)
+            {
+                msgString += $"AT {_timestamp}\r\n";
+            }
+
+            if (_content != String.Empty)
+            {
+                msgString += $"WITH\r\n{_content}";
+            }
+
+            return msgString;
         }
 
         // Persistence
