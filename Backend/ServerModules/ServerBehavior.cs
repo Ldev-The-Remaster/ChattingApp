@@ -1,5 +1,6 @@
 ﻿using Backend.Models.Messages;
 using Backend.Models.Users;
+using Backend.Utils;
 using WebSocketSharp;
 using WebSocketSharp.Server;
 using static Backend.Models.Messages.Message;
@@ -17,14 +18,14 @@ namespace Backend.ServerModules
             if (user == null)
             {
                 Send("DO REFUSE\r\nWITH\r\nInvalid connection, please reconnect");
-                Console.WriteLine($"Invalid connection from: {Context.UserEndPoint.Address}");
+                CLogger.Error($"Invalid connection from: {Context.UserEndPoint.Address}");
                 return;
             }
 
             if (!user.IsRegistered && !Authenticate(user, rawString))
             {
                 Send("DO REFUSE\r\nWITH\r\nYou must authenticate first by sending AUTH verb WITH username");
-                Console.WriteLine($"Failed send attempt from unregistered user at: {user.Ip}");
+                CLogger.Error($"Failed send attempt from unregistered user at: {user.Ip}");
                 return;
             }
 
@@ -34,13 +35,13 @@ namespace Backend.ServerModules
                     if (user.IsMuted)
                     {
                         Send("DO REFUSE\r\nWITH\r\nYou are muted!");
-                        Console.WriteLine($"Failed send attempt from muted user: {user.Username}");
+                        CLogger.Error($"Failed send attempt from muted user: {user.Username}");
                         return;
                     }
 
                     var textMessage = new TextMessage(socket, rawString);
 
-                    Console.WriteLine($"{textMessage.Sender}: {textMessage.Content}");
+                    CLogger.Chat(textMessage.Sender, textMessage.Content);
                     SendToAll(textMessage.ToString());
                     
                     break;
@@ -57,7 +58,7 @@ namespace Backend.ServerModules
             string ip = Context.UserEndPoint.Address.ToString();
 
             User newUser = UserManager.Connect(socket, ip);
-            Console.WriteLine($"New client connected from: {newUser.Ip}");
+            CLogger.Event($"New client connected from: {newUser.Ip}");
         }
 
         private bool Authenticate(User user, string message)

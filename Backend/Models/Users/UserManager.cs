@@ -1,4 +1,5 @@
-﻿using WebSocketSharp;
+﻿using Backend.Utils;
+using WebSocketSharp;
 
 namespace Backend.Models.Users
 {
@@ -18,12 +19,12 @@ namespace Backend.Models.Users
             BannedIp ipToBan = new BannedIp(ip);
             if (ipToBan.AlreadyExists())
             {
-                Console.WriteLine($"Attempt to ban IP {ip} failed: IP already banned");
+                CLogger.Error($"Attempt to ban IP {ip} failed: IP already banned");
                 return;
             }
 
             ipToBan.SaveToDb();
-            Console.WriteLine($"IP {ip} was banned successfully");
+            CLogger.Event($"IP {ip} was banned successfully");
         }
 
         public static void UnbanIp(string ip) { }
@@ -51,13 +52,13 @@ namespace Backend.Models.Users
             User? user = GetUserBySocket(socket);
             if (user == null)
             {
-                Console.WriteLine("User is not connected");
+                CLogger.Error("Authentication failed: User client not found");
                 return false;
             }
 
             if (user.IsRegistered)
             {
-                Console.WriteLine($"Double registration prevented from: {user.Username}");
+                CLogger.Warn($"Double registration prevented from: {user.Username}");
                 return false;
             }
 
@@ -71,7 +72,7 @@ namespace Backend.Models.Users
             user.IsRegistered = true;
             user.SaveToDb();
 
-            Console.WriteLine($"User authenticated with username: {username}");
+            CLogger.Event($"User authenticated with username: {username}");
             return true;
         }
 

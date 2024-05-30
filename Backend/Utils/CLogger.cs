@@ -13,6 +13,7 @@
             Console.Write(sender);
             Console.ResetColor();
             Console.Write($" > {message}");
+            Console.WriteLine();
         }
 
         public static void Event(string message)
