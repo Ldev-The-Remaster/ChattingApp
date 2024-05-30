@@ -10,7 +10,7 @@ namespace Backend.ServerModules
     {
         protected override void OnMessage(MessageEventArgs e)
         {
-            string rawString= e.Data;
+            string rawString = e.Data;
             WebSocket socket = Context.WebSocket;
             User? user = UserManager.GetUserBySocket(socket);
 
@@ -31,16 +31,24 @@ namespace Backend.ServerModules
             switch(Message.GetMessageType(rawString))
             {
                 case MessageType.TextMessage:
+                    if (user.IsMuted)
+                    {
+                        Send("DO REFUSE\r\nWITH\r\nYou are muted!");
+                        Console.WriteLine($"Failed send attempt from muted user: {user.Username}");
+                        return;
+                    }
+
                     var textMessage = new TextMessage(socket, rawString);
+
+                    Console.WriteLine($"{textMessage.Sender}: {textMessage.Content}");
+                    SendToAll(textMessage.ToString());
+                    
                     break;
                 case MessageType.CommandMessage:
                     var commandMessage = new CommandMessage(socket, rawString);
                     commandMessage.InvokeCommand();
                     break;
             }
-
-            Console.WriteLine($"{user.Username}: {rawString}");
-            Send(rawString);
         }
 
         protected override void OnOpen()
@@ -57,6 +65,19 @@ namespace Backend.ServerModules
             if (message.Substring(3, 4).ToLower() != "auth") return false;
             string username = message.Substring(14);
             return UserManager.Authenticate(user.Socket, username);
+        }
+
+        private void SendToAll(string message)
+        {
+            foreach (User client in UserManager.UsersList)
+            {
+                if (!client.IsRegistered)
+                {
+                    continue;
+                }
+
+                client.Socket.Send(message);
+            }
         }
     }
 }
