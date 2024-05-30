@@ -22,11 +22,19 @@ namespace Backend.ServerModules
                 return;
             }
 
-            if (!user.IsRegistered && !Authenticate(user, rawString))
+            if (!user.IsRegistered)
             {
-                Send("DO REFUSE\r\nWITH\r\nYou must authenticate first by sending AUTH verb WITH username");
-                CLogger.Error($"Failed send attempt from unregistered user at: {user.Ip}");
+                if (Authenticate(user, rawString))
+                {
+                    Send("DO ACCEPT");
+                }
+                else
+                {
+                    Send("DO REFUSE\r\nWITH\r\nYou must authenticate first by sending AUTH verb WITH a unique username");
+                    CLogger.Error($"Failed send attempt from unregistered user at: {user.Ip}");
+                }
                 return;
+                
             }
 
             switch(Message.GetMessageType(rawString))
