@@ -14,12 +14,14 @@
             Console.ResetColor();
             Console.Write($" > {message}");
         }
+
         public static void Event(string message)
         {
             Console.ForegroundColor = ConsoleColor.Green;
             Log(message);
             Console.ResetColor();
         }
+
         public static void Warn(string message)
         {
             Console.ForegroundColor = ConsoleColor.Yellow;
