@@ -38,7 +38,10 @@ namespace Backend.ServerModules
                         return;
                     }
 
-                    SendToAll(socket, rawString);
+                    var textMessage = new TextMessage(socket, rawString);
+
+                    Console.WriteLine($"{textMessage.Sender}: {textMessage.Content}");
+                    SendToAll(textMessage.ToString());
                     
                     break;
                 case MessageType.CommandMessage:
@@ -64,11 +67,8 @@ namespace Backend.ServerModules
             return UserManager.Authenticate(user.Socket, username);
         }
 
-        private void SendToAll(WebSocket socket, string rawString)
+        private void SendToAll(string message)
         {
-            var textMessage = new TextMessage(socket, rawString);
-            Console.WriteLine($"{textMessage.Sender}: {textMessage.Content}");
-
             foreach (User client in UserManager.UsersList)
             {
                 if (!client.IsRegistered)
@@ -76,7 +76,7 @@ namespace Backend.ServerModules
                     continue;
                 }
 
-                client.Socket.Send(textMessage.ToString());
+                client.Socket.Send(message);
             }
         }
     }
