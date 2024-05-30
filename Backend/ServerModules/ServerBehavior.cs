@@ -10,9 +10,9 @@ namespace Backend.ServerModules
     {
         protected override void OnMessage(MessageEventArgs e)
         {
-            string rawString= e.Data;
-            WebSocket currentSocket = Context.WebSocket;
-            User? user = UserManager.GetUserBySocket(currentSocket);
+            string rawString = e.Data;
+            WebSocket socket = Context.WebSocket;
+            User? user = UserManager.GetUserBySocket(socket);
 
             if (user == null)
             {
@@ -38,26 +38,11 @@ namespace Backend.ServerModules
                         return;
                     }
 
-                    var textMessage = new TextMessage(currentSocket, rawString);
-                    Console.WriteLine($"{textMessage.Sender}: {textMessage.Content}");
-
-                    foreach (User client in UserManager.UsersList)
-                    {
-                        if (client.Socket == currentSocket)
-                        {
-                            continue;
-                        }
-
-                        if (!client.IsRegistered)
-                        {
-                            continue;
-                        }
-
-                        client.Socket.Send(textMessage.ToString());
-                    }
+                    SendToAll(socket, rawString);
+                    
                     break;
                 case MessageType.CommandMessage:
-                    var commandMessage = new CommandMessage(currentSocket, rawString);
+                    var commandMessage = new CommandMessage(socket, rawString);
                     commandMessage.InvokeCommand();
                     break;
             }
@@ -77,6 +62,22 @@ namespace Backend.ServerModules
             if (message.Substring(3, 4).ToLower() != "auth") return false;
             string username = message.Substring(14);
             return UserManager.Authenticate(user.Socket, username);
+        }
+
+        private void SendToAll(WebSocket socket, string rawString)
+        {
+            var textMessage = new TextMessage(socket, rawString);
+            Console.WriteLine($"{textMessage.Sender}: {textMessage.Content}");
+
+            foreach (User client in UserManager.UsersList)
+            {
+                if (!client.IsRegistered)
+                {
+                    continue;
+                }
+
+                client.Socket.Send(textMessage.ToString());
+            }
         }
     }
 }
