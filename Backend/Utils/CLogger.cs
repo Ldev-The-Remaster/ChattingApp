@@ -1,6 +1,6 @@
 ﻿namespace Backend.Utils
 {
-    public static class Logger
+    public static class CLogger
     {
         public static void Log(string message)
         {
