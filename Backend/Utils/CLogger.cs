@@ -10,6 +10,7 @@
         public static void Chat(string sender, string message)
         {
             Console.ForegroundColor = ConsoleColor.Blue;
+            Console.Write($"{GetTimestamp()} | ");
             Console.Write(sender);
             Console.ResetColor();
             Console.Write($" > {message}");
