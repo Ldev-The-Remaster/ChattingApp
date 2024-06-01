@@ -28,18 +28,29 @@ namespace Backend.Models.Messages
             switch(_command)
             {
                 case CommandType.Mute:
+                    if (UserManager.IsUserAdmin(_sender) == false)
+                    {
+                        CLogger.Error("User must be an adminstrator to use this command");
+                        _sender.Socket.Send("DO REFUSE WITH user is not an adminstrator");
+                        return;
+                    }
+                   
                     if (_target == null)
                     {
                         CLogger.Error("Mute target not specified");
                         return;
                     }
+
                     User? userToMute = UserManager.GetUserByUsername(_target);
                     if (userToMute == null)
                     {
                         CLogger.Error("Mute target not found in DB");
                         return;
                     }
+
                     UserManager.Mute(userToMute);
+                    CLogger.Event("User Muted: " + _target);
+                    _sender.Socket.Send("DO ACCEPT");
                     break;
                 case CommandType.Kick:
                     break;
