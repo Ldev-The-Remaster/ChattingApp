@@ -47,6 +47,26 @@
     {
         errorMesages.Clear();
 
+        if (userInfo.username.Length < 1)
+        {
+            errorMesages.Add("Error: User is invalid");
+        }
+
+        if (userInfo.ip != "localhost" && !IPAddress.TryParse(userInfo.ip, out _))
+        {
+            errorMesages.Add("Error: IP is invalid");
+        }
+
+        if (!userInfo.port.HasValue && !(userInfo.port >= 0 && userInfo.port <= 65535))
+        {
+            errorMesages.Add("Error: Port is invalid");
+        }
+
+        if (errorMesages.Count > 0)
+        {
+            return;
+        }
+
         try
         {
             await ConnectWebSocket("ws://" + userInfo.ip + ":" + userInfo.port);
