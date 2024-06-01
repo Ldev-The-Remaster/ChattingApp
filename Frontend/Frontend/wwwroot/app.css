@@ -173,7 +173,6 @@ input {
     margin-right: 20px;
 }
 
-/* Custom CSS to hide arrows in InputNumber */
 .no-arrows::-webkit-inner-spin-button,
 .no-arrows::-webkit-outer-spin-button {
     -webkit-appearance: none;
