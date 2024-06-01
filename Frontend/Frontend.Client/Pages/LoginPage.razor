@@ -25,7 +25,16 @@
             <label for="port">PORT</label>
             <InputNumber class="login-input no-arrows" id="port" @bind-Value="userInfo.port" />
         </div>
-        <button class="login-button" @onclick=" HandleLogin">JOIN</button>
+        <button class="login-button" @onclick=" HandleLogin">
+            @if (isLoading == false)
+            {
+                <span>JOIN</span>
+            }
+            else
+            {
+                <div class="loginLoader"></div>
+            }
+        </button>
         <div class="loginError">
             @if (validIp == false)
             {
@@ -54,6 +63,7 @@
     bool validUser = true;
     bool validIp = true;
     bool validPort = true;
+    bool isLoading = false;
 
     public async Task HandleLogin()
     {
@@ -108,6 +118,8 @@
 
         try
         {
+            isLoading = true;
+            await Task.Delay(3000);
             if (userInfo.username.Length > 0)
             {
                 await ConnectWebSocket("ws://" + userInfo.ip + ":" + userInfo.port);
