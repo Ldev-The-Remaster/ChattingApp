@@ -255,7 +255,6 @@ input {
     }
 
 
-
 .chat-input-box {
     display: flex;
     padding: 10px;
@@ -292,15 +291,14 @@ input {
     border-top-left-radius: 6px;
 }
 
-.user-block h1 {
-    padding-top: 1.5rem;
-    padding-right: 10px;
-    font-size: 1.5rem;
-    color: black;
-    margin: 0 0 20px 0;
-    text-align: center;
-}
-
+    .user-block h1 {
+        padding-top: 1.5rem;
+        padding-right: 10px;
+        font-size: 1.5rem;
+        color: black;
+        margin: 0 0 20px 0;
+        text-align: center;
+    }
 
 .user-list {
     list-style: none;

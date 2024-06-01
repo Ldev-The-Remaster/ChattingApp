@@ -1,7 +1,6 @@
 ﻿@page "/main-page"
 
 
-
 <div class="main-page">
     <div class="main-block">
         <div class="main-top">
@@ -11,18 +10,16 @@
         </div>
     <div class="main-content">
         <div class="message-container" id="messageContainer">
-
                 @foreach (var message in Messages)
                 {
                     <Message User="@message.User" MessageContent="@message.Content" Timestamp="@message.Timestamp" />
                 }
         </div>
     </div>
-    <div class="chat-input-box">
-        
-        <input type="text" placeholder="Type your message here" />
-        <button class="sendMessageButton">➤</button>
-    </div>
+        <div class="chat-input-box">
+            <input type="text" placeholder="Type your message here" />
+            <button class="sendMessageButton">➤</button>
+        </div>
     </div>
     <div class="user-block">
         @*contains users connect to the chatroom probably user.id and just going list them*@
@@ -38,11 +35,7 @@
 
 
 
-
 @code {
-
-
-
     // hard coded messsages
     private List<Message> Messages = new List<Message>
     {
