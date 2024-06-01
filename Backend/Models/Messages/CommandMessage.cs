@@ -1,4 +1,5 @@
 ﻿using Backend.Models.Users;
+using Backend.Utils;
 using WebSocketSharp;
 
 namespace Backend.Models.Messages
@@ -27,6 +28,18 @@ namespace Backend.Models.Messages
             switch(_command)
             {
                 case CommandType.Mute:
+                    if (_target == null)
+                    {
+                        CLogger.Error("Mute target not specified");
+                        return;
+                    }
+                    User? userToMute = UserManager.GetUserByUsername(_target);
+                    if (userToMute == null)
+                    {
+                        CLogger.Error("Mute target not found in DB");
+                        return;
+                    }
+                    UserManager.Mute(userToMute);
                     break;
                 case CommandType.Kick:
                     break;
