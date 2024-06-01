@@ -51,6 +51,14 @@ input {
     background-color: #525CEB;
 }
 
+.loginError {
+    font-weight:bolder;
+    font-size:1.2rem;
+    display:flex;
+    flex-direction:column;
+    color: #B65757;
+}
+
 /* Custom CSS to hide arrows in InputNumber */
 .no-arrows::-webkit-inner-spin-button,
 .no-arrows::-webkit-outer-spin-button {
