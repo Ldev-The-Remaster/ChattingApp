@@ -61,6 +61,34 @@ input {
     background-color: #525CEB;
 }
 
+.loginError {
+    font-weight:bolder;
+    font-size:1.2rem;
+    display:flex;
+    flex-direction:column;
+    color: #B65757;
+}
+
+.chatMessageContainer {
+    flex-grow: 1;
+    display: flex;
+    flex: 1 0 30%;
+    justify-content: end;
+    flex-direction: column;
+}
+
+.chatMessageContainer div {
+    list-style: none;
+    align-items: center;
+    color: white;
+    background-color: #333333;
+    padding: 10px;
+    border-radius: 6px;
+    margin-bottom: 10px;
+    margin-left: 20px;
+    margin-right: 20px;
+}
+
 .dmDiv {
     display: flex;
     flex-direction: column;
@@ -70,26 +98,6 @@ input {
     width: 76rem;
     position: relative;
 }
-
-
-.chatMessageContainer {
-    flex-grow: 1;
-    display: flex;
-    flex: 1 0 30%;
-    justify-content: end;
-    flex-direction: column;
-}
-    .chatMessageContainer div {
-        list-style: none;
-        align-items: center;
-        color: white;
-        background-color: #333333;
-        padding: 10px;
-        border-radius: 6px;
-        margin-bottom: 10px;
-        margin-left: 20px;
-        margin-right: 20px;
-    }
 
 .dmChatButton {
     order: 0;
@@ -156,7 +164,6 @@ input {
     -moz-appearance: textfield;
 }
 
-
 /*main-page start*/
 .main-page {
     display: flex;
@@ -179,25 +186,25 @@ input {
 
 }
 
-    .main-top h1 {
-        color: white;
-        margin: 0;
-        flex-grow: 1;
-        text-align: center;
-    }
+.main-top h1 {
+    color: white;
+    margin: 0;
+    flex-grow: 1;
+    text-align: center;
+}
 
-    .main-top button {
-        margin-left: auto;
-        margin-right: 10px;
-        font-size: 0.9rem;
-        font-weight: bolder;
-        color: #D9D9D9;
-        height: 2.8rem;
-        width: 5.8rem;
-        border: 1px;
-        border-radius: 6px;
-        background-color: #525CEB;
-    }
+.main-top button {
+    margin-left: auto;
+    margin-right: 10px;
+    font-size: 0.9rem;
+    font-weight: bolder;
+    color: #D9D9D9;
+    height: 2.8rem;
+    width: 5.8rem;
+    border: 1px;
+    border-radius: 6px;
+    background-color: #525CEB;
+}
 
 .main-content {
     display: flex;
@@ -208,16 +215,16 @@ input {
     justify-content: flex-end;
 }
 
-    .main-content .message {
-        align-items:center;
-        color: white;
-        background-color: #333333;
-        padding: 10px;
-        border-radius: 6px;
-        margin-bottom: 10px;
-        margin-left: 20px;
-        margin-right: 20px;
-    }
+.main-content .message {
+    align-items:center;
+    color: white;
+    background-color: #333333;
+    padding: 10px;
+    border-radius: 6px;
+    margin-bottom: 10px;
+    margin-left: 20px;
+    margin-right: 20px;
+}
 
 .main-chat {
     display: flex;
@@ -227,15 +234,15 @@ input {
     margin-right: 20px;
 }
 
-    .main-chat .chat-input {
-        width: 100%;
-        height: 3.5rem;
-        font-size: 1rem;
-        border-radius: 6px;
-        border: none;
-        padding: 0 10px;
+.main-chat .chat-input {
+    width: 100%;
+    height: 3.5rem;
+    font-size: 1rem;
+    border-radius: 6px;
+    border: none;
+    padding: 0 10px;
+}
 
-    }
 .user-block {
     padding-left: 10px;
     display: flex;
@@ -245,23 +252,23 @@ input {
     border-bottom-left-radius: 6px;
     border-top-left-radius: 6px;
 }
-    .user-block h1 {
-        padding-top: 1.5rem;
-        padding-right: 10px;
-        font-size: 1.5rem; 
-        color: black;
-        margin: 0 0 20px 0; 
-        text-align: center;
-    }
 
+.user-block h1 {
+    padding-top: 1.5rem;
+    padding-right: 10px;
+    font-size: 1.5rem; 
+    color: black;
+    margin: 0 0 20px 0; 
+    text-align: center;
+}
 
 .user-list {
     list-style: none;
 }
 
-    .user-list li {
-        margin-bottom: 1rem;
-        margin-top: 1rem;
-        font-size: 1.25rem;
-        font-weight: bold
-    }
+.user-list li {
+    margin-bottom: 1rem;
+    margin-top: 1rem;
+    font-size: 1.25rem;
+    font-weight: bold
+}
