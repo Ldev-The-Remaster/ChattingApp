@@ -31,7 +31,7 @@ namespace Backend.Models.Messages
                     if (UserManager.IsUserAdmin(_sender) == false)
                     {
                         CLogger.Error("User must be an adminstrator to use this command");
-                        _sender.Socket.Send("DO REFUSE WITH user is not an adminstrator");
+                        _sender.Socket.Send("DO REFUSE\r\nWITH\r\nYou must be an adminstrator to use this command");
                         return;
                     }
                    
