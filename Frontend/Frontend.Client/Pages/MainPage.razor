@@ -1,0 +1,41 @@
+﻿@page "/main-page"
+
+
+<div class="main-page">
+    <div class="main-block">
+        <div class="main-top">
+            <h1>Chat Room</h1>
+            @*reroutes to the settings page inshaallah*@
+            <button>SETTINGS</button>
+        </div>
+        <div class="main-content">
+            @*messages contain user.id  user.message and user.message.timestamp or whatever its called*@
+            <div class="message">user3 message.... time</div>
+            <div class="message">user3 message.... time</div>
+            <div class="message">user3 message.... time</div>
+            <div class="message">user3 message.... time</div>
+        </div>
+        <div class="main-chat">
+            @*make a function that submits the message*@
+            <input class="chat-input" placeholder="Type your message here" />
+            <button class="sendMessageButton">➤</button>
+        </div>
+    </div>
+    <div class="user-block">
+        @*contains users connect to the chatroom probably user.id and just going list them*@
+        <h1>CONNECTED USERS</h1>
+        <ul class="user-list">
+            <li>user1</li>
+            <li>user2</li>
+            <li>user3</li>
+            <li>user4</li>
+        </ul>
+    </div>
+</div>
+
+
+
+
+@code {
+    @*the logic for the functions*@
+}
