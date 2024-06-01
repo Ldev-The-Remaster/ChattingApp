@@ -1,4 +1,6 @@
-﻿namespace Backend.ServerModules
+﻿using Backend.Utils;
+
+namespace Backend.ServerModules
 {
     public class ServerStartupOptions
     {
@@ -8,7 +10,7 @@
         {
             if (Port < 1 || Port > 65535)
             {
-                Console.WriteLine("Invalid port, input number between 1 and 65535");
+                CLogger.Error("Invalid port, input number between 1 and 65535");
                 return false;
             }
 
@@ -23,7 +25,7 @@
 
             do
             {
-                Console.WriteLine("Input server port:");
+                CLogger.Warn("Input server port:");
                 if (!int.TryParse(Console.ReadLine(), out serverOptions.Port))
                 {
                     continue;

@@ -1,4 +1,6 @@
-﻿namespace Backend.Models.Messages
+﻿using WebSocketSharp;
+
+namespace Backend.Models.Messages
 {
     struct MessageParams
     {
@@ -8,6 +10,7 @@
         public string In = "";
         public long At = ((DateTimeOffset)DateTime.Now).ToUnixTimeSeconds();
         public string With = "";
+
         public MessageParams(string rawString)
         {
             string[] commandPairs = rawString.Split("\r\n");
@@ -53,18 +56,21 @@
         protected string _in;
         protected long _at;
         protected string _with;
+        protected WebSocket? _socket;
 
         protected Message()
         {
+            // This is needed by EntityFramework
             _do = string.Empty;
             _from = string.Empty;
             _to = string.Empty;
             _in = string.Empty;
             _at = 0;
             _with = string.Empty;
+            _socket = null;
         }
 
-        public Message(string rawString)
+        public Message(WebSocket socket, string rawString)
         {
             MessageParams messageParams = new MessageParams(rawString);
 
@@ -74,6 +80,7 @@
             _in = messageParams.In;
             _at = messageParams.At;
             _with = messageParams.With;
+            _socket = socket;
         }
 
         public static MessageType GetMessageType(string rawString)
