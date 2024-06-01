@@ -27,17 +27,9 @@
         </div>
         <button class="login-button" @onclick=" HandleLogin">JOIN</button>
         <div class="loginError">
-            @if (validIp == false)
+            @foreach (string error in errorMesages)
             {
-                <p>Error: <span>The IP address is invalid!</span></p>
-            }
-            @if (validUser == false)
-            {
-                <p>Error: <span>User is invalid!</span></p>
-            }
-            @if (validPort == false)
-            {
-                <p>Error: <span>The port is invalid!</span></p>
+                <p>@error</p>
             }
         </div>
 
@@ -48,75 +40,17 @@
 @code
 {
     private ClientWebSocket? _webSocket;
-    string? errorMesage;
     public LoginInfo userInfo { get; set; } = new LoginInfo();
-    // the purpose of these booleans is to be used in an if statement in the HTML to render the error codes accordingly
-    bool validUser = true;
-    bool validIp = true;
-    bool validPort = true;
+    List<string> errorMesages = new List<string>();
 
     public async Task HandleLogin()
     {
-        Console.WriteLine("Handling Login");
-        // code to handle the user login info and send it to the server
-        if (userInfo.username.Length > 0)
-        {
-            // send a message to the server and request a list of the connected users
-            // string[] connectedUsers = GetConnectedUsers();
-            // if the sever doesn't respond return
-            // compare the current username to the list of connected users
-            // foreach (string user in connectedUsers)
-            // {
-            // if the username exists return a message that username is taken
-            // if (userInfo.username == user)
-            // {
-            //   Console.WriteLine("User name is already taken");
-            // }
-            // }
-            Console.WriteLine("User is valid");
-            validUser = true;
-        }
-        else
-        {
-            Console.WriteLine("Invalid Username");
-            validUser = false;
-        }
-
-        if (userInfo.ip.Length > 0)
-        {
-            if (!IPAddress.TryParse(userInfo.ip, out _))
-            {
-                Console.WriteLine("Invalid IP");
-                validIp = false;
-            }
-            if (userInfo.ip == "localhost")
-            {
-                validIp = true;
-            }
-        }
-        else
-        {
-            Console.WriteLine("Invalid IP");
-            validIp = false;
-        }
-
-        if (!userInfo.port.HasValue && !(userInfo.port >= 0 && userInfo.port <= 65535))
-        {
-            Console.WriteLine("port number is invalid");
-            validPort = false;
-        }
+        errorMesages.Clear();
 
         try
         {
-            if (userInfo.username.Length > 0)
-            {
-                await ConnectWebSocket("ws://" + userInfo.ip + ":" + userInfo.port);
-                NavigationManager.NavigateTo("main-page");
-            }
-            else
-            {
-                throw new Exception("User name is empty");
-            }
+            await ConnectWebSocket("ws://" + userInfo.ip + ":" + userInfo.port);
+            NavigationManager.NavigateTo("main-page");
 
         }
         catch (Exception ex)
