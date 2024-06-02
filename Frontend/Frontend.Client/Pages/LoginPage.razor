@@ -25,7 +25,16 @@
             <label for="port">PORT</label>
             <InputNumber class="login-input no-arrows" id="port" @bind-Value="userInfo.port" />
         </div>
-        <button class="login-button" @onclick=" HandleLogin">JOIN</button>
+        <button class="login-button" @onclick=" HandleLogin">
+            @if (isLoading == false)
+            {
+                <span>JOIN</span>
+            }
+            else
+            {
+                <div class="loginLoader"></div>
+            }
+        </button>
         <div class="loginError">
             @foreach (string error in errorMesages)
             {
@@ -67,8 +76,17 @@
 
         try
         {
-            await ConnectWebSocket("ws://" + userInfo.ip + ":" + userInfo.port);
-            NavigationManager.NavigateTo("main-page");
+            isLoading = true;
+            await Task.Delay(3000);
+            if (userInfo.username.Length > 0)
+            {
+                await ConnectWebSocket("ws://" + userInfo.ip + ":" + userInfo.port);
+                NavigationManager.NavigateTo("main-page");
+            }
+            else
+            {
+                throw new Exception("User name is empty");
+            }
 
         }
         catch (Exception ex)
