@@ -1,0 +1,43 @@
+<div class="message">
+    <div class="message-header">
+        <span class="user">@User</span>
+        <span class="timestamp">@Timestamp</span>
+    </div>
+    <div>
+        @MessageContent
+    </div>
+</div>
+
+@code {
+    [Parameter]
+    public string? User { get; set; }
+
+    [Parameter]
+    public string? MessageContent { get; set; }
+
+    [Parameter]
+    public DateTime Timestamp { get; set; }
+}
+
+<style>
+    .message {
+        padding: 10px;
+        margin: 10px 0;
+        border-radius: 5px;
+    }
+
+    .message-header {
+        display: flex;
+        justify-content: space-between;
+        font-weight: bold;
+    }
+
+    .user {
+        color: #525CEB;
+    }
+
+    .timestamp {
+        color: #6c757d;
+        font-size: 0.9em;
+    }
+</style>
