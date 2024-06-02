@@ -2,6 +2,7 @@
 @page "/login"
 @using Models
 @using System.Net.WebSockets
+@using System.Net
 @inject NavigationManager NavigationManager
 
 
@@ -24,41 +25,68 @@
             <label for="port">PORT</label>
             <InputNumber class="login-input no-arrows" id="port" @bind-Value="userInfo.port" />
         </div>
-        <button class="login-button" @onclick=" HandleLogin">JOIN</button>
-
+        <button class="login-button" @onclick=" HandleLogin">
+            @if (isLoading == false)
+            {
+                <span>JOIN</span>
+            }
+            else
+            {
+                <div class="loginLoader"></div>
+            }
+        </button>
+        <div class="loginError">
+            @foreach (string error in errorMesages)
+            {
+                <p>@error</p>
+            }
+        </div>
     </div>
 </div>
-
 
 @code
 {
     private ClientWebSocket? _webSocket;
     public LoginInfo userInfo { get; set; } = new LoginInfo();
+    List<string> errorMesages = new List<string>();
 
     public async Task HandleLogin()
     {
-        Console.WriteLine("Handling Login");
-        // code to handle the user login info and send it to the server
-        if (userInfo.ip.Length > 0)
+        errorMesages.Clear();
+
+        if (userInfo.username.Length < 1)
         {
-            //Validate ip here
+            errorMesages.Add("Error: User is invalid");
         }
 
-        if (!userInfo.port.HasValue)
+        if (userInfo.ip != "localhost" && !IPAddress.TryParse(userInfo.ip, out _))
         {
-            // show port error here
+            errorMesages.Add("Error: IP is invalid");
+        }
+
+        if (!userInfo.port.HasValue && !(userInfo.port >= 0 && userInfo.port <= 65535))
+        {
+            errorMesages.Add("Error: Port is invalid");
+        }
+
+        if (errorMesages.Count > 0)
+        {
             return;
-        }
-
-        if (userInfo.username.Length > 0)
-        {
-            //Validate user here
         }
 
         try
         {
-            await ConnectWebSocket("ws://" + userInfo.ip + ":" + userInfo.port);
-            NavigationManager.NavigateTo("main-page");
+            isLoading = true;
+            await Task.Delay(3000);
+            if (userInfo.username.Length > 0)
+            {
+                await ConnectWebSocket("ws://" + userInfo.ip + ":" + userInfo.port);
+                NavigationManager.NavigateTo("main-page");
+            }
+            else
+            {
+                throw new Exception("User name is empty");
+            }
 
         }
         catch (Exception ex)

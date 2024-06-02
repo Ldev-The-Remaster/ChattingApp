@@ -1,4 +1,5 @@
 ﻿using Backend.Models.Users;
+using WebSocketSharp;
 
 namespace Backend.Models.Messages
 {
@@ -63,10 +64,10 @@ namespace Backend.Models.Messages
             }
         }
 
-        public CommandMessage(string rawString) : base(rawString)
+        public CommandMessage(WebSocket socket, string rawString) : base(socket, rawString)
         {
             _command = GetCommandType();
-            _sender = UserManager.GetUserByUsername(_from);
+            _sender = UserManager.GetUserBySocket(socket);
             _target = _to;
             _channel = _in;
             _payload = _with;
