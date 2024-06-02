@@ -230,7 +230,6 @@ input {
             background-color: #3e49ed;
         }
 
-
 .main-content {
     display: flex;
     flex-direction: column;
@@ -257,7 +256,6 @@ input {
         margin-right: 20px;
     }
 
-
     .message-container::-webkit-scrollbar {
         width: 12px;
     }
@@ -279,7 +277,6 @@ input {
     .message-container::-webkit-scrollbar-button {
         display: none;
     }
-
 
 .chat-input-box {
     display: flex;
