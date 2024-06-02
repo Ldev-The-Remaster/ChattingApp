@@ -47,8 +47,8 @@ namespace Backend.Models.Messages
 
         public TextMessage(WebSocket socket, string rawString) : base(socket, rawString)
         {
-            _sender = _from != String.Empty ? _from : UserManager.GetUsernameBySocket(socket);
-            _channel = _in != String.Empty ? _in : "general-chat";
+            _sender = UserManager.GetUsernameBySocket(socket);
+            _channel = _in;
             _timestamp = _at;
             _content = _with;
         }

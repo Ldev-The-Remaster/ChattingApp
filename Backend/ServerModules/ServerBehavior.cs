@@ -65,13 +65,17 @@ namespace Backend.ServerModules
             WebSocket socket = Context.WebSocket;
             string ip = Context.UserEndPoint.Address.ToString();
 
-            User newUser = UserManager.Connect(socket, ip);
-            CLogger.Event($"New client connected from: {newUser.Ip}");
+            UserManager.Connect(socket, ip);
+            CLogger.Event($"New client connected from: {ip}");
         }
 
         private bool Authenticate(User user, string message)
         {
-            if (message.Substring(3, 4).ToLower() != "auth") return false;
+            if (message.Substring(3, 4).ToLower() != "auth")
+            {
+                return false;
+            }
+
             string username = message.Substring(14);
             return UserManager.Authenticate(user.Socket, username);
         }
