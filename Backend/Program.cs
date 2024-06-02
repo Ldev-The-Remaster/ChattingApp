@@ -15,7 +15,7 @@ internal class Program
     {
         SetUpDatabase();
 
-		WebSocketServer wssv = new WebSocketServer("ws://127.0.0.1:" + serverOptions.Port);
+        WebSocketServer wssv = new WebSocketServer("ws://127.0.0.1:" + serverOptions.Port);
         wssv.AddWebSocketService<ServerBehavior>("/");
         wssv.Start();
         CLogger.Log($"Server is up and listening on port: {serverOptions.Port}");
@@ -35,8 +35,8 @@ internal class Program
 
     private static void SetUpDatabase()
     {
-		UserContext.SetUp();
-		BannedIpContext.SetUp();
-		TextMessageContext.SetUp();
-	}
+        UserContext.SetUp();
+        BannedIpContext.SetUp();
+        TextMessageContext.SetUp();
+    }
 }
