@@ -28,6 +28,12 @@ namespace Backend.Models.Messages
             switch(_command)
             {
                 case CommandType.Mute:
+                    if (_sender == null)
+                    {
+                        CLogger.Error("Command not invoked: Missing sender");
+                        return;
+                    }
+
                     if (UserManager.IsUserAdmin(_sender) == false)
                     {
                         CLogger.Error("User must be an adminstrator to use this command");
@@ -38,6 +44,7 @@ namespace Backend.Models.Messages
                     if (_target == null)
                     {
                         CLogger.Error("Mute target not specified");
+                        _sender.Socket.Send("DO REFUSE\r\nWITH\r\nPlease indicate the user to mute");
                         return;
                     }
 
@@ -45,6 +52,7 @@ namespace Backend.Models.Messages
                     if (userToMute == null)
                     {
                         CLogger.Error("Mute target not found in DB");
+                        _sender.Socket.Send("DO REFUSE\r\nWITH\r\nUser not found");
                         return;
                     }
 
