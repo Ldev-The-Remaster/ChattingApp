@@ -1,4 +1,5 @@
 ﻿using Backend.Database;
+using Backend.Utils;
 using System.ComponentModel.DataAnnotations.Schema;
 using WebSocketSharp;
 
@@ -79,6 +80,17 @@ namespace Backend.Models.Users
             List<User> usersFromDB = context.Users.Where(m => m.Username == username).ToList();
             if (usersFromDB.Count == 0) return null;
             return usersFromDB.First();
+        }
+
+        public void UpdateToDB()
+        {
+            User? userFromDB = GetUserFromDB(Username);
+            if (userFromDB == null) {
+                CLogger.Error("User not found.");
+                return;
+            }
+            userFromDB = this;
+            context.SaveChanges();
         }
     }
 }

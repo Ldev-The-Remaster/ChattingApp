@@ -1,4 +1,5 @@
 ﻿using Backend.Models.Users;
+using Backend.Utils;
 using WebSocketSharp;
 
 namespace Backend.Models.Messages
@@ -27,6 +28,37 @@ namespace Backend.Models.Messages
             switch(_command)
             {
                 case CommandType.Mute:
+                    if (_sender == null)
+                    {
+                        CLogger.Error("Command not invoked: Missing sender");
+                        return;
+                    }
+
+                    if (UserManager.IsUserAdmin(_sender) == false)
+                    {
+                        CLogger.Error("User must be an adminstrator to use this command");
+                        _sender.Socket.Send("DO REFUSE\r\nWITH\r\nYou must be an adminstrator to use this command");
+                        return;
+                    }
+                   
+                    if (_target == null)
+                    {
+                        CLogger.Error("Mute target not specified");
+                        _sender.Socket.Send("DO REFUSE\r\nWITH\r\nPlease indicate the user to mute");
+                        return;
+                    }
+
+                    User? userToMute = UserManager.GetUserByUsername(_target);
+                    if (userToMute == null)
+                    {
+                        CLogger.Error("Mute target not found in DB");
+                        _sender.Socket.Send("DO REFUSE\r\nWITH\r\nUser not found");
+                        return;
+                    }
+
+                    UserManager.Mute(userToMute);
+                    CLogger.Event("User Muted: " + _target);
+                    _sender.Socket.Send("DO ACCEPT");
                     break;
                 case CommandType.Kick:
                     break;

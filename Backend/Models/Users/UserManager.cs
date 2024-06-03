@@ -8,7 +8,11 @@ namespace Backend.Models.Users
         public static List<User> UsersList { get; set; } = new List<User>();
 
         // Infractions
-        public static void Mute(User user) { }
+        public static void Mute(User user)
+        {
+            user.IsMuted = true;
+            user.UpdateToDB();
+        }
         public static void Unmute(User user) { }
         public static void Kick(User user) { }
         public static void Ban(User user) { }
