@@ -25,8 +25,8 @@
             <label for="port">PORT</label>
             <InputNumber class="login-input no-arrows" id="port" @bind-Value="userInfo.port" />
         </div>
-        <button class="login-button" @onclick=" HandleLogin">
-            @if (isLoading == false)
+        <button class="login-button" @onclick="HandleLogin">
+            @if (!isLoading)
             {
                 <span>JOIN</span>
             }
@@ -49,6 +49,7 @@
     private ClientWebSocket? _webSocket;
     public LoginInfo userInfo { get; set; } = new LoginInfo();
     List<string> errorMesages = new List<string>();
+    bool isLoading = false;
 
     public async Task HandleLogin()
     {
