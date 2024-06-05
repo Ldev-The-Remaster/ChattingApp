@@ -50,8 +50,8 @@ namespace Backend.ServerModules
 
                     var textMessage = new TextMessage(socket, rawString);
 
-                    CLogger.Chat(textMessage.Sender, textMessage.Content);
                     SendToAll(textMessage);
+                    CLogger.Chat(textMessage.Sender, textMessage.Content);
                     break;
                 case MessageType.CommandMessage:
                     var commandMessage = new CommandMessage(socket, rawString);
