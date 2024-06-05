@@ -72,9 +72,17 @@ namespace Backend.Models.Users
                 return false;
             }
 
-            user.Username = username;
+            User? userInDb = User.GetUserFromDB(username);
+            if (userInDb == null)
+            {
+                user.Username = username;
+                user.SaveToDb();
+            }
+            else
+            {
+                user = userInDb;
+            }
             user.IsRegistered = true;
-            user.SaveToDb();
 
             CLogger.Event($"User authenticated with username: {username}");
             return true;
