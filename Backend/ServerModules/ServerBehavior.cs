@@ -23,7 +23,7 @@ namespace Backend.ServerModules
 
             if (!user.IsRegistered)
             {
-                if (IsAuthRequest(user, rawString))
+                if (IsAuthRequest(rawString))
                 {
                     string username = rawString.Substring(14);
                     UserManager.Authenticate(user.Socket, username);
