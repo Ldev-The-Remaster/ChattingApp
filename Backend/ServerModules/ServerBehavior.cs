@@ -2,12 +2,11 @@
 using Backend.Models.Users;
 using Backend.Utils;
 using WebSocketSharp;
-using WebSocketSharp.Server;
 using static Backend.Models.Messages.Message;
 
 namespace Backend.ServerModules
 {
-    public class ServerBehavior : WebSocketBehavior
+    public class ServerBehavior : LSMPBehavior
     {
         protected override void OnMessage(MessageEventArgs e)
         {
