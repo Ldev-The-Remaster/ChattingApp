@@ -32,7 +32,7 @@ namespace Backend.ServerModules
             }
         }
 
-        protected bool IsAuthRequest(User user, string message)
+        protected bool IsAuthRequest(string message)
         {
             return (message.Substring(3, 4).ToLower() == "auth");
         }
