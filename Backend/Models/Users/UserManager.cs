@@ -84,6 +84,11 @@ namespace Backend.Models.Users
             }
             user.IsRegistered = true;
 
+            if (user.IsBanned)
+            {
+                Disconnect(user);
+            }
+
             CLogger.Event($"User authenticated with username: {username}");
             return true;
         }
