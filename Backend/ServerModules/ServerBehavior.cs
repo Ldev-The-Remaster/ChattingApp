@@ -38,7 +38,7 @@ namespace Backend.ServerModules
                 return;
             }
 
-            switch(Message.GetMessageType(rawString))
+            switch(GetMessageType(rawString))
             {
                 case MessageType.TextMessage:
                     if (user.IsMuted)
