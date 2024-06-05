@@ -4,75 +4,34 @@ using WebSocketSharp;
 
 namespace Backend.Models.Messages
 {
-    enum CommandType
-    {
-        Mute,
-        Kick,
-        Ban,
-        Ipban,
-        Unban,
-        Unbanip,
-        Unknown
-    }
+
 
     public class CommandMessage : Message
     {
+        enum CommandType
+        {
+            Mute,
+            Kick,
+            Ban,
+            Ipban,
+            Unban,
+            Unbanip,
+            Unknown
+        }
+
         private CommandType _command;
         private User? _sender;
         private string? _target;
         private string? _channel;
         private string? _payload;
 
-        public void InvokeCommand()
+        public CommandMessage(WebSocket socket, string rawString) : base(socket, rawString)
         {
-            switch(_command)
-            {
-                case CommandType.Mute:
-                    if (_sender == null)
-                    {
-                        CLogger.Error("Command not invoked: Missing sender");
-                        return;
-                    }
-
-                    if (UserManager.IsUserAdmin(_sender) == false)
-                    {
-                        CLogger.Error("User must be an adminstrator to use this command");
-                        _sender.Socket.Send("DO REFUSE\r\nWITH\r\nYou must be an adminstrator to use this command");
-                        return;
-                    }
-                   
-                    if (_target == null)
-                    {
-                        CLogger.Error("Mute target not specified");
-                        _sender.Socket.Send("DO REFUSE\r\nWITH\r\nPlease indicate the user to mute");
-                        return;
-                    }
-
-                    User? userToMute = UserManager.GetUserByUsername(_target);
-                    if (userToMute == null)
-                    {
-                        CLogger.Error("Mute target not found in DB");
-                        _sender.Socket.Send("DO REFUSE\r\nWITH\r\nUser not found");
-                        return;
-                    }
-
-                    UserManager.Mute(userToMute);
-                    CLogger.Event("User Muted: " + _target);
-                    _sender.Socket.Send("DO ACCEPT");
-                    break;
-                case CommandType.Kick:
-                    break;
-                case CommandType.Ban:
-                    break;
-                case CommandType.Ipban:
-                    break;
-                case CommandType.Unban:
-                    break;
-                case CommandType.Unbanip:
-                    break;
-                case CommandType.Unknown:
-                    break;
-            }
+            _command = GetCommandType();
+            _sender = UserManager.GetUserBySocket(socket);
+            _target = _to;
+            _channel = _in;
+            _payload = _with;
         }
 
         private CommandType GetCommandType()
@@ -96,13 +55,77 @@ namespace Backend.Models.Messages
             }
         }
 
-        public CommandMessage(WebSocket socket, string rawString) : base(socket, rawString)
+        public void InvokeCommand()
         {
-            _command = GetCommandType();
-            _sender = UserManager.GetUserBySocket(socket);
-            _target = _to;
-            _channel = _in;
-            _payload = _with;
+            switch(_command)
+            {
+                case CommandType.Mute:
+                    ProcessMute();
+                    break;
+                case CommandType.Kick:
+                    break;
+                case CommandType.Ban:
+                    break;
+                case CommandType.Ipban:
+                    break;
+                case CommandType.Unban:
+                    break;
+                case CommandType.Unbanip:
+                    break;
+                case CommandType.Unknown:
+                    break;
+            }
+        }
+
+        private void SendAccept()
+        {
+            if (_sender != null)
+            {
+                _sender.Socket.Send("DO ACCEPT");
+            }
+        }
+        private void SendRefuse(string reason = "")
+        {
+            if (_sender != null)
+            {
+                string message = $"DO REFUSE\r\nWITH\r\n{reason}";
+                _sender.Socket.Send(message);
+            }
+        }
+
+        private void ProcessMute()
+        {
+            if (_sender == null)
+            {
+                CLogger.Error("Command not invoked: Missing sender");
+                return;
+            }
+
+            if (UserManager.IsUserAdmin(_sender) == false)
+            {
+                CLogger.Error("User must be an adminstrator to use this command");
+                SendRefuse("You must be an adminstrator to use this command");
+                return;
+            }
+
+            if (_target == null)
+            {
+                CLogger.Error("Mute target not specified");
+                SendRefuse("Please indicate the user to mute");
+                return;
+            }
+
+            User? userToMute = UserManager.GetUserByUsername(_target);
+            if (userToMute == null)
+            {
+                CLogger.Error("Mute target not found in DB");
+                SendRefuse("User not found");
+                return;
+            }
+
+            UserManager.Mute(userToMute);
+            SendAccept();
+            CLogger.Event("User Muted: " + _target);
         }
     }
 }
