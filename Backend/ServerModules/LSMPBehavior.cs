@@ -5,7 +5,7 @@ using WebSocketSharp.Server;
 
 namespace Backend.ServerModules
 {
-    public class LSMPBehavior: WebSocketBehavior
+    public class LSMPBehavior : WebSocketBehavior
     {
         private readonly string NEW_LINE = "\r\n";
         protected void SendAccept()
