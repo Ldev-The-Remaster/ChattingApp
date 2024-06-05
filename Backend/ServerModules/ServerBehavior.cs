@@ -34,8 +34,8 @@ namespace Backend.ServerModules
                     SendRefuse("You must authenticate first by sending AUTH verb WITH a unique username");
                     CLogger.Error($"Failed send attempt from unregistered user at: {user.Ip}");
                 }
+
                 return;
-                
             }
 
             switch(Message.GetMessageType(rawString))
