@@ -82,7 +82,6 @@ namespace Backend.Models.Users
             {
                 user = userInDb;
             }
-            user.IsRegistered = true;
 
             if (user.IsBanned)
             {
@@ -91,6 +90,7 @@ namespace Backend.Models.Users
                 return false;
             }
 
+            user.IsRegistered = true;
             CLogger.Event($"User authenticated with username: {username}");
             return true;
         }
