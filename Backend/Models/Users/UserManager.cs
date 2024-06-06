@@ -87,6 +87,8 @@ namespace Backend.Models.Users
             if (user.IsBanned)
             {
                 Disconnect(user);
+                CLogger.Error($"Connection refused from banned user: {user.Username}");
+                return false;
             }
 
             CLogger.Event($"User authenticated with username: {username}");
