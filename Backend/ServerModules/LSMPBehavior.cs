@@ -7,7 +7,7 @@ namespace Backend.ServerModules
 {
     public class LSMPBehavior : WebSocketBehavior
     {
-        private readonly string NEW_LINE = "\r\n";
+        private static readonly string NEW_LINE = "\r\n";
         protected void SendAccept()
         {
             Send("DO ACCEPT");
@@ -32,9 +32,35 @@ namespace Backend.ServerModules
             }
         }
 
+        protected void SendUserList()
+        {
+            string encodedUserList = EncodeArrayToString(UserManager.UsersList);
+
+            string msg = $"DO INTRODUCE{NEW_LINE}WITH{NEW_LINE}{encodedUserList}";
+            Send(msg);
+        }
+
         protected bool IsAuthRequest(string message)
         {
             return (message.Substring(3, 4).ToLower() == "auth");
+        }
+
+        public static string EncodeArrayToString<T>(List<T> array)
+        {
+            string arrString = "/*$*/";
+
+            foreach (T item in array)
+            {
+                if (item == null)
+                {
+                    continue;
+                }
+                arrString += NEW_LINE;
+                arrString += item.ToString();
+                arrString += NEW_LINE + "/*$*/";
+            }
+
+            return arrString;
         }
     }
 }

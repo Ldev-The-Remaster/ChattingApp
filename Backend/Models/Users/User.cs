@@ -66,6 +66,11 @@ namespace Backend.Models.Users
             _ip = ip;
         }
 
+        public override string ToString()
+        {
+            return Username;
+        }
+
         // Persistence
         private static UserContext context = new UserContext();
 
