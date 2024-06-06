@@ -28,6 +28,7 @@ namespace Backend.ServerModules
                     string username = rawString.Substring(14);
                     UserManager.Authenticate(user.Socket, username);
                     SendAccept();
+                    SendUserList();
                 }
                 else
                 {
