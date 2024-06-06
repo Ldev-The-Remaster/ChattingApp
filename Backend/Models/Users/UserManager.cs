@@ -72,10 +72,25 @@ namespace Backend.Models.Users
                 return false;
             }
 
-            user.Username = username;
-            user.IsRegistered = true;
-            user.SaveToDb();
+            User? userInDb = User.GetUserFromDB(username);
+            if (userInDb == null)
+            {
+                user.Username = username;
+                user.SaveToDb();
+            }
+            else
+            {
+                user = userInDb;
+            }
 
+            if (user.IsBanned)
+            {
+                Disconnect(user);
+                CLogger.Error($"Connection refused from banned user: {user.Username}");
+                return false;
+            }
+
+            user.IsRegistered = true;
             CLogger.Event($"User authenticated with username: {username}");
             return true;
         }

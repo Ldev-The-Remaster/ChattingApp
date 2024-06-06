@@ -33,6 +33,7 @@ namespace Backend.Models.Users
         }
 
         private bool _isRegistered = false;
+        [NotMapped]
         public bool IsRegistered
         {
             get { return _isRegistered; }
@@ -56,7 +57,7 @@ namespace Backend.Models.Users
         private User()
         {
             // This is needed by EntityFramework
-            _socket = new WebSocket("");
+            _socket = new WebSocket("ws://localhost");
             _ip = String.Empty;
         }
 
