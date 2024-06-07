@@ -32,6 +32,14 @@ namespace Backend.ServerModules
             }
         }
 
+        protected void SendAlert(string message)
+        {
+            TextMessage alert = new TextMessage(null, "");
+            alert.Content = message;
+
+            SendToAll(alert);
+        }
+
         protected bool IsAuthRequest(string message)
         {
             return (message.Substring(3, 4).ToLower() == "auth");

@@ -82,10 +82,7 @@ namespace Backend.ServerModules
             UserManager.UsersList.Remove(user);
             CLogger.Event($"User disconnected: {user.Username}");
 
-            TextMessage disconnectAlert = new TextMessage(null, "");
-            disconnectAlert.Content = $"User {user.Username} has disconnected";
-
-            SendToAll(disconnectAlert);
+            SendAlert($"User {user.Username} has disconnected");
         }
     }
 }
