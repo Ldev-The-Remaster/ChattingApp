@@ -68,5 +68,21 @@ namespace Backend.ServerModules
             UserManager.Connect(socket, ip);
             CLogger.Event($"New client connected from: {ip}");
         }
+
+        protected override void OnClose(CloseEventArgs e)
+        {
+            WebSocket socket = Context.WebSocket;
+            User? user = UserManager.GetUserBySocket(socket);
+            if (user == null)
+            {
+                CLogger.Error("Disconnected user not found in UserList");
+                return;
+            }
+
+            UserManager.UsersList.Remove(user);
+            CLogger.Event($"User disconnected: {user.Username}");
+
+            SendAlert($"User {user.Username} has disconnected");
+        }
     }
 }

@@ -70,7 +70,7 @@ namespace Backend.Models.Messages
             _socket = null;
         }
 
-        public Message(WebSocket socket, string rawString)
+        public Message(WebSocket? socket, string rawString)
         {
             MessageParams messageParams = new MessageParams(rawString);
 

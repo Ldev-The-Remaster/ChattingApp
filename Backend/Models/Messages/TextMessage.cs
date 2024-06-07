@@ -45,9 +45,13 @@ namespace Backend.Models.Messages
             _content = string.Empty;
         }
 
-        public TextMessage(WebSocket socket, string rawString) : base(socket, rawString)
+        public TextMessage(WebSocket? socket, string rawString) : base(socket, rawString)
         {
-            _sender = UserManager.GetUsernameBySocket(socket);
+            _sender = string.Empty;
+            if (socket != null)
+            {
+                _sender = UserManager.GetUsernameBySocket(socket);
+            }
             _channel = _in;
             _timestamp = _at;
             _content = _with;
