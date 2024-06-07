@@ -1,4 +1,5 @@
 ﻿using Backend.Models.Users;
+using Backend.ServerModules;
 using Backend.Utils;
 using WebSocketSharp;
 
@@ -16,6 +17,7 @@ namespace Backend.Models.Messages
             Ipban,
             Unban,
             Unbanip,
+            Remember,
             Unknown
         }
 
@@ -50,6 +52,8 @@ namespace Backend.Models.Messages
                     return CommandType.Unban;
                 case "unbanip":
                     return CommandType.Unbanip;
+                case "remember":
+                    return CommandType.Remember;
                 default:
                     return CommandType.Unknown;
             }
@@ -71,6 +75,9 @@ namespace Backend.Models.Messages
                 case CommandType.Unban:
                     break;
                 case CommandType.Unbanip:
+                    break;
+                case CommandType.Remember:
+                    SendMessageHistory();
                     break;
                 case CommandType.Unknown:
                     break;
@@ -127,5 +134,25 @@ namespace Backend.Models.Messages
             SendAccept();
             CLogger.Event("User Muted: " + _target);
         }
+        private void SendMessageHistory()
+        {
+            int fromId, toId;
+            if (!int.TryParse(_from, out fromId) || !int.TryParse(_to, out toId))
+            {
+                SendRefuse("Invalid limits provided");
+                return;
+            }
+
+            string channel = "general-chat";
+            if (_in != string.Empty)
+            {
+                channel = _in;
+            }
+
+            List<TextMessage> messageHistory = TextMessage.GetMessageHistory(channel, fromId, toId);
+
+            // TODO
+        }
     }
+
 }
