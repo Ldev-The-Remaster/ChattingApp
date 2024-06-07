@@ -84,6 +84,7 @@ namespace Backend.ServerModules
             CLogger.Event($"User disconnected: {user.Username}");
 
             SendAlert($"User {user.Username} has disconnected");
+            SendUserListToAll();
         }
     }
 }

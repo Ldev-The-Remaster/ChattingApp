@@ -48,6 +48,23 @@ namespace Backend.ServerModules
             Send(msg);
         }
 
+        protected void SendUserListToAll()
+        {
+            string encodedUserList = EncodeArrayToString(UserManager.UsersList);
+
+            string msg = $"DO INTRODUCE{NEW_LINE}WITH{NEW_LINE}{encodedUserList}";
+
+            foreach (User client in UserManager.UsersList)
+            {
+                if (!client.IsRegistered)
+                {
+                    continue;
+                }
+
+                client.Socket.Send(msg.ToString());
+            }
+        }
+
         protected bool IsAuthRequest(string message)
         {
             return (message.Substring(3, 4).ToLower() == "auth");
