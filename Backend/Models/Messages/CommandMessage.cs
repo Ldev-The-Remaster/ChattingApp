@@ -77,7 +77,7 @@ namespace Backend.Models.Messages
                 case CommandType.Unbanip:
                     break;
                 case CommandType.Remember:
-                    SendMessageHistory();
+                    ProcessRemember();
                     break;
                 case CommandType.Unknown:
                     break;
@@ -134,7 +134,7 @@ namespace Backend.Models.Messages
             SendAccept();
             CLogger.Event("User Muted: " + _target);
         }
-        private void SendMessageHistory()
+        private void ProcessRemember()
         {
             int param1, param2;
             if (!int.TryParse(_from, out param1) || !int.TryParse(_to, out param2))
