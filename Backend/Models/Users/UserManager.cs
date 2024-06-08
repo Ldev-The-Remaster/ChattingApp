@@ -14,7 +14,10 @@ namespace Backend.Models.Users
             user.UpdateToDB();
         }
         public static void Unmute(User user) { }
-        public static void Kick(User user) { }
+        public static void Kick(User user) 
+        {
+            UserManager.Disconnect(user);
+        }
         public static void Ban(User user) { }
         public static void Unban(User user) { }
 
@@ -95,7 +98,12 @@ namespace Backend.Models.Users
             return true;
         }
 
-        public static void Disconnect(User user) { }
+        public static void Disconnect(User user) 
+        {
+            user.Socket.Close();
+            UsersList.Remove(user);
+            CLogger.Event("User has been disconnected: " + user.Username);
+        }
 
         public static User? GetUserBySocket(WebSocket socket)
         {
