@@ -154,8 +154,8 @@ namespace Backend.Models.Messages
 
             UserManager.Mute(userToMute, _with);
             SendAccept();
-            CLogger.Event($"User Muted: {_target}. Reason: {_with}");
-            SendAlert($"User Muted: {_target}. Reason: {_with}");
+            CLogger.Event($"User has been Muted: {_target}. Reason: {_with}");
+            SendAlert($"User has been Muted: {_target}. Reason: {_with}");
         }
 
         private void ProcessKick()
