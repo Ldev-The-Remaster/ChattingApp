@@ -80,7 +80,9 @@ namespace Backend.Models.Users
             }
             else
             {
-                user = userInDb;
+                user.Username = userInDb.Username;
+                user.IsMuted = userInDb.IsMuted;
+                user.IsBanned = userInDb.IsBanned;
             }
 
             if (user.IsBanned)
