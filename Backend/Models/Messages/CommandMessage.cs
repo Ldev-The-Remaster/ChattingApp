@@ -136,12 +136,15 @@ namespace Backend.Models.Messages
         }
         private void SendMessageHistory()
         {
-            int fromId, toId;
-            if (!int.TryParse(_from, out fromId) || !int.TryParse(_to, out toId))
+            int param1, param2;
+            if (!int.TryParse(_from, out param1) || !int.TryParse(_to, out param2))
             {
                 SendRefuse("Invalid limits provided");
                 return;
             }
+
+            int fromId = Math.Min(param1, param2);
+            int toId = Math.Max(param1, param2);
 
             string channel = "general-chat";
             if (_in != string.Empty)
