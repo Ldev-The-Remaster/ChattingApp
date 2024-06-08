@@ -5,6 +5,11 @@ using WebSocketSharp.Server;
 
 namespace Backend.ServerModules
 {
+    public interface IEncodable
+    {
+        string EncodeToString();
+    }
+
     public class LSMPBehavior : WebSocketBehavior
     {
         private static readonly string NEW_LINE = "\r\n";
@@ -28,7 +33,7 @@ namespace Backend.ServerModules
                     continue;
                 }
 
-                client.Socket.Send(message.ToString());
+                client.Socket.Send(message.EncodeToString());
             }
         }
 
@@ -61,7 +66,7 @@ namespace Backend.ServerModules
                     continue;
                 }
 
-                client.Socket.Send(msg.ToString());
+                client.Socket.Send(msg);
             }
         }
 
@@ -70,7 +75,7 @@ namespace Backend.ServerModules
             return (message.Substring(3, 4).ToLower() == "auth");
         }
 
-        public static string EncodeArrayToString<T>(List<T> array)
+        public static string EncodeArrayToString<T>(List<T> array) where T : IEncodable
         {
             string arrString = "/*$*/";
 
@@ -81,7 +86,7 @@ namespace Backend.ServerModules
                     continue;
                 }
                 arrString += NEW_LINE;
-                arrString += item.ToString();
+                arrString += item.EncodeToString();
                 arrString += NEW_LINE + "/*$*/";
             }
 

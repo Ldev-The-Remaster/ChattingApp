@@ -1,11 +1,12 @@
 ﻿using Backend.Database;
+using Backend.ServerModules;
 using Backend.Utils;
 using System.ComponentModel.DataAnnotations.Schema;
 using WebSocketSharp;
 
 namespace Backend.Models.Users
 {
-    public class User
+    public class User : IEncodable
     {
         public int UserId { get; set; }
 
@@ -67,7 +68,7 @@ namespace Backend.Models.Users
             _ip = ip;
         }
 
-        public override string ToString()
+        public string EncodeToString()
         {
             return Username;
         }
