@@ -67,6 +67,7 @@ namespace Backend.ServerModules
                     var textMessage = new TextMessage(socket, rawString);
 
                     SendToAll(textMessage);
+                    textMessage.SaveToDb();
                     CLogger.Chat(textMessage.Sender, textMessage.Content);
                     break;
                 case MessageType.CommandMessage:

@@ -151,7 +151,14 @@ namespace Backend.Models.Messages
 
             List<TextMessage> messageHistory = TextMessage.GetMessageHistory(channel, fromId, toId);
 
-            // TODO
+            string msgString = "DO POPULATE\r\nWITH\r\n";
+            string msgArray = LSMPBehavior.EncodeArrayToString(messageHistory);
+            msgString += msgArray;
+
+            if (_sender != null)
+            {
+                _sender.Socket.Send(msgString);
+            }
         }
     }
 
