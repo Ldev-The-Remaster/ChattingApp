@@ -104,7 +104,6 @@ namespace Backend.Models.Users
         {
             user.Socket.Close();
             UsersList.Remove(user);
-            CLogger.Event("User has been disconnected: " + user.Username);
         }
 
         public static User? GetUserBySocket(WebSocket socket)

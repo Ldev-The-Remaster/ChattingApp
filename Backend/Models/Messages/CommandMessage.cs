@@ -1,11 +1,10 @@
 ﻿using Backend.Models.Users;
+using Backend.ServerModules;
 using Backend.Utils;
 using WebSocketSharp;
 
 namespace Backend.Models.Messages
 {
-
-
     public class CommandMessage : Message
     {
         enum CommandType
@@ -94,6 +93,28 @@ namespace Backend.Models.Messages
             }
         }
 
+        private void SendToAll(TextMessage message)
+        {
+            foreach (User client in UserManager.UsersList)
+            {
+                if (!client.IsRegistered)
+                {
+                    continue;
+                }
+
+                client.Socket.Send(message.EncodeToString());
+            }
+        }
+
+        private void SendAlert(string message)
+        {
+            TextMessage alert = new TextMessage(null, "");
+            alert.Content = message;
+
+            SendToAll(alert);
+        }
+
+
         private void ProcessMute()
         {
             if (_sender == null)
@@ -123,10 +144,19 @@ namespace Backend.Models.Messages
                 SendRefuse("User not found");
                 return;
             }
+            
+            if (userToMute.IsMuted == true)
+            {
+                CLogger.Error("Command not invoked: User is already muted");
+                SendRefuse("User is already muted");
+                return;
+            }
 
+            userToMute.MuteReason = _with;
             UserManager.Mute(userToMute);
             SendAccept();
-            CLogger.Event("User Muted: " + _target);
+            CLogger.Event($"User Muted: {_target}. Reason: {_with}");
+            SendAlert($"User Muted: {_target}. Reason: {_with}");
         }
 
         private void ProcessKick()
@@ -161,7 +191,8 @@ namespace Backend.Models.Messages
 
             UserManager.Kick(userToKick);
             SendAccept();
-            CLogger.Event("User Kicked: " + _target);
+            CLogger.Event($"User has been Kicked: {_target}. Reason: {_with}");
+            SendAlert($"User {_target} has been kicked for: {_with}");
         }
     }
 }
