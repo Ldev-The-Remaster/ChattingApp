@@ -55,20 +55,6 @@ namespace Backend.Models.Users
             set { _isBanned = value; }
         }
 
-        private string _muteReason = "";
-        public string MuteReason
-        {
-            get { return _muteReason; }
-            set { _muteReason = value; }
-        }
-
-        private string _banReason = "";
-        public string BanReason
-        {
-            get { return _banReason; }
-            set { _banReason = value; }
-        }
-
         private User()
         {
             // This is needed by EntityFramework

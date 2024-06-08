@@ -1,10 +1,11 @@
 ﻿using Backend.Models.Users;
-using Backend.ServerModules;
 using Backend.Utils;
 using WebSocketSharp;
 
 namespace Backend.Models.Messages
 {
+
+
     public class CommandMessage : Message
     {
         enum CommandType
@@ -62,7 +63,6 @@ namespace Backend.Models.Messages
                     ProcessMute();
                     break;
                 case CommandType.Kick:
-                    ProcessKick();
                     break;
                 case CommandType.Ban:
                     break;
@@ -93,28 +93,6 @@ namespace Backend.Models.Messages
             }
         }
 
-        private void SendToAll(TextMessage message)
-        {
-            foreach (User client in UserManager.UsersList)
-            {
-                if (!client.IsRegistered)
-                {
-                    continue;
-                }
-
-                client.Socket.Send(message.EncodeToString());
-            }
-        }
-
-        private void SendAlert(string message)
-        {
-            TextMessage alert = new TextMessage(null, "");
-            alert.Content = message;
-
-            SendToAll(alert);
-        }
-
-
         private void ProcessMute()
         {
             if (_sender == null)
@@ -144,54 +122,10 @@ namespace Backend.Models.Messages
                 SendRefuse("User not found");
                 return;
             }
-            
-            if (userToMute.IsMuted)
-            {
-                CLogger.Error("Command not invoked: User is already muted");
-                SendRefuse("User is already muted");
-                return;
-            }
 
-            UserManager.Mute(userToMute, _with);
+            UserManager.Mute(userToMute);
             SendAccept();
-            CLogger.Event($"User has been Muted: {_target}. Reason: {_with}");
-            SendAlert($"User has been Muted: {_target}. Reason: {_with}");
-        }
-
-        private void ProcessKick()
-        {
-            if (_sender == null)
-            {
-                CLogger.Error("Command not invoked: Missing sender");
-                return;
-            }
-
-            if (UserManager.IsUserAdmin(_sender) == false)
-            {
-                CLogger.Error("User must be an adminstrator to use this command");
-                SendRefuse("You must be an adminstrator to use this command");
-                return;
-            }
-
-            if (_target == null)
-            {
-                CLogger.Error("Kick target not specified");
-                SendRefuse("Please indicate the user to kick");
-                return;
-            }
-
-            User? userToKick = UserManager.GetUserByUsername(_target);
-            if (userToKick == null) 
-            {
-                CLogger.Error("Kick target not found in DB");
-                SendRefuse("User not found");
-                return;
-            }
-
-            UserManager.Kick(userToKick);
-            SendAccept();
-            CLogger.Event($"User has been Kicked: {_target}. Reason: {_with}");
-            SendAlert($"User {_target} has been kicked for: {_with}");
+            CLogger.Event("User Muted: " + _target);
         }
     }
 }
