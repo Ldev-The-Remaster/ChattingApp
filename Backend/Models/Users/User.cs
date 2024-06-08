@@ -54,6 +54,7 @@ namespace Backend.Models.Users
             get { return _isBanned; }
             set { _isBanned = value; }
         }
+
         private string _muteReason = "";
         public string MuteReason
         {
