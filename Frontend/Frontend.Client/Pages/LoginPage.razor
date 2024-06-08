@@ -78,44 +78,24 @@
         try
         {
             isLoading = true;
-            await Task.Delay(3000);
             if (userInfo.username.Length > 0)
             {
-                await ConnectWebSocket("ws://" + userInfo.ip + ":" + userInfo.port);
+                await ServerComms.ConnectWebSocket("ws://" + userInfo.ip + ":" + userInfo.port,userInfo.username);
+                await ServerComms.ReceiveMessage();
+                isLoading = false;
                 NavigationManager.NavigateTo("main-page");
             }
             else
             {
                 throw new Exception("User name is empty");
             }
-
         }
         catch (Exception ex)
         {
+            isLoading = false;
+            errorMesages.Add("Failed to Connect to Server, please check the server info!");
             Console.WriteLine("WebSocket connection error: " + ex.Message);
         }
     }
 
-    private async Task ConnectWebSocket(string url)
-    {
-        _webSocket = new ClientWebSocket();
-        await _webSocket.ConnectAsync(new Uri(url), CancellationToken.None);
-        await SendMessage(userInfo.username + " is Connected!");
-        Console.WriteLine("CONNECTED");
-    }
-
-    private async Task SendMessage(string message)
-    {
-        if (_webSocket != null && _webSocket.State == WebSocketState.Open)
-        {
-            byte[] buffer = System.Text.Encoding.UTF8.GetBytes(message);
-            ArraySegment<byte> segment = new ArraySegment<byte>(buffer);
-
-            await _webSocket.SendAsync(segment, WebSocketMessageType.Text, true, CancellationToken.None);
-        }
-        else
-        {
-            Console.WriteLine("WebSocket is not connected!");
-        }
-    }
 }
