@@ -53,7 +53,7 @@ namespace Backend.Database
         {
             BannedIpContext bannedIpContext = new BannedIpContext();
             // This vvv should be disabled in prod
-            // userContext.Database.EnsureDeleted();
+            // bannedIpContext.Database.EnsureDeleted();
             bannedIpContext.Database.EnsureCreated();
         }
     }
