@@ -145,7 +145,7 @@ namespace Backend.Models.Messages
                 return;
             }
             
-            if (userToMute.IsMuted == true)
+            if (userToMute.IsMuted)
             {
                 CLogger.Error("Command not invoked: User is already muted");
                 SendRefuse("User is already muted");
