@@ -26,8 +26,17 @@ namespace Backend.ServerModules
                 if (IsAuthRequest(rawString))
                 {
                     string username = rawString.Substring(14);
-                    UserManager.Authenticate(user.Socket, username);
-                    SendAccept();
+                    if (UserManager.Authenticate(user.Socket, username))
+                    {
+                        SendAccept();
+                        SendUserList();
+                    }
+                    else
+                    {
+                        SendRefuse("Authentication failed: Username taken or banned");
+                        CLogger.Error($"Failed authentication attempt from user at: {user.Ip}");
+                    }
+                    
                 }
                 else
                 {
@@ -35,6 +44,13 @@ namespace Backend.ServerModules
                     CLogger.Error($"Failed send attempt from unregistered user at: {user.Ip}");
                 }
 
+                return;
+            }
+
+            if (user.IsRegistered && IsAuthRequest(rawString))
+            {
+                SendRefuse("Authentication failed: Already authenticated");
+                CLogger.Error($"Failed authentication request from already authentiated user: {user.Username}");
                 return;
             }
 
@@ -83,6 +99,7 @@ namespace Backend.ServerModules
             CLogger.Event($"User disconnected: {user.Username}");
 
             SendAlert($"User {user.Username} has disconnected");
+            SendUserListToAll();
         }
     }
 }

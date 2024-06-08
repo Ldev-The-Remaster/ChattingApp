@@ -5,9 +5,14 @@ using WebSocketSharp.Server;
 
 namespace Backend.ServerModules
 {
+    public interface IEncodable
+    {
+        string EncodeToString();
+    }
+
     public class LSMPBehavior : WebSocketBehavior
     {
-        private readonly string NEW_LINE = "\r\n";
+        private static readonly string NEW_LINE = "\r\n";
         protected void SendAccept()
         {
             Send("DO ACCEPT");
@@ -28,7 +33,7 @@ namespace Backend.ServerModules
                     continue;
                 }
 
-                client.Socket.Send(message.ToString());
+                client.Socket.Send(message.EncodeToString());
             }
         }
 
@@ -40,9 +45,52 @@ namespace Backend.ServerModules
             SendToAll(alert);
         }
 
+        protected void SendUserList()
+        {
+            string encodedUserList = EncodeArrayToString(UserManager.UsersList);
+
+            string msg = $"DO INTRODUCE{NEW_LINE}WITH{NEW_LINE}{encodedUserList}";
+            Send(msg);
+        }
+
+        protected void SendUserListToAll()
+        {
+            string encodedUserList = EncodeArrayToString(UserManager.UsersList);
+
+            string msg = $"DO INTRODUCE{NEW_LINE}WITH{NEW_LINE}{encodedUserList}";
+
+            foreach (User client in UserManager.UsersList)
+            {
+                if (!client.IsRegistered)
+                {
+                    continue;
+                }
+
+                client.Socket.Send(msg);
+            }
+        }
+
         protected bool IsAuthRequest(string message)
         {
             return (message.Substring(3, 4).ToLower() == "auth");
+        }
+
+        public static string EncodeArrayToString<T>(List<T> array) where T : IEncodable
+        {
+            string arrString = "/*$*/";
+
+            foreach (T item in array)
+            {
+                if (item == null)
+                {
+                    continue;
+                }
+                arrString += NEW_LINE;
+                arrString += item.EncodeToString();
+                arrString += NEW_LINE + "/*$*/";
+            }
+
+            return arrString;
         }
     }
 }

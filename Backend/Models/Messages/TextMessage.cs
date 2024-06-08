@@ -1,10 +1,11 @@
 ﻿using Backend.Database;
 using Backend.Models.Users;
+using Backend.ServerModules;
 using WebSocketSharp;
 
 namespace Backend.Models.Messages
 {
-    public class TextMessage : Message
+    public class TextMessage : Message, IEncodable
     {
         public int TextMessageId { get; set; }
 
@@ -57,7 +58,7 @@ namespace Backend.Models.Messages
             _content = _with;
         }
 
-        public override string ToString()
+        public string EncodeToString()
         {
             string msgString = "DO SEND\r\n";
 
