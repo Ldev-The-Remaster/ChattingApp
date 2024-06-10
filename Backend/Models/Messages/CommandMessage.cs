@@ -15,6 +15,7 @@ namespace Backend.Models.Messages
             Ipban,
             Unban,
             Unbanip,
+            Remember,
             Unknown
         }
 
@@ -49,6 +50,8 @@ namespace Backend.Models.Messages
                     return CommandType.Unban;
                 case "unbanip":
                     return CommandType.Unbanip;
+                case "remember":
+                    return CommandType.Remember;
                 default:
                     return CommandType.Unknown;
             }
@@ -71,6 +74,9 @@ namespace Backend.Models.Messages
                 case CommandType.Unban:
                     break;
                 case CommandType.Unbanip:
+                    break;
+                case CommandType.Remember:
+                    ProcessRemember();
                     break;
                 case CommandType.Unknown:
                     break;
@@ -193,5 +199,32 @@ namespace Backend.Models.Messages
             CLogger.Event($"User has been Kicked: {_target}. Reason: {_with}");
             SendAlert($"User {_target} has been kicked for: {_with}");
         }
+        private void ProcessRemember()
+        {
+            int fromId, toId;
+            if (!int.TryParse(_from, out fromId) || !int.TryParse(_to, out toId))
+            {
+                SendRefuse("Invalid limits provided");
+                return;
+            }
+
+            string channel = "general-chat";
+            if (_in != string.Empty)
+            {
+                channel = _in;
+            }
+
+            List<TextMessage> messageHistory = TextMessage.GetMessageHistory(channel, fromId, toId);
+
+            string msgString = "DO POPULATE\r\nWITH\r\n";
+            string msgArray = LSMPBehavior.EncodeArrayToString(messageHistory);
+            msgString += msgArray;
+
+            if (_sender != null)
+            {
+                _sender.Socket.Send(msgString);
+            }
+        }
     }
+
 }
