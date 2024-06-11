@@ -30,7 +30,7 @@ namespace Backend.ServerModules
                     {
                         SendAccept();
                         SendUserListToAll();
-                        SendAlert($"User connected: {username}");
+                        SendAlert($"User {username} has connected");
                     }
                     else
                     {
