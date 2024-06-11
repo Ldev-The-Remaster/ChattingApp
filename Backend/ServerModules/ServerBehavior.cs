@@ -29,7 +29,7 @@ namespace Backend.ServerModules
                     if (UserManager.Authenticate(user.Socket, username))
                     {
                         SendAccept();
-                        SendUserList();
+                        SendUserListToAll();
                     }
                     else
                     {
