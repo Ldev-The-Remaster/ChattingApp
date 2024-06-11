@@ -1,0 +1,50 @@
+﻿@using System
+@using System.Net
+<h3>ContextMenu</h3>
+
+@*
+    This context menu needs: 
+    message
+    Mute
+    Ban
+    View IP
+    IP Ban
+    # # Righting clicking a user brings up a menu with the options (Private Message, Mute, Kick, Ban).
+    # # Each button should be hooked up to a function call but the function call should not be implemented yet.
+    # # Menu should be accessible from both chat and user list
+*@
+
+<button @onclick="MessageUser">Message</button>
+<button @onclick="MuteUser">>Mute</button>
+<button @onclick="BanUser">>Ban</button>
+<button @onclick="ViewIpUser">>View IP</button>
+<button @onclick="IpBanUser">>IP Ban</button>
+
+@code {
+    @* Since each of the below functions will be sending a message to the server for it's concerned action they are all be async*@
+    public async void MessageUser()
+    {
+        return;
+    }
+
+    public async void MuteUser()
+    {
+        return;
+    }
+
+    public async void BanUser()
+    {
+        return;
+    }
+
+    public async void ViewIpUser()
+    {
+        return;
+    }
+
+    public async void IpBanUser()
+    {
+        return;
+    }
+
+}
