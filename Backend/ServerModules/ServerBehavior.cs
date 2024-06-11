@@ -30,6 +30,7 @@ namespace Backend.ServerModules
                     {
                         SendAccept();
                         SendUserListToAll();
+                        SendAlert($"User connected: {username}");
                     }
                     else
                     {
@@ -99,8 +100,8 @@ namespace Backend.ServerModules
             UserManager.UsersList.Remove(user);
             CLogger.Event($"User disconnected: {user.Username}");
 
-            SendAlert($"User {user.Username} has disconnected");
             SendUserListToAll();
+            SendAlert($"User {user.Username} has disconnected");
         }
     }
 }
