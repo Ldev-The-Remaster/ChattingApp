@@ -1,7 +1,7 @@
 # Technical specifications for the **L**eague **S**ockets **M**essaging **P**rotocol (LSMP)
 This document lists the technical specifications and details for implementing LSMP in your websocket server.  
 LSMP is a custom protocol intended for use on top of the websockets protocol for the purpose of a live chat messaging application.  
-*Version: 0.3.2*
+*Version: 0.4.0*
 
 # Client -> Server
 Websocket messages coming from the client should conform to the following pattern:
@@ -47,24 +47,26 @@ WITH
 ### Infractions (Admin only):
 - ### MUTE: Mute a user in a channel
    > Required params: `TO <username>`  
-   > With alert message: `IN <channel-name>`, `WITH <message>`
+   > With reason: `WITH <reason>`
 - ### KICK: Kick a user
    > Required params: `TO <username>`  
-   > With alert message: `IN <channel-name>`, `WITH <message>`
+   > With reason: `WITH <reason>`
 - ### BAN: Ban a user
    > Required params: `TO <username>`  
-   > With alert message: `IN <channel-name>`, `WITH <message>`
+   > With reason: `WITH <reason>`
 - ### IPBAN: Ban an IP
    > Required params: `TO <ip>`  
-   > With alert message: `IN <channel-name>`, `WITH <message>`
+   > With reason: `WITH <reason>`
+- ### UNMUTE: Unmute a user
+   > Required params: `TO <username>`  
+   > With reason: `WITH <reason>`
 - ### UNBAN: Unban a user
    > Required params: `TO <username>`  
-   > With alert message: `IN <channel-name>`, `WITH <message>`
+   > With reason: `WITH <reason>`
 - ### UNBANIP: Unban an IP
    > Required params: `TO <ip>`  
-   > With alert message: `IN <channel-name>`, `WITH <message>`
+   > With reason: `WITH <reason>`
 
-\* The `IN` parameter for infractions (mutes, kicks, bans...etc) specifies which channel to send the alert in. Thus, the `IN` and `WITH` parameters must either be both present, or both omitted.
 
 ## Example messages
 
@@ -77,12 +79,11 @@ FROM Akram
 ---
 ```
 DO SEND
-IN general-chat
 WITH
 yoo good morning
 how you been?
 ```
-> Request to send a message in channel with name `general-chat`, with the message content being:  
+> Request to send a message (defaults to `general-chat`) with the message content being:  
 > `yoo good morning`  
 > `how you been?`
 
@@ -90,18 +91,17 @@ how you been?
 ```
 DO BAN
 TO Forki
-IN league
 WITH
 Advertising is prohibited...
 ```
-> Requests a ban on user with username `Forki`, displaying the message `Advertising is prohibited...` in channel with name `league`
+> Requests a ban on user with username `Forki`, with the reason being `Advertising is prohibited...`
 
 # Server -> Client
 The server sends messages to the client in a similar way, with a few minor differences.
 
 ## Details
 - The server should store the username given in the `AUTH` request for the current websocket connection. The username can then be used by the server to check for authority level, show message sender names, or to target infractions.
-- When the server receives a `SEND` request from a client, the server should fill in the `FROM` parameter with the username of the sender (stored in the point above) before forwarding the message to all other clients.
+- When the server receives a `SEND` request from a client, the server should fill in the `FROM`, `IN` and `AT` parameters with the username of the sender (stored in the point above), the channel name (defaults to `general-chat` if not provided), and timestamp respectively, before forwarding the message to all clients including the sender as a way to confirm the receiving of the message.
 
 ## Verb list
 Keeping the details mentioned above in mind, besides performing backend operations, the server is obligated to notify the users using `SEND` WITHOUT a `FROM` parameter to signal that the message is sent from the server.  
@@ -110,9 +110,10 @@ The `AT` parameter for the timestamps is mainly used when the server is sending 
 - ### SEND: Tells the client that a user has sent a message
    > Required params: `WITH <message>`  
    > From a user (omit for alert): `FROM <username>`  
-   > With a timestamp from history: `AT <timestamp>`
+   > In channel (defaults to `general-chat`): `IN <channel-name>`  
+   > With a timestamp from history (defaults to `date.now`): `AT <timestamp>`
 
-Besides displaying messages and alerts, the server also needs to respond to `AUTH` and `CONNECT` requests, this is done using the following verbs:
+Besides displaying messages and alerts, the server also needs to respond to `AUTH` and `CONNECT` requests, as well as refuse `SEND` requests from unauthorized clients. This is done using the following verbs:
 - ### ACCEPT: Accepts the request from the client
    > No params
 - ### REFUSE: Refuses the request from the client
@@ -140,14 +141,14 @@ Asim
 It's then up to the client to re-interpret the user array to populate the UI.
 
 ### Message History
-When the server receives a `REMEMBER` request from a client, the server is expected to forward all the messages that users have sent in the specified period, this is done through the `POPULATE` server verb. When sending a `POPULATE` from the server, the `WITH` parameter will house multiple message requests from the server so the client can populate its UI with the message history.
+When the server receives a `REMEMBER` request from a client, the server is expected to forward all the messages that users have sent in the specified period, this is done through the `REMIND` server verb. When sending a `REMIND` from the server, the `WITH` parameter will house multiple message requests from the server so the client can populate its UI with the message history.
 
-- ### POPULATE: Send multiple messages at once
+- ### REMIND: Send multiple messages at once
    > Required params: `WITH <array-of-messages>`
 
 In the `WITH` argument, seperate message requests should start, end, and be seperated using the character sequence `/*$*/` (forward slash, asterisk, dollar sign, asterisk, forward slash) like so:
 ```
-DO POPULATE
+DO REMIND
 WITH
 /*$*/
 DO SEND
@@ -169,13 +170,13 @@ AT 1714754754
 WITH
 league? 💀
 /*$*/
-DO ALERT
+DO SEND
 AT 1714715436
 WITH
 User Forki has been banned
 /*$*/
 ```
-It's then up to the client to re-interpret the nested message requests to *populate* the UI sequentially.
+It's then up to the client to re-interpret the nested message requests to populate the UI sequentially.
 
 ## Examples
 User connects and attempts authentication using the username `Midfield`
@@ -190,16 +191,15 @@ DO ACCEPT
 ```
 
 ---
-`Midfield` tries to connect to a channel he does not have permissions for
+Another user tries to authenticate with the same username while `Midfield` is currently logged in
 ```
-DO CONNECT
-TO eid-drip
+DO AUTH
+FROM Midfield
 ```
 
 The server refuses the request
 ```
 DO REFUSE
 WITH
-You are not allowed to access this channel
-Please contact the administrator
+Username is already taken
 ```
