@@ -15,7 +15,7 @@
             <div class="message-container" id="messageContainer">
                 @foreach (var message in Messages)
                 {
-                    <MessageUi User="@message.User" MessageContent="@message.Content" Timestamp="@message.Timestamp" />
+                    <MessageComponent User="@message.User" MessageContent="@message.Content" Timestamp="@message.Timestamp" />
                 }
             </div>
         </div>
