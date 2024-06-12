@@ -1,6 +1,7 @@
 ﻿@page "/main-page"
 @using Frontend.Client.Components
 @using Models
+@using static Frontend.Client.Models.WebSocketService
 @inject WebSocketService WebSocketService
 
 <PageTitle>Main Page</PageTitle>
@@ -13,7 +14,7 @@
         </div>
         <div class="main-content">
             <div class="message-container" id="messageContainer">
-                @foreach (var message in Messages)
+                @foreach (var message in messages)
                 {
                     <MessageComponent User="@message.User" MessageContent="@message.Content" Timestamp="@message.Timestamp" />
                 }
@@ -36,51 +37,18 @@
 </div>
 
 @code {
-    private List<Message> Messages = new List<Message>();
     private string newMessage = string.Empty;
+    private List<Message> messages = new List<Message>();
 
     protected override void OnInitialized()
     {
         WebSocketService.OnMessageReceived += MessageReceived;
     }
 
-    private void MessageReceived(string rawMessage)
+    public void MessageReceived(Message message)
     {
-        Console.WriteLine("Message received in MainPage: " + rawMessage);
-
-        try
-        {
-            var lines = rawMessage.Split(new[] { "\r\n", "\n" }, StringSplitOptions.None);
-
-            if (lines.Length >= 6 &&
-                lines[0].StartsWith("DO SEND") &&
-                lines[1].StartsWith("FROM ") &&
-                lines[2].StartsWith("IN general-chat") &&
-                lines[3].StartsWith("AT ") &&
-                lines[4].StartsWith("WITH"))
-            {
-                var user = lines[1].Substring(5); // "FROM user"
-                var timestamp = DateTimeOffset.FromUnixTimeSeconds(long.Parse(lines[3].Substring(3))).DateTime; // "AT timestamp"
-                var content = string.Join("\n", lines.Skip(5)); // Content strarts after "WITH" line
-
-                Messages.Add(new Message
-                    {
-                        User = user,
-                        Content = content,
-                        Timestamp = timestamp
-                    });
-
-                InvokeAsync(StateHasChanged);
-            }
-            else
-            {
-                Console.WriteLine("Error: Message format is invalid.");
-            }
-        }
-        catch (Exception e)
-        {
-            Console.WriteLine($"Error processing message: {e.Message}");
-        }
+        messages.Add(message);
+        InvokeAsync(StateHasChanged);
     }
 
     private async Task SendMessage()
@@ -98,12 +66,5 @@
         {
             await SendMessage();
         }
-    }
-
-    public class Message
-    {
-        public string? User { get; set; }
-        public string? Content { get; set; }
-        public DateTime Timestamp { get; set; }
     }
 }

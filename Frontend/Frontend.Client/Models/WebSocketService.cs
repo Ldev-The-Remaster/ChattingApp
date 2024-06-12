@@ -5,8 +5,16 @@ using System.Text;
 
 public class WebSocketService
 {
+    public class Message
+    {
+        public string? User { get; set; }
+        public string? Content { get; set; }
+        public DateTime Timestamp { get; set; }
+    }
+
     private ClientWebSocket? _webSocket;
-    public event Action<string>? OnMessageReceived;
+    public delegate void MessagesEventHandler(Message messages);
+    public event MessagesEventHandler? OnMessageReceived;
 
     public async Task ConnectAsync(string uri)
     {
@@ -15,6 +23,45 @@ public class WebSocketService
             _webSocket = new ClientWebSocket();
             await _webSocket.ConnectAsync(new Uri(uri), CancellationToken.None);
             _ = ReceiveMessagesAsync();
+        }
+    }
+
+    private void OnMessage(string message)
+    {
+
+        try
+        {
+            var lines = message.Split(new[] { "\r\n", "\n" }, StringSplitOptions.None);
+
+            if (lines.Length >= 6 &&
+                lines[0].StartsWith("DO SEND") &&
+                lines[1].StartsWith("FROM ") &&
+                lines[2].StartsWith("IN general-chat") &&
+                lines[3].StartsWith("AT ") &&
+                lines[4].StartsWith("WITH"))
+            {
+                var user = lines[1].Substring(5); // "FROM user"
+                var timestamp = DateTimeOffset.FromUnixTimeSeconds(long.Parse(lines[3].Substring(3))).DateTime; // "AT timestamp"
+                var content = string.Join("\n", lines.Skip(5)); // Content strarts after "WITH" line
+                if (OnMessageReceived != null)
+                {
+                    OnMessageReceived.Invoke(new Message
+                    {
+                        User = user,
+                        Content = content,
+                        Timestamp = timestamp
+                    });
+                }
+
+            }
+            else
+            {
+                Console.WriteLine("Error: Message format is invalid.");
+            }
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine($"Error processing message: {e.Message}");
         }
     }
 
@@ -27,7 +74,10 @@ public class WebSocketService
             if (result.MessageType == WebSocketMessageType.Text)
             {
                 var message = Encoding.UTF8.GetString(buffer, 0, result.Count);
-                OnMessageReceived?.Invoke(message);
+                if (message != null)
+                {
+                    OnMessage(message);
+                }
             }
         }
     }
