@@ -11,8 +11,9 @@ public class WebSocketService
         public string? Content { get; set; }
         public DateTime Timestamp { get; set; }
     }
-
+ 
     private ClientWebSocket? _webSocket;
+    private Task? _receiveMessagesTask;
     public delegate void MessagesEventHandler(Message messages);
     public event MessagesEventHandler? OnMessageReceived;
 
@@ -22,7 +23,7 @@ public class WebSocketService
         {
             _webSocket = new ClientWebSocket();
             await _webSocket.ConnectAsync(new Uri(uri), CancellationToken.None);
-            _ = ReceiveMessagesAsync();
+            _receiveMessagesTask = ReceiveMessagesAsync();
         }
     }
 
