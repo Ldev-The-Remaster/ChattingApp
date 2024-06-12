@@ -245,17 +245,6 @@ input {
     padding: 10px;
 }
 
-    .message-container .message {
-        align-items: center;
-        color: white;
-        background-color: #333333;
-        padding: 10px;
-        border-radius: 6px;
-        margin-bottom: 10px;
-        margin-left: 20px;
-        margin-right: 20px;
-    }
-
     .message-container::-webkit-scrollbar {
         width: 12px;
     }
