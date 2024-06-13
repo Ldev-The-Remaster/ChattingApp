@@ -1,11 +1,10 @@
 ﻿using Backend.Models.Users;
+using Backend.ServerModules;
 using Backend.Utils;
 using WebSocketSharp;
 
 namespace Backend.Models.Messages
 {
-
-
     public class CommandMessage : Message
     {
         enum CommandType
@@ -16,6 +15,7 @@ namespace Backend.Models.Messages
             Ipban,
             Unban,
             Unbanip,
+            Remember,
             Unknown
         }
 
@@ -50,6 +50,8 @@ namespace Backend.Models.Messages
                     return CommandType.Unban;
                 case "unbanip":
                     return CommandType.Unbanip;
+                case "remember":
+                    return CommandType.Remember;
                 default:
                     return CommandType.Unknown;
             }
@@ -63,6 +65,7 @@ namespace Backend.Models.Messages
                     ProcessMute();
                     break;
                 case CommandType.Kick:
+                    ProcessKick();
                     break;
                 case CommandType.Ban:
                     break;
@@ -71,6 +74,9 @@ namespace Backend.Models.Messages
                 case CommandType.Unban:
                     break;
                 case CommandType.Unbanip:
+                    break;
+                case CommandType.Remember:
+                    ProcessRemember();
                     break;
                 case CommandType.Unknown:
                     break;
@@ -92,6 +98,28 @@ namespace Backend.Models.Messages
                 _sender.Socket.Send(message);
             }
         }
+
+        private void SendToAll(TextMessage message)
+        {
+            foreach (User client in UserManager.UsersList)
+            {
+                if (!client.IsRegistered)
+                {
+                    continue;
+                }
+
+                client.Socket.Send(message.EncodeToString());
+            }
+        }
+
+        private void SendAlert(string message)
+        {
+            TextMessage alert = new TextMessage(null, "");
+            alert.Content = message;
+
+            SendToAll(alert);
+        }
+
 
         private void ProcessMute()
         {
@@ -122,10 +150,82 @@ namespace Backend.Models.Messages
                 SendRefuse("User not found");
                 return;
             }
+            
+            if (userToMute.IsMuted)
+            {
+                CLogger.Error("Command not invoked: User is already muted");
+                SendRefuse("User is already muted");
+                return;
+            }
 
-            UserManager.Mute(userToMute);
+            UserManager.Mute(userToMute, _with);
             SendAccept();
-            CLogger.Event("User Muted: " + _target);
+            CLogger.Event($"User has been Muted: {_target}. Reason: {_with}");
+            SendAlert($"User has been Muted: {_target}. Reason: {_with}");
+        }
+
+        private void ProcessKick()
+        {
+            if (_sender == null)
+            {
+                CLogger.Error("Command not invoked: Missing sender");
+                return;
+            }
+
+            if (UserManager.IsUserAdmin(_sender) == false)
+            {
+                CLogger.Error("User must be an adminstrator to use this command");
+                SendRefuse("You must be an adminstrator to use this command");
+                return;
+            }
+
+            if (_target == null)
+            {
+                CLogger.Error("Kick target not specified");
+                SendRefuse("Please indicate the user to kick");
+                return;
+            }
+
+            User? userToKick = UserManager.GetUserByUsername(_target);
+            if (userToKick == null) 
+            {
+                CLogger.Error("Kick target not found in DB");
+                SendRefuse("User not found");
+                return;
+            }
+
+            UserManager.Kick(userToKick);
+            SendAccept();
+            CLogger.Event($"User has been Kicked: {_target}. Reason: {_with}");
+            SendAlert($"User {_target} has been kicked for: {_with}");
+        }
+
+        private void ProcessRemember()
+        {
+            int fromId, toId;
+            if (!int.TryParse(_from, out fromId) || !int.TryParse(_to, out toId))
+            {
+                SendRefuse("Invalid limits provided");
+                return;
+            }
+
+            string channel = "general-chat";
+            if (_in != string.Empty)
+            {
+                channel = _in;
+            }
+
+            List<TextMessage> messageHistory = TextMessage.GetMessageHistory(channel, fromId, toId);
+
+            string msgString = "DO REMIND\r\nWITH\r\n";
+            string msgArray = LSMPBehavior.EncodeArrayToString(messageHistory);
+            msgString += msgArray;
+
+            if (_sender != null)
+            {
+                _sender.Socket.Send(msgString);
+            }
         }
     }
+
 }

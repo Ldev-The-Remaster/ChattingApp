@@ -8,13 +8,20 @@ namespace Backend.Models.Users
         public static List<User> UsersList { get; set; } = new List<User>();
 
         // Infractions
-        public static void Mute(User user)
+        public static void Mute(User user, string reason = "")
         {
             user.IsMuted = true;
+            user.MuteReason = reason;
             user.UpdateToDB();
         }
+
         public static void Unmute(User user) { }
-        public static void Kick(User user) { }
+       
+        public static void Kick(User user) 
+        {
+            UserManager.Disconnect(user);
+        }
+
         public static void Ban(User user) { }
         public static void Unban(User user) { }
 
@@ -97,7 +104,11 @@ namespace Backend.Models.Users
             return true;
         }
 
-        public static void Disconnect(User user) { }
+        public static void Disconnect(User user) 
+        {
+            user.Socket.Close();
+            UsersList.Remove(user);
+        }
 
         public static User? GetUserBySocket(WebSocket socket)
         {

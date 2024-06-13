@@ -2,16 +2,14 @@
 @page "/login"
 @using Models
 @using System.Net
-@using System.Net.WebSockets
 @inject NavigationManager NavigationManager
+@inject WebSocketService WebSocketService
 
+<PageTitle>Login</PageTitle>
 
-<PageTitle>login</PageTitle>
 <div class="login-div">
     <h1>WELCOME TO LDEV:THE REMASTER</h1>
     <h1>JOIN CHAT ROOM</h1>
-    @* for the IP address field there needs to be validation where either the user gets an error upon entering
-    something that does not represent an ip *@
     <div class="login-items-div">
         <div class="input-group">
             <label for="username">USERNAME</label>
@@ -44,9 +42,7 @@
     </div>
 </div>
 
-@code
-{
-    private ClientWebSocket? _webSocket;
+@code {
     public LoginInfo userInfo { get; set; } = new LoginInfo();
     List<string> errorMesages = new List<string>();
     bool isLoading = false;
@@ -78,44 +74,15 @@
         try
         {
             isLoading = true;
-            await Task.Delay(3000);
-            if (userInfo.username.Length > 0)
-            {
-                await ConnectWebSocket("ws://" + userInfo.ip + ":" + userInfo.port);
-                NavigationManager.NavigateTo("main-page");
-            }
-            else
-            {
-                throw new Exception("User name is empty");
-            }
+            await WebSocketService.ConnectAsync($"ws://{userInfo.ip}:{userInfo.port}");
+            await WebSocketService.SendMessageAsync("DO AUTH\r\nFROM " + userInfo.username);
 
+            NavigationManager.NavigateTo("main-page");
         }
         catch (Exception ex)
         {
-            Console.WriteLine("WebSocket connection error: " + ex.Message);
-        }
-    }
-
-    private async Task ConnectWebSocket(string url)
-    {
-        _webSocket = new ClientWebSocket();
-        await _webSocket.ConnectAsync(new Uri(url), CancellationToken.None);
-        await SendMessage(userInfo.username + " is Connected!");
-        Console.WriteLine("CONNECTED");
-    }
-
-    private async Task SendMessage(string message)
-    {
-        if (_webSocket != null && _webSocket.State == WebSocketState.Open)
-        {
-            byte[] buffer = System.Text.Encoding.UTF8.GetBytes(message);
-            ArraySegment<byte> segment = new ArraySegment<byte>(buffer);
-
-            await _webSocket.SendAsync(segment, WebSocketMessageType.Text, true, CancellationToken.None);
-        }
-        else
-        {
-            Console.WriteLine("WebSocket is not connected!");
+            isLoading = false;
+            errorMesages.Add("Failed to connect to server, please check the server info!");
         }
     }
 }

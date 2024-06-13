@@ -26,10 +26,12 @@ namespace Backend.ServerModules
                 if (IsAuthRequest(rawString))
                 {
                     string username = rawString.Substring(14);
+                    username = username.Trim();
                     if (UserManager.Authenticate(user.Socket, username))
                     {
                         SendAccept();
-                        SendUserList();
+                        SendUserListToAll();
+                        SendAlert($"User {username} has connected");
                     }
                     else
                     {
@@ -67,6 +69,7 @@ namespace Backend.ServerModules
                     var textMessage = new TextMessage(socket, rawString);
 
                     SendToAll(textMessage);
+                    textMessage.SaveToDb();
                     CLogger.Chat(textMessage.Sender, textMessage.Content);
                     break;
                 case MessageType.CommandMessage:
@@ -98,8 +101,8 @@ namespace Backend.ServerModules
             UserManager.UsersList.Remove(user);
             CLogger.Event($"User disconnected: {user.Username}");
 
-            SendAlert($"User {user.Username} has disconnected");
             SendUserListToAll();
+            SendAlert($"User {user.Username} has disconnected");
         }
     }
 }

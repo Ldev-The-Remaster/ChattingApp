@@ -53,7 +53,13 @@ namespace Backend.Models.Messages
             {
                 _sender = UserManager.GetUsernameBySocket(socket);
             }
-            _channel = _in;
+
+            _channel = "general-chat";
+            if (_in != string.Empty)
+            {
+                _channel = _in;
+            }
+
             _timestamp = _at;
             _content = _with;
         }
@@ -97,7 +103,7 @@ namespace Backend.Models.Messages
         public static List<TextMessage> GetMessageHistory(string channel, int from, int to)
         {
             List<TextMessage> messageHistory = context.TextMessages
-                .Where(m => m.TextMessageId < from && m.TextMessageId >= to)
+                .Where(m => m.TextMessageId >= from && m.TextMessageId < to && m.Channel == channel)
                 .ToList();
 
             return messageHistory;
