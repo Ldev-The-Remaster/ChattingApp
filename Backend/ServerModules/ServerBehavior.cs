@@ -26,6 +26,7 @@ namespace Backend.ServerModules
                 if (IsAuthRequest(rawString))
                 {
                     string username = rawString.Substring(14);
+                    username = username.Trim();
                     if (UserManager.Authenticate(user.Socket, username))
                     {
                         SendAccept();
