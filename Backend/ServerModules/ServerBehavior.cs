@@ -29,7 +29,8 @@ namespace Backend.ServerModules
                     if (UserManager.Authenticate(user.Socket, username))
                     {
                         SendAccept();
-                        SendUserList();
+                        SendUserListToAll();
+                        SendAlert($"User {username} has connected");
                     }
                     else
                     {
@@ -99,8 +100,8 @@ namespace Backend.ServerModules
             UserManager.UsersList.Remove(user);
             CLogger.Event($"User disconnected: {user.Username}");
 
-            SendAlert($"User {user.Username} has disconnected");
             SendUserListToAll();
+            SendAlert($"User {user.Username} has disconnected");
         }
     }
 }
