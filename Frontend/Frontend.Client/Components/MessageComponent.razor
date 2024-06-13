@@ -1,0 +1,57 @@
+@namespace Frontend.Client.Components
+
+<div class="message">
+    <div class="message-header">
+        <span class="user">@User</span>
+        <span class="timestamp">@Timestamp</span>
+    </div>
+    <div class="message-content">
+        @MessageContent
+    </div>
+</div>
+
+@code {
+    [Parameter]
+    public string? User { get; set; }
+
+    [Parameter]
+    public string? MessageContent { get; set; }
+
+    [Parameter]
+    public DateTime Timestamp { get; set; }
+}
+
+<style>
+    .message {
+        align-items: center;
+        color: white;
+        background-color: #333333;
+        padding: 10px;
+        border-radius: 6px;
+        margin-bottom: 10px;
+        margin-left: 20px;
+        margin-right: 20px;
+        word-wrap: break-word;
+        overflow-wrap: break-word;
+        word-break: break-all;
+    }
+
+    .message-header {
+        display: flex;
+        justify-content: space-between;
+        font-weight: bold;
+    }
+
+    .user {
+        color: #1E90FF;
+    }
+
+    .timestamp {
+        color: #6c757d;
+        font-size: 0.9em;
+    }
+
+    .message-content {
+        white-space: pre-wrap;
+    }
+</style>
