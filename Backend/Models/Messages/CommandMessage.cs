@@ -199,6 +199,7 @@ namespace Backend.Models.Messages
             CLogger.Event($"User has been Kicked: {_target}. Reason: {_with}");
             SendAlert($"User {_target} has been kicked for: {_with}");
         }
+
         private void ProcessRemember()
         {
             int fromId, toId;
@@ -216,7 +217,7 @@ namespace Backend.Models.Messages
 
             List<TextMessage> messageHistory = TextMessage.GetMessageHistory(channel, fromId, toId);
 
-            string msgString = "DO POPULATE\r\nWITH\r\n";
+            string msgString = "DO REMIND\r\nWITH\r\n";
             string msgArray = LSMPBehavior.EncodeArrayToString(messageHistory);
             msgString += msgArray;
 
