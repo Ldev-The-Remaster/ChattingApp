@@ -202,4 +202,4 @@ The server refuses the request
 DO REFUSE
 WITH
 Username is already taken
-
+```
