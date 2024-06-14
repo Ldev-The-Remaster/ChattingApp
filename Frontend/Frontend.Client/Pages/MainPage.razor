@@ -1,7 +1,8 @@
 ﻿@page "/main-page"
 @using Frontend.Client.Components
-@using Models
+@using Frontend.Client.Models
 @using static Frontend.Client.Models.WebSocketService
+@inject NavigationManager NavigationManager
 @inject WebSocketService WebSocketService
 
 <PageTitle>Main Page</PageTitle>
@@ -42,6 +43,11 @@
 
     protected override void OnInitialized()
     {
+        if (!WebSocketService.IsAuthenticated)
+        {
+            NavigationManager.NavigateTo("/login");
+        }
+
         WebSocketService.OnMessageReceived += MessageReceived;
     }
 
