@@ -16,6 +16,7 @@ namespace Backend.Models.Messages
             Unban,
             Unbanip,
             Remember,
+            Unmute,
             Unknown
         }
 
@@ -52,6 +53,8 @@ namespace Backend.Models.Messages
                     return CommandType.Unbanip;
                 case "remember":
                     return CommandType.Remember;
+                case "unmute":
+                    return CommandType.Unmute;
                 default:
                     return CommandType.Unknown;
             }
@@ -79,6 +82,9 @@ namespace Backend.Models.Messages
                     break;
                 case CommandType.Remember:
                     ProcessRemember();
+                    break;
+                case CommandType.Unmute:
+                    ProcessUnmute();
                     break;
                 case CommandType.Unknown:
                     break;
@@ -133,14 +139,14 @@ namespace Backend.Models.Messages
 
             if (UserManager.IsUserAdmin(_sender) == false)
             {
-                CLogger.Error("User must be an adminstrator to use this command");
+                CLogger.Error("Command not invoked: User must be an adminstrator to use this command");
                 SendRefuse("You must be an adminstrator to use this command");
                 return;
             }
 
             if (_target == null)
             {
-                CLogger.Error("Mute target not specified");
+                CLogger.Error("Command not invoked: Mute target not specified");
                 SendRefuse("Please indicate the user to mute");
                 return;
             }
@@ -148,7 +154,7 @@ namespace Backend.Models.Messages
             User? userToMute = UserManager.GetUserByUsername(_target);
             if (userToMute == null)
             {
-                CLogger.Error("Mute target not found in DB");
+                CLogger.Error("Command not invoked: Mute target not found in DB");
                 SendRefuse("User not found");
                 return;
             }
@@ -162,7 +168,7 @@ namespace Backend.Models.Messages
 
             if (userToMute == _sender)
             {
-                CLogger.Error("Command not invoked: You cannot mute yourself");
+                CLogger.Error("Command not invoked: User cannot mute themself");
                 SendRefuse("Did you really want to mute yourself?");
                 return;
             }
@@ -171,6 +177,56 @@ namespace Backend.Models.Messages
             SendAccept();
             CLogger.Event($"User has been Muted: {_target}. Reason: {_with}");
             SendAlert($"User has been Muted: {_target}. Reason: {_with}");
+        }
+
+        private void ProcessUnmute()
+        {
+            if (_sender == null)
+            {
+                CLogger.Error("Command not invoked: Missing sender");
+                return;
+            }
+
+            if (UserManager.IsUserAdmin(_sender) == false)
+            {
+                CLogger.Error("Command not invoked: User must be an adminstrator to use this command");
+                SendRefuse("You must be an adminstrator to use this command");
+                return;
+            }
+
+            if (_target == null)
+            {
+                CLogger.Error("Command not invoked: Mute target not specified");
+                SendRefuse("Please indicate the user to unmute");
+                return;
+            }
+
+            User? userToUnmute = UserManager.GetUserByUsername(_target);
+            if (userToUnmute == null)
+            {
+                CLogger.Error("Command not invoked: Unmute target not found in DB");
+                SendRefuse("User not found");
+                return;
+            }
+
+            if (!userToUnmute.IsMuted)
+            {
+                CLogger.Error("Command not invoked: User is not muted");
+                SendRefuse("User is not muted");
+                return;
+            }
+
+            if (userToUnmute == _sender)
+            {
+                CLogger.Error("Command not invoked: User cannot unmute themself");
+                SendRefuse("Did you really mute yourself?");
+                return;
+            }
+
+            UserManager.Unmute(userToUnmute);
+            SendAccept();
+            CLogger.Event($"User has been Unmuted: {_target}.");
+            SendAlert($"User has been Muted: {_target}.");
         }
 
         private void ProcessKick()
@@ -183,14 +239,14 @@ namespace Backend.Models.Messages
 
             if (UserManager.IsUserAdmin(_sender) == false)
             {
-                CLogger.Error("User must be an adminstrator to use this command");
+                CLogger.Error("Command not invoked: User must be an adminstrator to use this command");
                 SendRefuse("You must be an adminstrator to use this command");
                 return;
             }
 
             if (_target == null)
             {
-                CLogger.Error("Kick target not specified");
+                CLogger.Error("Command not invoked: Kick target not specified");
                 SendRefuse("Please indicate the user to kick");
                 return;
             }
@@ -198,14 +254,14 @@ namespace Backend.Models.Messages
             User? userToKick = UserManager.GetUserByUsername(_target);
             if (userToKick == null) 
             {
-                CLogger.Error("Kick target not found in DB");
+                CLogger.Error("Command not invoked: Kick target not found in DB");
                 SendRefuse("User not found");
                 return;
             }
 
             if (userToKick == _sender)
             {
-                CLogger.Error("Command not invoked: You cannot kick yourself");
+                CLogger.Error("Command not invoked: User cannot kick themself");
                 SendRefuse("You can't kick yourself idiot");
                 return;
             }
@@ -226,14 +282,14 @@ namespace Backend.Models.Messages
 
             if (UserManager.IsUserAdmin(_sender) == false)
             {
-                CLogger.Error("User must be an adminstrator to use this command");
+                CLogger.Error("Command not invoked: User must be an adminstrator to use this command");
                 SendRefuse("You must be an adminstrator to use this command");
                 return;
             }
 
             if (_target == null)
             {
-                CLogger.Error("Ban target not specified");
+                CLogger.Error("Command not invoked: Ban target not specified");
                 SendRefuse("Please indicate the user to ban");
                 return;
             }
@@ -241,14 +297,14 @@ namespace Backend.Models.Messages
             User? userToBan = UserManager.GetUserByUsername(_target);
             if (userToBan == null)
             {
-                CLogger.Error("Ban target not found in DB");
+                CLogger.Error("Command not invoked: Ban target not found in DB");
                 SendRefuse("User not found");
                 return;
             }
 
             if (userToBan == _sender)
             {
-                CLogger.Error("Command not invoked: You cannot ban yourself");
+                CLogger.Error("Command not invoked: User cannot ban themself");
                 SendRefuse("You can't ban yourself idiot");
                 return;
             }
@@ -276,14 +332,14 @@ namespace Backend.Models.Messages
 
             if (UserManager.IsUserAdmin(_sender) == false)
             {
-                CLogger.Error("User must be an adminstrator to use this command");
+                CLogger.Error("Command not invoked: User must be an adminstrator to use this command");
                 SendRefuse("You must be an adminstrator to use this command");
                 return;
             }
 
             if (_target == null)
             {
-                CLogger.Error("Unban target not specified");
+                CLogger.Error("Command not invoked: Unban target not specified");
                 SendRefuse("Please indicate the user to unban");
                 return;
             }
@@ -291,14 +347,14 @@ namespace Backend.Models.Messages
             User? userToUnban = UserManager.GetUserByUsername(_target);
             if (userToUnban == null)
             {
-                CLogger.Error("Unban target not found in DB");
+                CLogger.Error("Command not invoked: Unban target not found in DB");
                 SendRefuse("User not found");
                 return;
             }
 
             if (userToUnban == _sender)
             {
-                CLogger.Error("Command not invoked: You cannot unban yourself");
+                CLogger.Error("Command not invoked: User cannot unban themself");
                 SendRefuse("You can't unban yourself");
                 return;
             }

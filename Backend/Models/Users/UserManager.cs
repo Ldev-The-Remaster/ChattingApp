@@ -15,7 +15,12 @@ namespace Backend.Models.Users
             user.UpdateToDB();
         }
 
-        public static void Unmute(User user) { }
+        public static void Unmute(User user)
+        {
+            user.IsMuted = false;
+            user.MuteReason = "";
+            user.UpdateToDB();
+        }
        
         public static void Kick(User user) 
         {
@@ -32,6 +37,7 @@ namespace Backend.Models.Users
         public static void Unban(User user) 
         {
             user.IsBanned = false;
+            user.BanReason = "";
             user.UpdateToDB();
         }
 
