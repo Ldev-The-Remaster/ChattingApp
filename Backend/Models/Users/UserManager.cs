@@ -58,18 +58,12 @@ namespace Backend.Models.Users
             return UsersList.Find(user => user.Username == username);
         }
 
-        public static bool Authenticate(WebSocket socket, string username)
+        public static bool InitializeUser(WebSocket socket, string username)
         {
             User? user = GetUserBySocket(socket);
             if (user == null)
             {
                 CLogger.Error("Authentication failed: User client not found");
-                return false;
-            }
-
-            if (user.IsRegistered)
-            {
-                CLogger.Warn($"Double registration prevented from: {user.Username}");
                 return false;
             }
 
@@ -92,12 +86,6 @@ namespace Backend.Models.Users
                 user.IsBanned = userInDb.IsBanned;
             }
 
-            if (user.IsBanned)
-            {
-                Disconnect(user);
-                CLogger.Error($"Connection refused from banned user: {user.Username}");
-                return false;
-            }
 
             user.IsRegistered = true;
             CLogger.Event($"User authenticated with username: {username}");
