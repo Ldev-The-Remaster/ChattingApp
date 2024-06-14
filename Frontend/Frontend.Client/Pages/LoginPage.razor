@@ -8,7 +8,7 @@
 <PageTitle>Login</PageTitle>
 
 <div class="login-div">
-    <h1>WELCOME TO LDEV: THE REMASTER</h1>
+    <h1>WELCOME TO LDEV:THE REMASTER</h1>
     <h1>JOIN CHAT ROOM</h1>
     <div class="login-items-div">
         <div class="input-group">
@@ -61,7 +61,7 @@
             errorMesages.Add("Error: IP is invalid");
         }
 
-        if (!userInfo.port.HasValue || !(userInfo.port >= 0 && userInfo.port <= 65535))
+        if (!userInfo.port.HasValue && !(userInfo.port >= 0 && userInfo.port <= 65535))
         {
             errorMesages.Add("Error: Port is invalid");
         }
