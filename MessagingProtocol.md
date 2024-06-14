@@ -54,7 +54,7 @@ WITH
 - ### BAN: Ban a user
    > Required params: `TO <username>`  
    > With reason: `WITH <reason>`
-- ### IPBAN: Ban an IP
+- ### BANIP: Ban an IP
    > Required params: `TO <ip>`  
    > With reason: `WITH <reason>`
 - ### UNMUTE: Unmute a user
