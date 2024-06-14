@@ -68,10 +68,12 @@ namespace Backend.Models.Messages
                     ProcessKick();
                     break;
                 case CommandType.Ban:
+                    ProcessBan();
                     break;
                 case CommandType.Ipban:
                     break;
                 case CommandType.Unban:
+                    ProcessUnban(); 
                     break;
                 case CommandType.Unbanip:
                     break;
@@ -158,6 +160,13 @@ namespace Backend.Models.Messages
                 return;
             }
 
+            if (userToMute == _sender)
+            {
+                CLogger.Error("Command not invoked: You cannot mute yourself");
+                SendRefuse("Did you really want to mute yourself?");
+                return;
+            }
+
             UserManager.Mute(userToMute, _with);
             SendAccept();
             CLogger.Event($"User has been Muted: {_target}. Reason: {_with}");
@@ -194,11 +203,119 @@ namespace Backend.Models.Messages
                 return;
             }
 
+            if (userToKick == _sender)
+            {
+                CLogger.Error("Command not invoked: You cannot kick yourself");
+                SendRefuse("You can't kick yourself idiot");
+                return;
+            }
+
             UserManager.Kick(userToKick);
             SendAccept();
             CLogger.Event($"User has been Kicked: {_target}. Reason: {_with}");
             SendAlert($"User {_target} has been kicked for: {_with}");
         }
+
+        private void ProcessBan()
+        {
+            if (_sender == null)
+            {
+                CLogger.Error("Command not invoked: Missing sender");
+                return;
+            }
+
+            if (UserManager.IsUserAdmin(_sender) == false)
+            {
+                CLogger.Error("User must be an adminstrator to use this command");
+                SendRefuse("You must be an adminstrator to use this command");
+                return;
+            }
+
+            if (_target == null)
+            {
+                CLogger.Error("Ban target not specified");
+                SendRefuse("Please indicate the user to ban");
+                return;
+            }
+
+            User? userToBan = UserManager.GetUserByUsername(_target);
+            if (userToBan == null)
+            {
+                CLogger.Error("Ban target not found in DB");
+                SendRefuse("User not found");
+                return;
+            }
+
+            if (userToBan == _sender)
+            {
+                CLogger.Error("Command not invoked: You cannot ban yourself");
+                SendRefuse("You can't ban yourself idiot");
+                return;
+            }
+
+            if (userToBan.IsBanned) 
+            {
+                CLogger.Error("Command not invoked: User is already banned");
+                SendRefuse("User is already banned");
+                return;
+            }
+
+            UserManager.Ban(userToBan);
+            SendAccept();
+            CLogger.Event($"User has been Banned: {_target}. Reason: {_with}");
+            SendAlert($"User {_target} has been Banned for: {_with}");
+        }
+
+        private void ProcessUnban()
+        {
+            if (_sender == null)
+            {
+                CLogger.Error("Command not invoked: Missing sender");
+                return;
+            }
+
+            if (UserManager.IsUserAdmin(_sender) == false)
+            {
+                CLogger.Error("User must be an adminstrator to use this command");
+                SendRefuse("You must be an adminstrator to use this command");
+                return;
+            }
+
+            if (_target == null)
+            {
+                CLogger.Error("Unban target not specified");
+                SendRefuse("Please indicate the user to unban");
+                return;
+            }
+
+            User? userToUnban = UserManager.GetUserByUsername(_target);
+            if (userToUnban == null)
+            {
+                CLogger.Error("Unban target not found in DB");
+                SendRefuse("User not found");
+                return;
+            }
+
+            if (userToUnban == _sender)
+            {
+                CLogger.Error("Command not invoked: You cannot unban yourself");
+                SendRefuse("You can't unban yourself");
+                return;
+            }
+
+            if (userToUnban.IsBanned == false)
+            {
+                CLogger.Error("Command not invoked: User is not banned");
+                SendRefuse("User is not banned");
+                return;
+            }
+
+            UserManager.Unban(userToUnban);
+            SendAccept();
+            CLogger.Event("User has been Unbanned: " + _target);
+            SendAlert("User has been Unbanned: " + _target);
+        }
+
 
         private void ProcessRemember()
         {
