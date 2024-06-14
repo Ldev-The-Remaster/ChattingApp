@@ -17,8 +17,8 @@ namespace Backend.Models.Users
 
         public static void Unmute(User user) { }
        
-        public static void Kick(User user, string reason = "") 
-        {
+        public static void Kick(User user) 
+        {   
             Disconnect(user);
         }
 

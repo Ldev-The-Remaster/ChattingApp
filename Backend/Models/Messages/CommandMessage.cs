@@ -303,7 +303,7 @@ namespace Backend.Models.Messages
                 return;
             }
 
-            if (userToUnban.IsBanned == false)
+            if (!userToUnban.IsBanned)
             {
                 CLogger.Error("Command not invoked: User is not banned");
                 SendRefuse("User is not banned");
