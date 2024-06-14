@@ -16,6 +16,7 @@ namespace Backend.Models.Messages
             Unban,
             Unbanip,
             Remember,
+            Unmute,
             Unknown
         }
 
@@ -52,6 +53,8 @@ namespace Backend.Models.Messages
                     return CommandType.Unbanip;
                 case "remember":
                     return CommandType.Remember;
+                case "unmute":
+                    return CommandType.Unmute;
                 default:
                     return CommandType.Unknown;
             }
@@ -79,6 +82,9 @@ namespace Backend.Models.Messages
                     break;
                 case CommandType.Remember:
                     ProcessRemember();
+                    break;
+                case CommandType.Unmute:
+                    ProcessUnmute();
                     break;
                 case CommandType.Unknown:
                     break;
@@ -171,6 +177,56 @@ namespace Backend.Models.Messages
             SendAccept();
             CLogger.Event($"User has been Muted: {_target}. Reason: {_with}");
             SendAlert($"User has been Muted: {_target}. Reason: {_with}");
+        }
+
+        private void ProcessUnmute()
+        {
+            if (_sender == null)
+            {
+                CLogger.Error("Command not invoked: Missing sender");
+                return;
+            }
+
+            if (UserManager.IsUserAdmin(_sender) == false)
+            {
+                CLogger.Error("User must be an adminstrator to use this command");
+                SendRefuse("You must be an adminstrator to use this command");
+                return;
+            }
+
+            if (_target == null)
+            {
+                CLogger.Error("Mute target not specified");
+                SendRefuse("Please indicate the user to unmute");
+                return;
+            }
+
+            User? userToUnmute = UserManager.GetUserByUsername(_target);
+            if (userToUnmute == null)
+            {
+                CLogger.Error("Unmute target not found in DB");
+                SendRefuse("User not found");
+                return;
+            }
+
+            if (!userToUnmute.IsMuted)
+            {
+                CLogger.Error("Command not invoked: User is not muted");
+                SendRefuse("User is not muted");
+                return;
+            }
+
+            if (userToUnmute == _sender)
+            {
+                CLogger.Error("Command not invoked: You cannot unmute yourself");
+                SendRefuse("Did you really mute yourself?");
+                return;
+            }
+
+            UserManager.Unmute(userToUnmute);
+            SendAccept();
+            CLogger.Event($"User has been Unmuted: {_target}.");
+            SendAlert($"User has been Muted: {_target}.");
         }
 
         private void ProcessKick()
