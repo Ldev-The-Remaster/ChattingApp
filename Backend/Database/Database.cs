@@ -17,7 +17,9 @@ namespace Backend.Database
         {
             TextMessageContext messageContext = new TextMessageContext();
             // This vvv should be disabled in prod
-            // messageContext.Database.EnsureDeleted();
+#if DEBUG
+            messageContext.Database.EnsureDeleted();
+#endif
             messageContext.Database.EnsureCreated();
         }
     }
@@ -35,7 +37,9 @@ namespace Backend.Database
         {
             UserContext userContext = new UserContext();
             // This vvv should be disabled in prod
-            // userContext.Database.EnsureDeleted();
+#if DEBUG
+            userContext.Database.EnsureDeleted();
+#endif
             userContext.Database.EnsureCreated();
         }
     }
@@ -53,7 +57,9 @@ namespace Backend.Database
         {
             BannedIpContext bannedIpContext = new BannedIpContext();
             // This vvv should be disabled in prod
-            // bannedIpContext.Database.EnsureDeleted();
+#if DEBUG
+            bannedIpContext.Database.EnsureDeleted();
+#endif           
             bannedIpContext.Database.EnsureCreated();
         }
     }

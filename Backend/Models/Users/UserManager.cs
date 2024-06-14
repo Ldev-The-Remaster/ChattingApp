@@ -19,11 +19,21 @@ namespace Backend.Models.Users
        
         public static void Kick(User user) 
         {
-            UserManager.Disconnect(user);
+            Disconnect(user);
         }
 
-        public static void Ban(User user) { }
-        public static void Unban(User user) { }
+        public static void Ban(User user, string reason = "")
+        {
+            Disconnect(user);
+            user.IsBanned = true;
+            user.BanReason = reason;
+            user.UpdateToDB();
+        }
+        public static void Unban(User user) 
+        {
+            user.IsBanned = false;
+            user.UpdateToDB();
+        }
 
         public static void BanIp(string ip)
         { 
