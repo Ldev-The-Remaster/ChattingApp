@@ -75,9 +75,15 @@
         {
             isLoading = true;
             await WebSocketService.ConnectAsync($"ws://{userInfo.ip}:{userInfo.port}");
-            await WebSocketService.SendMessageAsync("DO AUTH\r\nFROM " + userInfo.username);
 
-            NavigationManager.NavigateTo("main-page");
+            if(!await WebSocketService.RequestAuth(userInfo.username))
+            {
+                isLoading = false;
+                errorMesages.Add("Failed to authenticate. Please check your credentials.");
+                return;
+            }
+
+            NavigationManager.NavigateTo("/main-page");
         }
         catch (Exception ex)
         {
