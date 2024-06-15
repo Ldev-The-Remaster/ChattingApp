@@ -75,26 +75,15 @@
         {
             isLoading = true;
             await WebSocketService.ConnectAsync($"ws://{userInfo.ip}:{userInfo.port}");
-            await WebSocketService.SendMessageAsync("DO AUTH\r\nFROM " + userInfo.username);
 
-            var authTimeout = TimeSpan.FromSeconds(10);
-            var startTime = DateTime.Now;
-
-            while (!WebSocketService.IsAuthenticated && DateTime.Now - startTime < authTimeout)
+            if(!await WebSocketService.RequestAuth(userInfo.username))
             {
-                await Task.Delay(100);
-            }
-
-            isLoading = false;
-
-            if (WebSocketService.IsAuthenticated)
-            {
-                NavigationManager.NavigateTo("main-page");
-            }
-            else
-            {
+                isLoading = false;
                 errorMesages.Add("Failed to authenticate. Please check your credentials.");
+                return;
             }
+
+            NavigationManager.NavigateTo("/main-page");
         }
         catch (Exception ex)
         {
