@@ -28,11 +28,7 @@ public class WebSocketService
 
     public bool IsAuthenticated
     {
-#if DEBUG
         get { return true; }
-#else
-        get { return _isAuthenticated; }
-#endif
     }
 
     public async Task ConnectAsync(string uri)
@@ -47,7 +43,7 @@ public class WebSocketService
 
     private void OnMessage(string message)
     {
-        if(_activeCommand == ActiveCommand.Auth)
+        if (_activeCommand == ActiveCommand.Auth)
         {
             _isAuthenticated = message.StartsWith("DO ACCEPT");
             _activeCommand = ActiveCommand.NotSet;
@@ -58,12 +54,16 @@ public class WebSocketService
         {
             var lines = message.Split(new[] { "\r\n", "\n" }, StringSplitOptions.None);
 
-            if (lines.Length >= 6 &&
-                lines[0].StartsWith("DO SEND") &&
-                lines[1].StartsWith("FROM ") &&
-                lines[2].StartsWith("IN general-chat") &&
-                lines[3].StartsWith("AT ") &&
-                lines[4].StartsWith("WITH"))
+            if (lines[0].StartsWith("DO INTRODUCE"))
+            {
+                ClientManager.UpdateUserList(message);
+            }
+            else if (lines.Length >= 6 &&
+                     lines[0].StartsWith("DO SEND") &&
+                     lines[1].StartsWith("FROM ") &&
+                     lines[2].StartsWith("IN general-chat") &&
+                     lines[3].StartsWith("AT ") &&
+                     lines[4].StartsWith("WITH"))
             {
                 var user = lines[1].Substring(5); // "FROM user"
                 var timestamp = DateTimeOffset.FromUnixTimeSeconds(long.Parse(lines[3].Substring(3))).DateTime; // "AT timestamp"
