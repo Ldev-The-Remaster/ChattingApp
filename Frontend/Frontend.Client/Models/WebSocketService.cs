@@ -43,7 +43,7 @@ public class WebSocketService
 
     private void OnMessage(string message)
     {
-        if(_activeCommand == ActiveCommand.Auth)
+        if (_activeCommand == ActiveCommand.Auth)
         {
             _isAuthenticated = message.StartsWith("DO ACCEPT");
             _activeCommand = ActiveCommand.NotSet;
@@ -54,7 +54,7 @@ public class WebSocketService
         {
             var lines = message.Split(new[] { "\r\n", "\n" }, StringSplitOptions.None);
 
-            if(lines[0].StartsWith("DO INTRODUCE"))
+            if (lines[0].StartsWith("DO INTRODUCE"))
             {
                 ClientManager.UpdateUserList(message);
             }
