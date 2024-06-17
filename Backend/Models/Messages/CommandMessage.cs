@@ -464,7 +464,7 @@ namespace Backend.Models.Messages
                 return;
             }
 
-            UserManager.UnbanIp(new BannedIp(ipToUnban,_with));
+            UserManager.UnbanIp(ipToUnban);
             SendAccept();
             CLogger.Event($"IP has been Unbanned: {ipToUnban}");
             SendAlert($"IP has been Unbanned: {ipToUnban}");
