@@ -2,7 +2,7 @@
 {
     public static class ClientManager
     {
-        struct MessageParams
+        public struct MessageParams
         {
             public string Do = "";
             public string From = "";
@@ -46,10 +46,9 @@
         public static List<string> CurrentUsersList
             { get { return _users; } }
 
-        public static void UpdateUserList(string introduceMessage)
+        public static void UpdateUserList(string rawUserList)
         {
-            var users = GetUsersList(introduceMessage);
-            Console.WriteLine("Parsed users: " + string.Join(", ", users));
+            var users = GetUsersList(rawUserList);
 
             _users.Clear();
             _users.AddRange(users);
@@ -57,16 +56,9 @@
             OnUserListUpdate?.Invoke();
         }
 
-        public static List<string> GetUsersList(string introduceMessage) 
+        public static List<string> GetUsersList(string rawUserList) 
         {
-            var msg = new MessageParams(introduceMessage);
-            if (msg.Do == "INTRODUCE")
-            {
-                var usersList = msg.With.Split(new[] { "/*$*/" }, StringSplitOptions.None);
-
-                return new List<string>(usersList);
-            }
-            return new List<string>();
+            return rawUserList.Split(new[] { "/*$*/", "\r\n" }, StringSplitOptions.RemoveEmptyEntries).ToList();
         }
     }
 }
