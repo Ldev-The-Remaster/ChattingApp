@@ -37,7 +37,10 @@ namespace Backend.Models.Users
         public static BannedIp? GetBannedIpFromDb(string bannedIp)
         {
             List<BannedIp> bannedIpsFromDb = context.BannedIps.Where(m => m.IpAddress == bannedIp).ToList();
-            if (bannedIpsFromDb.Count == 0) return null;
+            if (bannedIpsFromDb.Count == 0)
+            {
+                return null;
+            }
             return bannedIpsFromDb.First();
         }
 

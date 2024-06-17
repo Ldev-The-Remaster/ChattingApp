@@ -45,6 +45,7 @@ namespace Backend.Models.Users
         { 
             BannedIp ipToBan = new BannedIp(ip,reason);
             ipToBan.SaveToDb();
+            UsersList.Where(user => user.Ip == ip).ToList().ForEach(user => Disconnect(user));
         }
 
         public static void UnbanIp(BannedIp bannedIp)

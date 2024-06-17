@@ -415,8 +415,8 @@ namespace Backend.Models.Messages
 
             if (BannedIp.AlreadyExists(ipToBan))
             {
-                CLogger.Error("Command not invoked: User is already banned");
-                SendRefuse("User is already banned");
+                CLogger.Error("Command not invoked: IP is already banned");
+                SendRefuse("IP is already banned");
                 return;
             }
 
@@ -472,7 +472,7 @@ namespace Backend.Models.Messages
                 return;
             }
 
-            UserManager.Unban(userToUnban);
+            UserManager.UnbanIp(ipToUnban);
             SendAccept();
             CLogger.Event($"IP has been Unbanned: {ipToUnban}");
             SendAlert($"IP has been Unbanned: {ipToUnban}");
