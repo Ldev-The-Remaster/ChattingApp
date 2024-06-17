@@ -48,8 +48,14 @@ namespace Backend.Models.Users
             UsersList.Where(user => user.Ip == ip).ToList().ForEach(user => Disconnect(user));
         }
 
-        public static void UnbanIp(BannedIp bannedIp)
+        public static void UnbanIp(string ip)
         {
+            BannedIp? bannedIp = BannedIp.GetBannedIpFromDb(ip);
+            if (bannedIp == null)
+            {
+                CLogger.Error("IP not found.");
+                return;
+            }
             bannedIp.RemoveFromDb();
         }
 
