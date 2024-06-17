@@ -1,9 +1,9 @@
-﻿namespace Frontend.Client.Models
-{
-    using System.Net.WebSockets;
-    using System.Text;
-    using static Frontend.Client.Models.ClientManager;
+﻿using System.Net.WebSockets;
+using System.Text;
+using static Frontend.Client.Models.ClientManager;
 
+namespace Frontend.Client.Models
+{
     public class WebSocketService
     {
         enum ActiveCommand
