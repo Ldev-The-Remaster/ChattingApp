@@ -12,7 +12,7 @@ namespace Backend.Models.Messages
             Mute,
             Kick,
             Ban,
-            Ipban,
+            Banip,
             Unban,
             Unbanip,
             Remember,
@@ -45,8 +45,8 @@ namespace Backend.Models.Messages
                     return CommandType.Kick;
                 case "ban":
                     return CommandType.Ban;
-                case "ipban":
-                    return CommandType.Ipban;
+                case "banip":
+                    return CommandType.Banip;
                 case "unban":
                     return CommandType.Unban;
                 case "unbanip":
@@ -73,12 +73,14 @@ namespace Backend.Models.Messages
                 case CommandType.Ban:
                     ProcessBan();
                     break;
-                case CommandType.Ipban:
+                case CommandType.Banip:
+                    ProcessBanIp();
                     break;
                 case CommandType.Unban:
                     ProcessUnban(); 
                     break;
                 case CommandType.Unbanip:
+                    ProcessUnbanIp();
                     break;
                 case CommandType.Remember:
                     ProcessRemember();
@@ -344,7 +346,7 @@ namespace Backend.Models.Messages
                 return;
             }
 
-            User? userToUnban = UserManager.GetUserByUsername(_target);
+            User? userToUnban = User.GetUserFromDB(_target);
             if (userToUnban == null)
             {
                 CLogger.Error("Command not invoked: Unban target not found in DB");
@@ -372,6 +374,101 @@ namespace Backend.Models.Messages
             SendAlert("User has been Unbanned: " + _target);
         }
 
+        private void ProcessBanIp()
+        {
+            if (_sender == null)
+            {
+                CLogger.Error("Command not invoked: Missing sender");
+                return;
+            }
+
+            if (UserManager.IsUserAdmin(_sender) == false)
+            {
+                CLogger.Error("Command not invoked: User must be an adminstrator to use this command");
+                SendRefuse("You must be an adminstrator to use this command");
+                return;
+            }
+
+            if (_target == null)
+            {
+                CLogger.Error("Command not invoked: Ban IP not specified");
+                SendRefuse("Please indicate the IP to ban");
+                return;
+            }
+
+            User? userToBan = UserManager.GetUserByUsername(_target);
+            if (userToBan == null)
+            {
+                CLogger.Error("Command not invoked: BanIP target not found in DB");
+                SendRefuse("User not found");
+                return;
+            }
+
+            string ipToBan = userToBan.Ip;
+
+            if (ipToBan == _sender.Ip)
+            {
+                CLogger.Error("Command not invoked: User cannot ban themself");
+                SendRefuse("You can't ban yourself idiot");
+                return;
+            }
+
+            if (BannedIp.AlreadyExists(ipToBan))
+            {
+                CLogger.Error("Command not invoked: IP is already banned");
+                SendRefuse("IP is already banned");
+                return;
+            }
+
+            UserManager.BanIp(ipToBan);
+            SendAccept();
+            CLogger.Event($"IP has been Banned: {ipToBan}. Reason: {_with}");
+            SendAlert($"IP {ipToBan} has been Banned: Reason: {_with}");
+        }
+
+        private void ProcessUnbanIp()
+        {
+            if (_sender == null)
+            {
+                CLogger.Error("Command not invoked: Missing sender");
+                return;
+            }
+
+            if (UserManager.IsUserAdmin(_sender) == false)
+            {
+                CLogger.Error("Command not invoked: User must be an adminstrator to use this command");
+                SendRefuse("You must be an adminstrator to use this command");
+                return;
+            }
+
+            if (_target == null)
+            {
+                CLogger.Error("Command not invoked: UnbanIP target not specified");
+                SendRefuse("Please indicate the IP to unban");
+                return;
+            }
+
+            string ipToUnban = _target;
+
+            if (ipToUnban == _sender.Ip)
+            {
+                CLogger.Error("Command not invoked: User cannot unban themself");
+                SendRefuse("How'd you manage to ban yourself?");
+                return;
+            }
+
+            if (!BannedIp.AlreadyExists(ipToUnban))
+            {
+                CLogger.Error("Command not invoked: IP is not banned");
+                SendRefuse("IP is not banned");
+                return;
+            }
+
+            UserManager.UnbanIp(ipToUnban);
+            SendAccept();
+            CLogger.Event($"IP has been Unbanned: {ipToUnban}");
+            SendAlert($"IP has been Unbanned: {ipToUnban}");
+        }
 
         private void ProcessRemember()
         {

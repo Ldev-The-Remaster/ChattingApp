@@ -112,6 +112,14 @@ namespace Backend.ServerModules
                 return;
             }
 
+            if (BannedIp.AlreadyExists(user.Ip)) 
+            {
+                SendRefuse("Authentication failed: IP is banned");
+                CLogger.Error($"Connection refused from banned IP: {user.Ip}");
+                UserManager.Disconnect(user);
+                return;
+            }
+
             SendAccept();
             SendUserListToAll();
             SendAlert($"User {username} has connected");

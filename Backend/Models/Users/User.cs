@@ -98,7 +98,7 @@ namespace Backend.Models.Users
 
         public static User? GetUserFromDB(string username)
         {
-            List<User> usersFromDB = context.Users.Where(m => m.Username == username).ToList();
+            List<User> usersFromDB = context.Users.Where(m => m.Username.ToLower() == username.ToLower()).ToList();
             if (usersFromDB.Count == 0) return null;
             return usersFromDB.First();
         }

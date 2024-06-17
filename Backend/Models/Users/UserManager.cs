@@ -41,20 +41,23 @@ namespace Backend.Models.Users
             user.UpdateToDB();
         }
 
-        public static void BanIp(string ip)
+        public static void BanIp(string ip, string reason = "")
         { 
-            BannedIp ipToBan = new BannedIp(ip);
-            if (ipToBan.AlreadyExists())
-            {
-                CLogger.Error($"Attempt to ban IP {ip} failed: IP already banned");
-                return;
-            }
-
+            BannedIp ipToBan = new BannedIp(ip,reason);
             ipToBan.SaveToDb();
-            CLogger.Event($"IP {ip} was banned successfully");
+            UsersList.Where(user => user.Ip == ip).ToList().ForEach(user => Disconnect(user));
         }
 
-        public static void UnbanIp(string ip) { }
+        public static void UnbanIp(string ip)
+        {
+            BannedIp? bannedIp = BannedIp.GetBannedIpFromDb(ip);
+            if (bannedIp == null)
+            {
+                CLogger.Error("IP not found.");
+                return;
+            }
+            bannedIp.RemoveFromDb();
+        }
 
         // Connection
         public static User Connect(WebSocket socket, string ip)
@@ -71,7 +74,7 @@ namespace Backend.Models.Users
 
         public static User? GetUserByUsername(string username) 
         {
-            return UsersList.Find(user => user.Username == username);
+            return UsersList.Find(user => user.Username.ToLower() == username.ToLower());
         }
 
         public static bool InitializeUser(WebSocket socket, string username)
