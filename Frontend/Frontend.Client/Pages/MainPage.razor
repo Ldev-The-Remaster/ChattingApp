@@ -17,7 +17,14 @@
             <div class="message-container" id="messageContainer">
                 @foreach (var message in messages)
                 {
-                    <MessageComponent User="@message.User" MessageContent="@message.Content" Timestamp="@message.Timestamp" />
+                    if (message.User == null)
+                    {
+                        <ServerAlertMessageComponent MessageContent="@message.Content" Timestamp="@message.Timestamp" />
+                    }
+                    else
+                    {
+                        <MessageComponent User="@message.User" MessageContent="@message.Content" Timestamp="@message.Timestamp" />
+                    }
                 }
             </div>
         </div>
@@ -29,10 +36,10 @@
     <div class="user-block">
         <h1>CONNECTED USERS</h1>
         <ul class="user-list">
-            <li>user1</li>
-            <li>user2</li>
-            <li>user3</li>
-            <li>user4</li>
+            @foreach (var user in users)
+            {
+                <li>@user</li>
+            }
         </ul>
     </div>
 </div>
@@ -40,6 +47,7 @@
 @code {
     private string newMessage = string.Empty;
     private List<Message> messages = new List<Message>();
+    private List<string> users = new List<string>();
 
     protected override void OnInitialized()
     {
@@ -47,8 +55,16 @@
         {
             NavigationManager.NavigateTo("/login");
         }
-
+        users = ClientManager.CurrentUsersList;
         WebSocketService.OnMessageReceived += MessageReceived;
+        ClientManager.OnUserListUpdate += UpdateUserList;
+    }
+
+    private void UpdateUserList()
+    {
+        users = ClientManager.CurrentUsersList; 
+        InvokeAsync(StateHasChanged);
+        Console.WriteLine("users in mainpage: " + string.Join(", ", users));
     }
 
     public void MessageReceived(Message message)
