@@ -41,20 +41,16 @@ namespace Backend.Models.Users
             user.UpdateToDB();
         }
 
-        public static void BanIp(string ip)
+        public static void BanIp(string ip, string reason = "")
         { 
-            BannedIp ipToBan = new BannedIp(ip);
-            if (ipToBan.AlreadyExists())
-            {
-                CLogger.Error($"Attempt to ban IP {ip} failed: IP already banned");
-                return;
-            }
-
+            BannedIp ipToBan = new BannedIp(ip,reason);
             ipToBan.SaveToDb();
-            CLogger.Event($"IP {ip} was banned successfully");
         }
 
-        public static void UnbanIp(string ip) { }
+        public static void UnbanIp(BannedIp bannedIp)
+        {
+            bannedIp.RemoveFromDb();
+        }
 
         // Connection
         public static User Connect(WebSocket socket, string ip)
