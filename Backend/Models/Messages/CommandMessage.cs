@@ -346,7 +346,7 @@ namespace Backend.Models.Messages
                 return;
             }
 
-            User? userToUnban = UserManager.GetUserByUsername(_target);
+            User? userToUnban = User.GetUserFromDB(_target);
             if (userToUnban == null)
             {
                 CLogger.Error("Command not invoked: Unban target not found in DB");
@@ -448,15 +448,7 @@ namespace Backend.Models.Messages
                 return;
             }
 
-            User? userToUnban = UserManager.GetUserByUsername(_target);
-            if (userToUnban == null)
-            {
-                CLogger.Error("Command not invoked: UnbanIP target not found in list");
-                SendRefuse("User not found");
-                return;
-            }
-
-            string ipToUnban = userToUnban.Ip;
+            string ipToUnban = _target;
 
             if (ipToUnban == _sender.Ip)
             {

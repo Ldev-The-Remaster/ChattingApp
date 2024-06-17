@@ -68,7 +68,7 @@ namespace Backend.Models.Users
 
         public static User? GetUserByUsername(string username) 
         {
-            return UsersList.Find(user => user.Username == username);
+            return UsersList.Find(user => user.Username.ToLower() == username.ToLower());
         }
 
         public static bool InitializeUser(WebSocket socket, string username)
