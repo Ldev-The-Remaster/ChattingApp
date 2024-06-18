@@ -23,6 +23,7 @@ namespace Frontend.Client.Models
         private Task? _receiveMessagesTask;
         public delegate void MessagesEventHandler(Message messages);
         public event MessagesEventHandler? OnMessageReceived;
+        public event Action? OnClosed;
         private bool _isAuthenticated = false;
         private ActiveCommand _activeCommand = ActiveCommand.NotSet;
         private readonly int AuthTimeOut = 10;
@@ -93,6 +94,12 @@ namespace Frontend.Client.Models
             }
         }
 
+        private void OnClose() 
+        {
+            _isAuthenticated = false;
+            OnClosed?.Invoke();
+        }
+
         private async Task ReceiveMessagesAsync()
         {
             var buffer = new byte[1024 * 4];
@@ -106,6 +113,10 @@ namespace Frontend.Client.Models
                     {                          
                         OnMessage(new MessageParams(message));
                     }
+                }
+                if (result.MessageType == WebSocketMessageType.Close)
+                {
+                    OnClose();
                 }
             }
         }

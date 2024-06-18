@@ -51,13 +51,19 @@
 
     protected override void OnInitialized()
     {
-        if (!WebSocketService.IsAuthenticated)
+        HandleDisconnect();
+        users = ClientManager.CurrentUsersList;
+        WebSocketService.OnClosed += HandleDisconnect;
+        WebSocketService.OnMessageReceived += MessageReceived;
+        ClientManager.OnUserListUpdate += UpdateUserList;
+    }
+
+    private void HandleDisconnect()
+    {
+        if(!WebSocketService.IsAuthenticated)
         {
             NavigationManager.NavigateTo("/login");
         }
-        users = ClientManager.CurrentUsersList;
-        WebSocketService.OnMessageReceived += MessageReceived;
-        ClientManager.OnUserListUpdate += UpdateUserList;
     }
 
     private void UpdateUserList()
