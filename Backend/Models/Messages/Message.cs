@@ -13,35 +13,41 @@ namespace Backend.Models.Messages
 
         public MessageParams(string rawString)
         {
-            string[] commandPairs = rawString.Split("\r\n");
-            foreach (string line in commandPairs)
+            try
             {
-                string[] commandPair = line.Split(' ');
-                switch (commandPair[0])
+                string[] commandPairs = rawString.Split("\r\n");
+                foreach (string line in commandPairs)
                 {
-                    case "DO":
-                        Do = commandPair[1];
-                        break;
-                    case "FROM":
-                        From = commandPair[1];
-                        break;
-                    case "TO":
-                        To = commandPair[1];
-                        break;
-                    case "IN":
-                        In = commandPair[1];
-                        break;
-                    case "AT":
-                        At = long.Parse(commandPair[1]);
-                        break;
-                    case "WITH":
-                        With = rawString.Split("WITH\r\n", 2)[1];
-                        break;
+                    string[] commandPair = line.Split(' ');
+                    switch (commandPair[0])
+                    {
+                        case "DO":
+                            Do = commandPair[1];
+                            break;
+                        case "FROM":
+                            From = commandPair[1];
+                            break;
+                        case "TO":
+                            To = commandPair[1];
+                            break;
+                        case "IN":
+                            In = commandPair[1];
+                            break;
+                        case "AT":
+                            At = long.Parse(commandPair[1]);
+                            break;
+                        case "WITH":
+                            With = rawString.Split("WITH\r\n", 2)[1];
+                            break;
+                    }
                 }
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine($"Error Parsing: {e.Message}");
             }
         }
     }
-
     public abstract class Message
     {
         public enum MessageType
