@@ -11,7 +11,7 @@ namespace Backend.Models.Messages
         public long At = ((DateTimeOffset)DateTime.Now).ToUnixTimeSeconds();
         public string With = "";
 
-        public MessageParams(string rawString)
+        MessageParams(string rawString)
         {
             try
             {
