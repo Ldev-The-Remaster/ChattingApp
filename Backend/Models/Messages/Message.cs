@@ -2,7 +2,7 @@
 
 namespace Backend.Models.Messages
 {
-    public struct MessageParams
+    struct MessageParams
     {
         public string Do = "";
         public string From = "";
@@ -11,7 +11,7 @@ namespace Backend.Models.Messages
         public long At = ((DateTimeOffset)DateTime.Now).ToUnixTimeSeconds();
         public string With = "";
 
-        MessageParams(string rawString)
+        public MessageParams(string rawString)
         {
             try
             {
