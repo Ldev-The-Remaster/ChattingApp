@@ -1,9 +1,11 @@
-﻿@using System
+﻿@namespace Frontend.Client.Components
+@page "/context"
+@using System
 @using System.Net
-<h3>ContextMenu</h3>
+@inject IJSRuntime JSRuntime
 
 @*
-    This context menu needs: 
+    This context menu needs:
     message
     Mute
     Ban
@@ -12,16 +14,23 @@
     # # Righting clicking a user brings up a menu with the options (Private Message, Mute, Kick, Ban).
     # # Each button should be hooked up to a function call but the function call should not be implemented yet.
     # # Menu should be accessible from both chat and user list
+    TO DO:
+    // make them render on click next to their element
+    
 *@
-
-<button @onclick="MessageUser">Message</button>
-<button @onclick="MuteUser">>Mute</button>
-<button @onclick="BanUser">>Ban</button>
-<button @onclick="ViewIpUser">>View IP</button>
-<button @onclick="IpBanUser">>IP Ban</button>
+<div >
+    <ul>
+        <li @onclick="MessageUser">Message</li>
+        <li @onclick="MuteUser">Mute</li>
+        <li @onclick="BanUser">Ban</li>
+        <li @onclick="ViewIpUser">View IP</li>
+        <li @onclick="IpBanUser">IP Ban</li>
+    </ul>
+</div>
 
 @code {
-    @* Since each of the below functions will be sending a message to the server for it's concerned action they are all be async*@
+    string? styleClass;
+
     public async void MessageUser()
     {
         return;
@@ -46,5 +55,34 @@
     {
         return;
     }
-
 }
+
+<style>
+    .contextMenuDiv {
+        top;
+        position: absolute;
+        z-index: 1000;
+        background-color: #D9D9D9;
+        color: #111111;
+        border: solid 1px;
+        border-radius: 6px;
+        font-weight: bold;
+        width: 13rem;
+    }
+
+    .hideContextMenu {
+        display: none;
+    }
+
+
+    .contextMenuDiv li {
+        list-style:none;
+        width: max-content;
+        list-style: none;
+        margin-bottom: 7px;
+    }
+
+    .contextMenuDiv li:hover {
+        cursor: pointer;
+    }
+</style>

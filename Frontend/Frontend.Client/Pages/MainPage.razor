@@ -3,10 +3,11 @@
 @using Models
 @using static Frontend.Client.Models.WebSocketService
 @inject WebSocketService WebSocketService
+@inject IJSRuntime JSRuntime
 
 <PageTitle>Main Page</PageTitle>
 
-<div class="main-page">
+<div class="main-page" @onclick="hideContextMenu">
     <div class="main-block">
         <div class="main-top">
             <h1>Chat Room</h1>
@@ -28,17 +29,62 @@
     <div class="user-block">
         <h1>CONNECTED USERS</h1>
         <ul class="user-list">
-            <li>user1</li>
-            <li>user2</li>
-            <li>user3</li>
-            <li>user4</li>
+            @if (isBeingShown && position!=null)
+            {
+                <div class="@contextDivClass" @onclick:stopPropagation="true">
+                    <ContextMenu />
+                </div>
+            }
+
+            <li @oncontextmenu="showContextMenu" @oncontextmenu:preventDefault="true">user1</li>
+            <li @oncontextmenu="showContextMenu" @oncontextmenu:preventDefault="true">user2</li>
+            <li @oncontextmenu="showContextMenu" @oncontextmenu:preventDefault="true">user3</li>
+            <li @oncontextmenu="showContextMenu" @oncontextmenu:preventDefault="true">user4</li>
         </ul>
     </div>
+
 </div>
 
 @code {
     private string newMessage = string.Empty;
     private List<Message> messages = new List<Message>();
+    bool isBeingShown = false;
+    public ContextMenu contextMenu;
+    string? contextDivClass;
+    [CascadingParameter]
+    private MainPage MainPageInstance { get; set; }
+
+    public class Position
+    {
+        public int top { get; set; }
+        public int left { get; set; }
+    }
+    Position position = new Position { top = 0, left = 0 };
+
+    public void hideContextMenu()
+    {
+        if (isBeingShown)
+        {
+            isBeingShown = false;
+            contextDivClass = "hideDiv";
+            InvokeAsync(StateHasChanged);
+        }
+    }
+
+    public async Task showContextMenu(MouseEventArgs e)
+    {
+        position = await JSRuntime.InvokeAsync<Position>("getElementPosition", e.ClientX-50, e.ClientY);
+        isBeingShown = true;
+        if (isBeingShown)
+        {
+            contextDivClass = "contextMenuDiv";
+        }
+        else
+        {
+            contextDivClass = "hideDiv";
+        }
+        InvokeAsync(StateHasChanged);
+    }
 
     protected override void OnInitialized()
     {
@@ -68,3 +114,33 @@
         }
     }
 }
+
+<style>
+    .contextMenuDiv {
+        top: @(position?.top ?? 0)px;
+        left: @(position?.left ?? 0)px;
+        position: absolute;
+        z-index: 1000;
+        background-color: #D9D9D9;
+        color: #111111;
+        border: solid 1px;
+        border-radius: 6px;
+        font-weight: bold;
+        width: 15rem;
+    }
+
+    .hideContextMenu {
+        display: none;
+    }
+
+
+    .dynamicDivStyle li {
+        width: max-content;
+        list-style: none;
+        margin-bottom: 7px;
+    }
+
+    .contextMenuDiv li:hover {
+        cursor: pointer;
+    }
+</style>
