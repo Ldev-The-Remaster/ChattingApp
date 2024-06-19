@@ -7,36 +7,40 @@ namespace Backend.Models.Messages
 {
     public class TextMessage : Message, IEncodable
     {
+        // Fields
         public int TextMessageId { get; set; }
 
         private string _sender;
+        private string _channel;
+        private long _timestamp;
+        private string _content;
+
+        // Properties
         public string Sender
         {
             get { return _sender; }
             set { _sender = value; }
         }
 
-        private string _channel;
         public string Channel
         {
             get { return _channel; }
             set { _channel = value; }
         }
 
-        private long _timestamp;
         public long TimeStamp
         {
             get { return _timestamp; }
             set { _timestamp = value; }
         }
 
-        private string _content;
         public string Content
         {
             get { return _content; }
             set { _content = value; }
         }
 
+        // Constructors
         private TextMessage()
         {
             // This is needed by EntityFramework
@@ -64,6 +68,7 @@ namespace Backend.Models.Messages
             _content = _with;
         }
 
+        // Methods
         public string EncodeToString()
         {
             string msgString = "DO SEND\r\n";

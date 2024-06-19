@@ -50,6 +50,7 @@ namespace Backend.Models.Messages
     }
     public abstract class Message
     {
+        //Fields
         public enum MessageType
         {
             TextMessage,
@@ -64,6 +65,7 @@ namespace Backend.Models.Messages
         protected string _with;
         protected WebSocket? _socket;
 
+        // Constructors
         protected Message()
         {
             // This is needed by EntityFramework
@@ -89,6 +91,7 @@ namespace Backend.Models.Messages
             _socket = socket;
         }
 
+        // Methods
         public static MessageType GetMessageType(string rawString)
         {
             string doArgument = rawString.Substring(3, 4); // "DO SEND"

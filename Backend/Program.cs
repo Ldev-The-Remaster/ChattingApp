@@ -33,6 +33,7 @@ internal class Program
         }
     }
 
+    // Local Methods
     private static void SetUpDatabase()
     {
         UserContext.SetUp();

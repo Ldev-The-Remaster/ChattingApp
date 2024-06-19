@@ -5,9 +5,10 @@ namespace Backend.Models.Users
 {
     public static class UserManager
     {
+        // Fields
         public static List<User> UsersList { get; set; } = new List<User>();
 
-        // Infractions
+        // Infraction Methods
         public static void Mute(User user, string reason = "")
         {
             user.IsMuted = true;
@@ -59,22 +60,12 @@ namespace Backend.Models.Users
             bannedIp.RemoveFromDb();
         }
 
-        // Connection
+        // User Management
         public static User Connect(WebSocket socket, string ip)
         {
             User newUser = new User(socket, ip);
             UsersList.Add(newUser);
             return newUser;
-        }
-
-        public static bool IsUserAdmin(User user) 
-        {
-            return user.Ip == "127.0.0.1";
-        }
-
-        public static User? GetUserByUsername(string username) 
-        {
-            return UsersList.Find(user => user.Username.ToLower() == username.ToLower());
         }
 
         public static bool InitializeUser(WebSocket socket, string username)
@@ -111,10 +102,22 @@ namespace Backend.Models.Users
             return true;
         }
 
+        public static bool IsUserAdmin(User user) 
+        {
+            return user.Ip == "127.0.0.1";
+        }
+
+
         public static void Disconnect(User user) 
         {
             user.Socket.Close();
             UsersList.Remove(user);
+        }
+
+        // Getters
+        public static User? GetUserByUsername(string username) 
+        {
+            return UsersList.Find(user => user.Username.ToLower() == username.ToLower());
         }
 
         public static User? GetUserBySocket(WebSocket socket)

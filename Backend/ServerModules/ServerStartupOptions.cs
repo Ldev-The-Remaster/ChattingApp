@@ -4,8 +4,10 @@ namespace Backend.ServerModules
 {
     public class ServerStartupOptions
     {
+        // Fields
         public int Port;
 
+        // Methods
         bool IsValid()
         {
             if (Port < 1 || Port > 65535)

@@ -4,15 +4,19 @@ namespace Backend.Models.Users
 {
     public class BannedIp
     {
+        // Fields
         public int BannedIpId { get; set; }
         public string IpAddress { get; set; }
         public string BanReason { get; set; }
 
+        // Constructors
         private BannedIp()
         {
+            // This is needed by EntityFramework
             IpAddress = String.Empty;
             BanReason = String.Empty;
         }
+
         public BannedIp(string ip, string banReason)
         {
             IpAddress = ip;
