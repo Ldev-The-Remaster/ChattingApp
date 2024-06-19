@@ -2,6 +2,7 @@
 @using Frontend.Client.Components
 @using Models
 @using static Frontend.Client.Models.WebSocketService
+@inject NavigationManager NavigationManager
 @inject WebSocketService WebSocketService
 @inject IJSRuntime JSRuntime
 
@@ -17,7 +18,14 @@
             <div class="message-container" id="messageContainer">
                 @foreach (var message in messages)
                 {
-                    <MessageComponent User="@message.User" MessageContent="@message.Content" Timestamp="@message.Timestamp" />
+                    if (message.User == null)
+                    {
+                        <ServerAlertMessageComponent MessageContent="@message.Content" Timestamp="@message.Timestamp" />
+                    }
+                    else
+                    {
+                        <MessageComponent User="@message.User" MessageContent="@message.Content" Timestamp="@message.Timestamp" />
+                    }
                 }
             </div>
         </div>
@@ -36,10 +44,10 @@
                 </div>
             }
 
-            <li @oncontextmenu="showContextMenu" @oncontextmenu:preventDefault="true">user1</li>
-            <li @oncontextmenu="showContextMenu" @oncontextmenu:preventDefault="true">user2</li>
-            <li @oncontextmenu="showContextMenu" @oncontextmenu:preventDefault="true">user3</li>
-            <li @oncontextmenu="showContextMenu" @oncontextmenu:preventDefault="true">user4</li>
+            @foreach (var user in users)
+            {
+                <li  @oncontextmenu="showContextMenu" @oncontextmenu:preventDefault="true">@user</li>
+            }
         </ul>
     </div>
 
@@ -85,10 +93,30 @@
         }
         InvokeAsync(StateHasChanged);
     }
+    private List<string> users = new List<string>();
 
     protected override void OnInitialized()
     {
+        HandleDisconnect();
+        users = ClientManager.CurrentUsersList;
+        WebSocketService.OnClosed += HandleDisconnect;
         WebSocketService.OnMessageReceived += MessageReceived;
+        ClientManager.OnUserListUpdate += UpdateUserList;
+    }
+
+    private void HandleDisconnect()
+    {
+        if(!WebSocketService.IsAuthenticated)
+        {
+            NavigationManager.NavigateTo("/login");
+        }
+    }
+
+    private void UpdateUserList()
+    {
+        users = ClientManager.CurrentUsersList; 
+        InvokeAsync(StateHasChanged);
+        Console.WriteLine("users in mainpage: " + string.Join(", ", users));
     }
 
     public void MessageReceived(Message message)

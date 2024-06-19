@@ -15,30 +15,49 @@ namespace Backend.Models.Users
             user.UpdateToDB();
         }
 
-        public static void Unmute(User user) { }
+        public static void Unmute(User user)
+        {
+            user.IsMuted = false;
+            user.MuteReason = "";
+            user.UpdateToDB();
+        }
        
         public static void Kick(User user) 
         {
-            UserManager.Disconnect(user);
+            Disconnect(user);
         }
 
-        public static void Ban(User user) { }
-        public static void Unban(User user) { }
+        public static void Ban(User user, string reason = "")
+        {
+            Disconnect(user);
+            user.IsBanned = true;
+            user.BanReason = reason;
+            user.UpdateToDB();
+        }
+        public static void Unban(User user) 
+        {
+            user.IsBanned = false;
+            user.BanReason = "";
+            user.UpdateToDB();
+        }
 
-        public static void BanIp(string ip)
+        public static void BanIp(string ip, string reason = "")
         { 
-            BannedIp ipToBan = new BannedIp(ip);
-            if (ipToBan.AlreadyExists())
+            BannedIp ipToBan = new BannedIp(ip,reason);
+            ipToBan.SaveToDb();
+            UsersList.Where(user => user.Ip == ip).ToList().ForEach(user => Disconnect(user));
+        }
+
+        public static void UnbanIp(string ip)
+        {
+            BannedIp? bannedIp = BannedIp.GetBannedIpFromDb(ip);
+            if (bannedIp == null)
             {
-                CLogger.Error($"Attempt to ban IP {ip} failed: IP already banned");
+                CLogger.Error("IP not found.");
                 return;
             }
-
-            ipToBan.SaveToDb();
-            CLogger.Event($"IP {ip} was banned successfully");
+            bannedIp.RemoveFromDb();
         }
-
-        public static void UnbanIp(string ip) { }
 
         // Connection
         public static User Connect(WebSocket socket, string ip)
@@ -55,21 +74,15 @@ namespace Backend.Models.Users
 
         public static User? GetUserByUsername(string username) 
         {
-            return UsersList.Find(user => user.Username == username);
+            return UsersList.Find(user => user.Username.ToLower() == username.ToLower());
         }
 
-        public static bool Authenticate(WebSocket socket, string username)
+        public static bool InitializeUser(WebSocket socket, string username)
         {
             User? user = GetUserBySocket(socket);
             if (user == null)
             {
                 CLogger.Error("Authentication failed: User client not found");
-                return false;
-            }
-
-            if (user.IsRegistered)
-            {
-                CLogger.Warn($"Double registration prevented from: {user.Username}");
                 return false;
             }
 
@@ -92,12 +105,6 @@ namespace Backend.Models.Users
                 user.IsBanned = userInDb.IsBanned;
             }
 
-            if (user.IsBanned)
-            {
-                Disconnect(user);
-                CLogger.Error($"Connection refused from banned user: {user.Username}");
-                return false;
-            }
 
             user.IsRegistered = true;
             CLogger.Event($"User authenticated with username: {username}");

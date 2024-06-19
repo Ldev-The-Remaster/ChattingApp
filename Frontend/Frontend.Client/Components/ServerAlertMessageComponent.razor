@@ -1,0 +1,42 @@
+@namespace Frontend.Client.Components
+
+<div class="server-alert-message">
+    <div class="alert-content">
+        @MessageContent
+    </div>
+    <div class="alert-timestamp">
+        <span>@Timestamp</span>
+    </div>
+</div>
+
+@code {
+    [Parameter]
+    public string? MessageContent { get; set; }
+
+    [Parameter]
+    public DateTime Timestamp { get; set; }
+}
+
+<style>
+    .server-alert-message {
+        background-color: #444444;
+        color: #d3d3d3;
+        padding: 10px;
+        border-radius: 6px;
+        margin-bottom: 10px;
+        margin-left: 20px;
+        margin-right: 20px;
+        word-wrap: break-word;
+        overflow-wrap: break-word;
+        word-break: break-all;
+    }
+
+    .alert-content {
+        font-style: italic;
+    }
+
+    .alert-timestamp {
+        color: #6c757d;
+        font-size: 0.9em;
+    }
+</style>

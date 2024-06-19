@@ -21,44 +21,24 @@ namespace Backend.ServerModules
                 return;
             }
 
-            if (!user.IsRegistered)
+            if (IsAuthRequest(rawString))
             {
-                if (IsAuthRequest(rawString))
-                {
-                    string username = rawString.Substring(14);
-                    username = username.Trim();
-                    if (UserManager.Authenticate(user.Socket, username))
-                    {
-                        SendAccept();
-                        SendUserListToAll();
-                        SendAlert($"User {username} has connected");
-                    }
-                    else
-                    {
-                        SendRefuse("Authentication failed: Username taken or banned");
-                        CLogger.Error($"Failed authentication attempt from user at: {user.Ip}");
-                    }
-                    
-                }
-                else
-                {
-                    SendRefuse("You must authenticate first by sending AUTH verb WITH a unique username");
-                    CLogger.Error($"Failed send attempt from unregistered user at: {user.Ip}");
-                }
-
-                return;
+                string username = rawString.Substring(14);
+                username = username.Trim();
+                Authenticate(user, username);
             }
 
-            if (user.IsRegistered && IsAuthRequest(rawString))
+            if(!user.IsRegistered)
             {
-                SendRefuse("Authentication failed: Already authenticated");
-                CLogger.Error($"Failed authentication request from already authentiated user: {user.Username}");
+                SendRefuse("You are not authenticated!");
+                CLogger.Error($"Message refused, user is not authenticated: {user.Ip}");
                 return;
             }
 
             switch(GetMessageType(rawString))
             {
                 case MessageType.TextMessage:
+                {
                     if (user.IsMuted)
                     {
                         SendRefuse("You are muted!");
@@ -72,10 +52,13 @@ namespace Backend.ServerModules
                     textMessage.SaveToDb();
                     CLogger.Chat(textMessage.Sender, textMessage.Content);
                     break;
+                }
                 case MessageType.CommandMessage:
+                {
                     var commandMessage = new CommandMessage(socket, rawString);
                     commandMessage.InvokeCommand();
                     break;
+                }
             }
         }
 
@@ -103,6 +86,43 @@ namespace Backend.ServerModules
 
             SendUserListToAll();
             SendAlert($"User {user.Username} has disconnected");
+        }
+
+        private void Authenticate(User user, string username)
+        {
+            if (user.IsRegistered)
+            {
+                SendRefuse("Authentication failed: Already authenticated");
+                CLogger.Error($"Failed authentication request from already authentiated user: {user.Username}");
+                return;
+            }
+
+            if (!UserManager.InitializeUser(user.Socket, username))
+            {
+                SendRefuse("Authentication failed: Username taken");
+                CLogger.Error($"Failed authentication attempt, username taken: {username}");
+                return;
+            }
+
+            if (user.IsBanned)
+            {
+                SendRefuse("Authentication failed: Username is banned");
+                CLogger.Error($"Connection refused from banned user: {user.Username}");
+                UserManager.Disconnect(user);
+                return;
+            }
+
+            if (BannedIp.AlreadyExists(user.Ip)) 
+            {
+                SendRefuse("Authentication failed: IP is banned");
+                CLogger.Error($"Connection refused from banned IP: {user.Ip}");
+                UserManager.Disconnect(user);
+                return;
+            }
+
+            SendAccept();
+            SendUserListToAll();
+            SendAlert($"User {username} has connected");
         }
     }
 }
