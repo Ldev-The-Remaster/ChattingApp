@@ -4,7 +4,8 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Backend.Database
 {
-    // Messages Database
+    #region Messages Database
+
     public class TextMessageContext : DbContext
     {
         public DbSet<TextMessage> TextMessages { get; set; }
@@ -25,7 +26,10 @@ namespace Backend.Database
         }
     }
 
-    // Users Database
+    #endregion
+
+    #region Users Database
+
     public class UserContext : DbContext
     {
         public DbSet<User> Users { get; set; }
@@ -46,7 +50,10 @@ namespace Backend.Database
         }
     }
 
-    // Banned IPs Database
+    #endregion
+
+    #region Banned IPs Database
+
     public class BannedIpContext : DbContext
     {
         public DbSet<BannedIp> BannedIps { get; set; }
@@ -66,4 +73,6 @@ namespace Backend.Database
             bannedIpContext.Database.EnsureCreated();
         }
     }
+
+    #endregion
 }

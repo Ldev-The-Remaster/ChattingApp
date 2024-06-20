@@ -4,10 +4,14 @@ namespace Backend.ServerModules
 {
     public class ServerStartupOptions
     {
-        // Fields
+        #region Fields
+
         public int Port;
 
-        // Methods
+        #endregion
+
+        #region Methods
+
         bool IsValid()
         {
             if (Port < 1 || Port > 65535)
@@ -36,5 +40,7 @@ namespace Backend.ServerModules
 
             return serverOptions;
         }
+
+        #endregion
     }
 }

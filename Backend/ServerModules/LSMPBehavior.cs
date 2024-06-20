@@ -12,10 +12,14 @@ namespace Backend.ServerModules
 
     public class LSMPBehavior : WebSocketBehavior
     {
-        // Fields
+        #region Fields
+
         private static readonly string NEW_LINE = "\r\n";
 
-        // Senders
+        #endregion
+
+        #region Senders
+
         protected void SendAccept()
         {
             Send("DO ACCEPT");
@@ -73,7 +77,10 @@ namespace Backend.ServerModules
             }
         }
 
-        // Methods
+        #endregion
+
+        #region Methods
+
         protected bool IsAuthRequest(string message)
         {
             return (message.Substring(3, 4).ToLower() == "auth");
@@ -96,5 +103,7 @@ namespace Backend.ServerModules
 
             return arrString;
         }
+
+        #endregion
     }
 }

@@ -8,7 +8,8 @@ namespace Backend.ServerModules
 {
     public class ServerBehavior : LSMPBehavior
     {
-        // Callbacks
+        #region Callbacks
+
         protected override void OnOpen()
         {
             WebSocket socket = Context.WebSocket;
@@ -89,7 +90,10 @@ namespace Backend.ServerModules
             SendAlert($"User {user.Username} has disconnected");
         }
 
-        // Local Methods
+        #endregion
+
+        #region Local Methods
+
         private void Authenticate(User user, string username)
         {
             if (user.IsRegistered)
@@ -126,5 +130,7 @@ namespace Backend.ServerModules
             SendUserListToAll();
             SendAlert($"User {username} has connected");
         }
+
+        #endregion
     }
 }

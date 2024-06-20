@@ -8,7 +8,8 @@ namespace Backend.Models.Users
 {
     public class User : IEncodable
     {
-        // Fields
+        #region Fields
+
         public int UserId { get; set; }
 
         private WebSocket _socket;
@@ -20,7 +21,10 @@ namespace Backend.Models.Users
         private string _muteReason = "";
         private string _banReason = "";
 
-        //Properties
+        #endregion
+
+        #region Properties
+
         [NotMapped]
         public WebSocket Socket
         {
@@ -72,7 +76,10 @@ namespace Backend.Models.Users
             set { _banReason = value; }
         }
 
-        // Constructors
+        #endregion
+
+        #region Constructors
+
         private User()
         {
             // This is needed by EntityFramework
@@ -86,13 +93,18 @@ namespace Backend.Models.Users
             _ip = ip;
         }
 
-        // Methods
+        #endregion
+
+        #region Methods
+
         public string EncodeToString()
         {
             return Username;
         }
+        #endregion
 
-        // Persistence
+        #region Persistence
+
         private static UserContext context = new UserContext();
 
         public void SaveToDb()
@@ -118,5 +130,7 @@ namespace Backend.Models.Users
             if (usersFromDB.Count == 0) return null;
             return usersFromDB.First();
         }
+
+        #endregion
     }
 }

@@ -5,10 +5,14 @@ namespace Backend.Models.Users
 {
     public static class UserManager
     {
-        // Fields
+        #region Fields
+
         public static List<User> UsersList { get; set; } = new List<User>();
 
-        // Infraction Methods
+        #endregion
+
+        #region Infraction Methods
+
         public static void Mute(User user, string reason = "")
         {
             user.IsMuted = true;
@@ -60,7 +64,10 @@ namespace Backend.Models.Users
             bannedIp.RemoveFromDb();
         }
 
-        // User Management
+        #endregion
+
+        #region User Management
+
         public static User Connect(WebSocket socket, string ip)
         {
             User newUser = new User(socket, ip);
@@ -114,7 +121,10 @@ namespace Backend.Models.Users
             UsersList.Remove(user);
         }
 
-        // Getters
+        #endregion
+
+        #region Getters
+
         public static User? GetUserByUsername(string username) 
         {
             return UsersList.Find(user => user.Username.ToLower() == username.ToLower());
@@ -129,5 +139,7 @@ namespace Backend.Models.Users
         {
             return GetUserBySocket(socket)?.Username ?? String.Empty;
         }
+
+        #endregion
     }
 }

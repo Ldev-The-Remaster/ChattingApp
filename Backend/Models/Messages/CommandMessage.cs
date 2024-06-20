@@ -7,7 +7,8 @@ namespace Backend.Models.Messages
 {
     public class CommandMessage : Message
     {
-        // Fields
+        #region Fields
+
         enum CommandType
         {
             Mute,
@@ -27,7 +28,10 @@ namespace Backend.Models.Messages
         private string? _channel;
         private string? _payload;
 
-        // Constructors
+        #endregion
+
+        #region Constructors
+
         public CommandMessage(WebSocket socket, string rawString) : base(socket, rawString)
         {
             _command = GetCommandType();
@@ -37,7 +41,10 @@ namespace Backend.Models.Messages
             _payload = _with;
         }
 
-        // Methods
+        #endregion
+
+        #region Methods
+
         private CommandType GetCommandType()
         {
             switch (_do.ToLower())
@@ -96,7 +103,10 @@ namespace Backend.Models.Messages
             }
         }
 
-        // Senders
+        #endregion
+
+        #region Senders
+
         private void SendAccept()
         {
             if (_sender != null)
@@ -134,7 +144,10 @@ namespace Backend.Models.Messages
             SendToAll(alert);
         }
 
-        // Commands
+        #endregion
+
+        #region Commands
+
         private void ProcessMute()
         {
             if (_sender == null)
@@ -500,6 +513,8 @@ namespace Backend.Models.Messages
                 _sender.Socket.Send(msgString);
             }
         }
+
+        #endregion
     }
 
 }
