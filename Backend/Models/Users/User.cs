@@ -8,9 +8,23 @@ namespace Backend.Models.Users
 {
     public class User : IEncodable
     {
+        #region Fields
+
         public int UserId { get; set; }
 
         private WebSocket _socket;
+        private string _ip;
+        private string _username = "";
+        private bool _isRegistered = false;
+        private bool _isMuted = false;
+        private bool _isBanned = false;
+        private string _muteReason = "";
+        private string _banReason = "";
+
+        #endregion
+
+        #region Properties
+
         [NotMapped]
         public WebSocket Socket
         {
@@ -18,7 +32,6 @@ namespace Backend.Models.Users
             set { _socket = value; }
         }
 
-        private string _ip;
         [NotMapped]
         public string Ip
         {
@@ -26,14 +39,12 @@ namespace Backend.Models.Users
             set { _ip = value; }
         }
 
-        private string _username = "";
         public string Username
         {
             get { return _username; }
             set { _username = value; }
         }
 
-        private bool _isRegistered = false;
         [NotMapped]
         public bool IsRegistered
         {
@@ -41,33 +52,33 @@ namespace Backend.Models.Users
             set { _isRegistered = value; }
         }
 
-        private bool _isMuted = false;
         public bool IsMuted
         {
             get { return _isMuted; }
             set { _isMuted = value; }
         }
 
-        private bool _isBanned = false;
         public bool IsBanned
         {
             get { return _isBanned; }
             set { _isBanned = value; }
         }
 
-        private string _muteReason = "";
         public string MuteReason
         {
             get { return _muteReason; }
             set { _muteReason = value; }
         }
 
-        private string _banReason = "";
         public string BanReason
         {
             get { return _banReason; }
             set { _banReason = value; }
         }
+
+        #endregion
+
+        #region Constructors
 
         private User()
         {
@@ -82,25 +93,24 @@ namespace Backend.Models.Users
             _ip = ip;
         }
 
+        #endregion
+
+        #region Methods
+
         public string EncodeToString()
         {
             return Username;
         }
+        #endregion
 
-        // Persistence
+        #region Persistence
+
         private static UserContext context = new UserContext();
 
         public void SaveToDb()
         {
             context.Add(this);
             context.SaveChanges();
-        }
-
-        public static User? GetUserFromDB(string username)
-        {
-            List<User> usersFromDB = context.Users.Where(m => m.Username.ToLower() == username.ToLower()).ToList();
-            if (usersFromDB.Count == 0) return null;
-            return usersFromDB.First();
         }
 
         public void UpdateToDB()
@@ -113,5 +123,14 @@ namespace Backend.Models.Users
             userFromDB = this;
             context.SaveChanges();
         }
+
+        public static User? GetUserFromDB(string username)
+        {
+            List<User> usersFromDB = context.Users.Where(m => m.Username.ToLower() == username.ToLower()).ToList();
+            if (usersFromDB.Count == 0) return null;
+            return usersFromDB.First();
+        }
+
+        #endregion
     }
 }

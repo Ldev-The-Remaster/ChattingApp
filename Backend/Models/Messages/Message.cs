@@ -50,6 +50,8 @@ namespace Backend.Models.Messages
     }
     public abstract class Message
     {
+        #region Fields
+
         public enum MessageType
         {
             TextMessage,
@@ -63,6 +65,10 @@ namespace Backend.Models.Messages
         protected long _at;
         protected string _with;
         protected WebSocket? _socket;
+
+        #endregion
+
+        #region Constructors
 
         protected Message()
         {
@@ -89,6 +95,10 @@ namespace Backend.Models.Messages
             _socket = socket;
         }
 
+        #endregion
+
+        #region Methods
+
         public static MessageType GetMessageType(string rawString)
         {
             string doArgument = rawString.Substring(3, 4); // "DO SEND"
@@ -98,5 +108,7 @@ namespace Backend.Models.Messages
             }
             return MessageType.CommandMessage;
         }
+
+        #endregion
     }
 }

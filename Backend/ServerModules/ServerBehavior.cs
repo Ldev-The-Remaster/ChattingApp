@@ -8,6 +8,17 @@ namespace Backend.ServerModules
 {
     public class ServerBehavior : LSMPBehavior
     {
+        #region Callbacks
+
+        protected override void OnOpen()
+        {
+            WebSocket socket = Context.WebSocket;
+            string ip = Context.UserEndPoint.Address.ToString();
+
+            UserManager.Connect(socket, ip);
+            CLogger.Event($"New client connected from: {ip}");
+        }
+
         protected override void OnMessage(MessageEventArgs e)
         {
             string rawString = e.Data;
@@ -62,15 +73,6 @@ namespace Backend.ServerModules
             }
         }
 
-        protected override void OnOpen()
-        {
-            WebSocket socket = Context.WebSocket;
-            string ip = Context.UserEndPoint.Address.ToString();
-
-            UserManager.Connect(socket, ip);
-            CLogger.Event($"New client connected from: {ip}");
-        }
-
         protected override void OnClose(CloseEventArgs e)
         {
             WebSocket socket = Context.WebSocket;
@@ -87,6 +89,10 @@ namespace Backend.ServerModules
             SendUserListToAll();
             SendAlert($"User {user.Username} has disconnected");
         }
+
+        #endregion
+
+        #region Local Methods
 
         private void Authenticate(User user, string username)
         {
@@ -124,5 +130,7 @@ namespace Backend.ServerModules
             SendUserListToAll();
             SendAlert($"User {username} has connected");
         }
+
+        #endregion
     }
 }

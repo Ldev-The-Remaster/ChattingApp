@@ -7,35 +7,46 @@ namespace Backend.Models.Messages
 {
     public class TextMessage : Message, IEncodable
     {
+        #region Fields
+
         public int TextMessageId { get; set; }
 
         private string _sender;
+        private string _channel;
+        private long _timestamp;
+        private string _content;
+
+        #endregion
+
+        #region Properties
+
         public string Sender
         {
             get { return _sender; }
             set { _sender = value; }
         }
 
-        private string _channel;
         public string Channel
         {
             get { return _channel; }
             set { _channel = value; }
         }
 
-        private long _timestamp;
         public long TimeStamp
         {
             get { return _timestamp; }
             set { _timestamp = value; }
         }
 
-        private string _content;
         public string Content
         {
             get { return _content; }
             set { _content = value; }
         }
+
+        #endregion
+
+        #region Constructors
 
         private TextMessage()
         {
@@ -64,6 +75,10 @@ namespace Backend.Models.Messages
             _content = _with;
         }
 
+        #endregion
+
+        #region Methods
+
         public string EncodeToString()
         {
             string msgString = "DO SEND\r\n";
@@ -91,7 +106,10 @@ namespace Backend.Models.Messages
             return msgString;
         }
 
-        // Persistence
+        #endregion
+
+        #region Persistence
+
         private static TextMessageContext context = new TextMessageContext();
 
         public void SaveToDb()
@@ -108,5 +126,7 @@ namespace Backend.Models.Messages
 
             return messageHistory;
         }
+
+        #endregion
     }
 }

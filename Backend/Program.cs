@@ -33,10 +33,14 @@ internal class Program
         }
     }
 
+    #region Local Methods
+
     private static void SetUpDatabase()
     {
         UserContext.SetUp();
         BannedIpContext.SetUp();
         TextMessageContext.SetUp();
     }
+
+    #endregion
 }

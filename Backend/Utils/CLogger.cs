@@ -2,6 +2,8 @@
 {
     public static class CLogger
     {
+        #region Loggers
+
         public static void Log(string message)
         {
             Console.WriteLine($"{GetTimestamp()} | {message}");
@@ -38,9 +40,15 @@
             Console.ResetColor();
         }
 
+        #endregion
+
+        #region Local Methods
+
         private static string GetTimestamp()
         {
             return DateTime.Now.ToString("HH:mm:ss");
         }
+
+        #endregion
     }
 }

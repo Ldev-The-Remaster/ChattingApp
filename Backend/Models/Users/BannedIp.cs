@@ -4,22 +4,33 @@ namespace Backend.Models.Users
 {
     public class BannedIp
     {
+        #region Properties
+
         public int BannedIpId { get; set; }
         public string IpAddress { get; set; }
         public string BanReason { get; set; }
 
+        #endregion
+
+        #region Constructors
+
         private BannedIp()
         {
+            // This is needed by EntityFramework
             IpAddress = String.Empty;
             BanReason = String.Empty;
         }
+
         public BannedIp(string ip, string banReason)
         {
             IpAddress = ip;
             BanReason = banReason;
         }
 
-        //Persistence
+        #endregion
+
+        #region Persistence
+
         public static BannedIpContext context = new BannedIpContext();
 
         public void SaveToDb()
@@ -49,5 +60,7 @@ namespace Backend.Models.Users
             List<BannedIp> ipsFromDb = context.BannedIps.Where(m => m.IpAddress == ip).ToList();
             return ipsFromDb.Count > 0;
         }
+
+        #endregion
     }
 }
