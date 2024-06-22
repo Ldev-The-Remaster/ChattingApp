@@ -4,20 +4,6 @@
 @using System.Net
 @inject IJSRuntime JSRuntime
 
-@*
-    This context menu needs:
-    message
-    Mute
-    Ban
-    View IP
-    IP Ban
-    # # Righting clicking a user brings up a menu with the options (Private Message, Mute, Kick, Ban).
-    # # Each button should be hooked up to a function call but the function call should not be implemented yet.
-    # # Menu should be accessible from both chat and user list
-    TO DO:
-    // make them render on click next to their element
-    
-*@
 <div >
     <ul>
         <li @onclick="MessageUser">Message</li>

@@ -37,7 +37,7 @@
     <div class="user-block">
         <h1>CONNECTED USERS</h1>
         <ul class="user-list">
-            @if (isBeingShown && position!=null)
+            @if (isBeingShown && position != null)
             {
                 <div class="@contextDivClass" @onclick:stopPropagation="true">
                     <ContextMenu />
@@ -46,7 +46,7 @@
 
             @foreach (var user in users)
             {
-                <li  @oncontextmenu="showContextMenu" @oncontextmenu:preventDefault="true">@user</li>
+                <li @oncontextmenu="showContextMenu" @oncontextmenu:preventDefault="true">@user</li>
             }
         </ul>
     </div>
@@ -81,7 +81,7 @@
 
     public async Task showContextMenu(MouseEventArgs e)
     {
-        position = await JSRuntime.InvokeAsync<Position>("getElementPosition", e.ClientX-50, e.ClientY);
+        position = await JSRuntime.InvokeAsync<Position>("getElementPosition", e.ClientX - 50, e.ClientY);
         isBeingShown = true;
         if (isBeingShown)
         {
@@ -106,7 +106,7 @@
 
     private void HandleDisconnect()
     {
-        if(!WebSocketService.IsAuthenticated)
+        if (!WebSocketService.IsAuthenticated)
         {
             NavigationManager.NavigateTo("/login");
         }
@@ -114,7 +114,7 @@
 
     private void UpdateUserList()
     {
-        users = ClientManager.CurrentUsersList; 
+        users = ClientManager.CurrentUsersList;
         InvokeAsync(StateHasChanged);
         Console.WriteLine("users in mainpage: " + string.Join(", ", users));
     }
