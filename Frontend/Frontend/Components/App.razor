@@ -14,7 +14,8 @@
     <HeadOutlet @rendermode="InteractiveWebAssembly" />
 </head>
 
-<body>
+<body @onclick="ContextMenuService.HideContextMenu">
+    <Frontend.Client.Components.ContextMenu @rendermode="InteractiveWebAssembly" />
     <Routes @rendermode="InteractiveWebAssembly" />
     <script src="_framework/blazor.web.js"></script>
 </body>
