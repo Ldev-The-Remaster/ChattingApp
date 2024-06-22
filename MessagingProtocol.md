@@ -1,7 +1,7 @@
 # Technical specifications for the **L**eague **S**ockets **M**essaging **P**rotocol (LSMP)
 This document lists the technical specifications and details for implementing LSMP in your websocket server.  
 LSMP is a custom protocol intended for use on top of the websockets protocol for the purpose of a live chat messaging application.  
-*Version: 0.4.0*
+*Version: 0.4.1*
 
 # Client -> Server
 Websocket messages coming from the client should conform to the following pattern:
@@ -38,7 +38,9 @@ WITH
 - ### AUTH: Authenticate a user
    > Required params: `FROM <username>`
 - ### CONNECT: Connect to a channel
-   > Required params: `TO <channel-name>`
+   > Required params: `IN <channel-name>`
+- ### IDENTIFY: Request user list
+   > Required params: `IN <channel-name>`
 - ### REMEMBER: Request message history
    > Required params: `FROM <message-order>`, `TO <message-order>`, `IN <channel-name>`
 - ### SEND: Send a message in a channel
@@ -121,14 +123,16 @@ Besides displaying messages and alerts, the server also needs to respond to `AUT
 
 ## Multisend verbs
 ### User List
-When a new client authenticates using `AUTH`, the server will send the list of users that are currently connected (and authenticated) to this new client. Similarly, the server will also send the updated list to all other clients when the new client joins, or when another client disconnects.
+When a new client authenticates using `AUTH`, the server will send the list of users that are currently connected (and authenticated) to this new client. Similarly, the server will also send the updated list to all other clients when the new client joins, or when another client disconnects.  
+The client may also ask for the user list using the `IDENTIFY` verb.  
 This is done via the `INTRODUCE` server verb, in which the server will provide the list of connected users in the form of an array.
 - ### INTRODUCE: Send list of online users
-   > Required params: `WITH <array-of-users>`
+   > Required params: `IN <channel-name>`, `WITH <array-of-users>`
 
 In the `WITH` argument, the list of usernames should start, end, and be seperated using the character sequence `/*$*/` (forward slash, asterisk, dollar sign, asterisk, forward slash) with the seperator and each username in a different line like so:
 ```
 DO INTRODUCE
+IN general-chat
 WITH
 /*$*/
 Psycho
@@ -144,15 +148,17 @@ It's then up to the client to re-interpret the user array to populate the UI.
 When the server receives a `REMEMBER` request from a client, the server is expected to forward all the messages that users have sent in the specified period, this is done through the `REMIND` server verb. When sending a `REMIND` from the server, the `WITH` parameter will house multiple message requests from the server so the client can populate its UI with the message history.
 
 - ### REMIND: Send multiple messages at once
-   > Required params: `WITH <array-of-messages>`
+   > Required params: `IN <channel-name>`, `WITH <array-of-messages>`
 
 In the `WITH` argument, seperate message requests should start, end, and be seperated using the character sequence `/*$*/` (forward slash, asterisk, dollar sign, asterisk, forward slash) like so:
 ```
 DO REMIND
+IN general-chat
 WITH
 /*$*/
 DO SEND
 FROM Okkio
+IN general-chat
 AT 1714754642
 WITH
 yoo good morning
@@ -160,17 +166,20 @@ how you been?
 /*$*/
 DO SEND
 FROM Psycho
+IN general-chat
 AT 1714754703
 WITH
 i'm good, just working on the protocol
 /*$*/
 DO SEND
 FROM Forki
+IN general-chat
 AT 1714754754
 WITH
 league? 💀
 /*$*/
 DO SEND
+IN general-chat
 AT 1714715436
 WITH
 User Forki has been banned
