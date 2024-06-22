@@ -61,11 +61,12 @@
     string? contextDivClass;
     [CascadingParameter]
     private MainPage MainPageInstance { get; set; }
+    private int boxWidth = 150;
 
     public class Position
     {
-        public int top { get; set; }
-        public int left { get; set; }
+        public double top { get; set; }
+        public double left { get; set; }
     }
     Position position = new Position { top = 0, left = 0 };
 
@@ -81,9 +82,16 @@
 
     public async Task showContextMenu(MouseEventArgs e)
     {
-        // position = await JSRuntime.InvokeAsync<Position>("getElementPosition", e.ClientX - 50, e.ClientY);
-        position.top = (int) e.ClientY;
-        position.left = (int) e.ClientX - 70;
+        //position = await JSRuntime.InvokeAsync<Position>("getElementPosition", e.ClientX - 50, e.ClientY);
+        position.top = e.ClientY;
+        position.left = e.ClientX;
+        double pageWidth = await JSRuntime.InvokeAsync<double>("getPageWidth");
+        double offset = boxWidth - (pageWidth - e.ClientX);
+        if (offset > 0)
+        {
+            position.left -= offset;
+        }
+
         isBeingShown = true;
         if (isBeingShown)
         {
@@ -156,7 +164,7 @@
         border: solid 1px;
         border-radius: 6px;
         font-weight: bold;
-        width: 15rem;
+        width: @(boxWidth)px;
     }
 
     .hideContextMenu {

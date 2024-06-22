@@ -5,6 +5,10 @@ window.getElementPosition = (clientX, clientY) => {
     };
 };
 
+window.getPageWidth = () => {
+    return window.innerWidth || document.documentElement.clientWidth || document.body.clientWidth;
+};
+
 let contextMenu = document.getElementById("contextMenuDiv");
 function changeDivClass() {
     contextMenu.classList.add("contextMenuDiv");
