@@ -294,35 +294,39 @@ input {
 .user-block {
     flex: 0 0 auto;
     min-width: 250px;
-    padding-left: 10px;
+/*    margin: 10px;*/
+    width:auto;
     display: flex;
     flex-direction: column;
     align-items: center;
     background-color: #525ceb;
-    border-bottom-left-radius: 6px;
-    border-top-left-radius: 6px;
 }
 
-    .user-block h1 {
-        padding-top: 1.5rem;
-        padding-right: 10px;
-        font-size: 1.5rem;
-        color: black;
-        margin: 0 0 20px 0;
-        text-align: center;
-    }
+.user-block h1 {
+    padding: 1.5rem;
+    font-size: 1.5rem;
+    color: black;
+    text-align: center;
+    margin: 0;
+}
 
 .user-list {
     list-style: none;
-    padding: 0;
+    width: 100%;
+    padding:0;
+    margin:0;
 }
 
 .user-list li {
-    margin-bottom: 1rem;
-    margin-top: 1rem;
+    margin: 1rem;
+    padding: 1rem;
+    font-size: 1.3rem;
     font-weight: bold;
+    text-align: center;
+    border-radius: 6px;
 }
 
-.user-list li:hover{
-    cursor:pointer;
+.user-list li:hover {
+    cursor: pointer;
+    background-color: #7881ff70;
 }
