@@ -81,7 +81,9 @@
 
     public async Task showContextMenu(MouseEventArgs e)
     {
-        position = await JSRuntime.InvokeAsync<Position>("getElementPosition", e.ClientX - 50, e.ClientY);
+        // position = await JSRuntime.InvokeAsync<Position>("getElementPosition", e.ClientX - 50, e.ClientY);
+        position.top = (int) e.ClientY;
+        position.left = (int) e.ClientX - 70;
         isBeingShown = true;
         if (isBeingShown)
         {
