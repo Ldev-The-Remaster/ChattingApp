@@ -37,8 +37,6 @@ WITH
 \* `DO` is required for all verbs.
 - ### AUTH: Authenticate a user
    > Required params: `FROM <username>`
-- ### CONNECT: Connect to a channel
-   > Required params: `IN <channel-name>`
 - ### IDENTIFY: Request user list
    > Required params: `IN <channel-name>`
 - ### REMEMBER: Request message history
@@ -115,7 +113,7 @@ The `AT` parameter for the timestamps is mainly used when the server is sending 
    > In channel (defaults to `general-chat`): `IN <channel-name>`  
    > With a timestamp from history (defaults to `date.now`): `AT <timestamp>`
 
-Besides displaying messages and alerts, the server also needs to respond to `AUTH` and `CONNECT` requests, as well as refuse `SEND` requests from unauthorized clients. This is done using the following verbs:
+Besides displaying messages and alerts, the server also needs to respond to `AUTH` requests, as well as refuse `SEND` requests from unauthorized clients. This is done using the following verbs:
 - ### ACCEPT: Accepts the request from the client
    > No params
 - ### REFUSE: Refuses the request from the client
