@@ -1,7 +1,7 @@
 # Technical specifications for the **L**eague **S**ockets **M**essaging **P**rotocol (LSMP)
 This document lists the technical specifications and details for implementing LSMP in your websocket server.  
 LSMP is a custom protocol intended for use on top of the websockets protocol for the purpose of a live chat messaging application.  
-*Version: 0.4.1*
+*Version: 0.5.0*
 
 # Client -> Server
 Websocket messages coming from the client should conform to the following pattern:
@@ -39,10 +39,17 @@ WITH
    > Required params: `FROM <username>`
 - ### IDENTIFY: Request user list
    > Required params: `IN <channel-name>`
+- ### INQUIRE: Request room list
 - ### REMEMBER: Request message history
    > Required params: `FROM <message-order>`, `TO <message-order>`, `IN <channel-name>`
 - ### SEND: Send a message in a channel
    > Required params: `IN <channel-name>`, `WITH <message>`  
+---
+### Channel management (Admin only):
+- ### CREATE: Create a channel
+   > Required params: `WITH <channel-name>`  
+- ### DELETE: Delete a channel
+   > Required params: `WITH <channel-name>`
 ---
 ### Infractions (Admin only):
 - ### MUTE: Mute a user in a channel
