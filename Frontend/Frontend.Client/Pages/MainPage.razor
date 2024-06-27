@@ -4,10 +4,11 @@
 @using static Frontend.Client.Models.WebSocketService
 @inject NavigationManager NavigationManager
 @inject WebSocketService WebSocketService
+@inject IJSRuntime JSRuntime
 
 <PageTitle>Main Page</PageTitle>
 
-<div class="main-page">
+<div class="main-page" @onclick="HandleGlobalClick">
     <div class="main-block">
         <div class="main-top">
             <h1>Chat Room</h1>
@@ -38,7 +39,7 @@
         <ul class="user-list">
             @foreach (var user in users)
             {
-                <li>@user</li>
+                <li @oncontextmenu="e => ContextMenuService.ShowContextMenu(e, JSRuntime)" @oncontextmenu:preventDefault="true">@user</li>
             }
         </ul>
     </div>
@@ -46,9 +47,8 @@
 
 @code {
     private string newMessage = string.Empty;
-    private List<Message> messages = new List<Message>();
     private List<string> users = new List<string>();
-
+    private List<Message> messages = new List<Message>();
     protected override void OnInitialized()
     {
         HandleDisconnect();
@@ -60,7 +60,7 @@
 
     private void HandleDisconnect()
     {
-        if(!WebSocketService.IsAuthenticated)
+        if (!WebSocketService.IsAuthenticated)
         {
             NavigationManager.NavigateTo("/login");
         }
@@ -68,7 +68,7 @@
 
     private void UpdateUserList()
     {
-        users = ClientManager.CurrentUsersList; 
+        users = ClientManager.CurrentUsersList;
         InvokeAsync(StateHasChanged);
         Console.WriteLine("users in mainpage: " + string.Join(", ", users));
     }
@@ -95,4 +95,13 @@
             await SendMessage();
         }
     }
+    private void HandleGlobalClick()
+    {
+        if (ContextMenuService.IsBeingShown)
+        {
+            ContextMenuService.HideContextMenu();
+        }
+    }
 }
+
+
