@@ -27,27 +27,40 @@
 
     public async void MessageUser()
     {
+        hideOnAction();
         return;
     }
 
     public async void MuteUser()
     {
+        hideOnAction();
         return;
     }
 
     public async void BanUser()
     {
+        hideOnAction();
         return;
     }
 
     public async void ViewIpUser()
     {
+        hideOnAction();
         return;
     }
 
     public async void IpBanUser()
     {
+        hideOnAction();
         return;
+    }
+
+    public void hideOnAction()
+    {
+        if (ContextMenuService.IsBeingShown)
+        {
+            ContextMenuService.HideContextMenu();
+        }
     }
 }
 

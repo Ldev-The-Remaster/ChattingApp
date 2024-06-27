@@ -8,7 +8,7 @@
 
 <PageTitle>Main Page</PageTitle>
 
-<div class="main-page">
+<div class="main-page" @onclick="HandleGlobalClick">
     <div class="main-block">
         <div class="main-top">
             <h1>Chat Room</h1>
@@ -93,6 +93,13 @@
         if (e.Key == "Enter")
         {
             await SendMessage();
+        }
+    }
+    private void HandleGlobalClick()
+    {
+        if (ContextMenuService.IsBeingShown)
+        {
+            ContextMenuService.HideContextMenu();
         }
     }
 }
