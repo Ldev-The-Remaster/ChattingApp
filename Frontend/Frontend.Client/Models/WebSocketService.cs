@@ -13,7 +13,7 @@ namespace Frontend.Client.Models
 
         private static ClientWebSocket? _webSocket;
         private static Task? _receiveMessagesTask;
-        public delegate void MessagesEventHandler(Message messages);
+        public delegate void MessagesEventHandler(UserMessage messages);
         public static event MessagesEventHandler? OnMessageReceived;
         public static event Action? OnClosed;
         private static bool _isAuthenticated = false;
@@ -52,30 +52,8 @@ namespace Frontend.Client.Models
                     return;
                 }
 
-                if (message.Do.Equals("SEND") && message.From.Equals(""))
-                {
-                    var hashAndMessageList = message.With.Split("\r\n");
-                    if (hashAndMessageList.Length != 2)
-                    {
-                        Console.WriteLine("Error: Message format is invalid, missing hash or content.");
-                        return;
-                    }
-                    var hash = hashAndMessageList[0];
-                    var timestamp = DateTimeOffset.FromUnixTimeSeconds(message.At).DateTime;
-                    var content = hashAndMessageList[1];
-                    OnMessageReceived?.Invoke(new Message
-                    (
-                        user: null,
-                        hash: hash,
-                        content: content,
-                        timestamp: timestamp
-                    ));
-                    return;
-                }
-
                 if(message.Do.Equals("SEND"))
                 {
-                    bool isServerAlert = message.From.Equals("");
                     var hashAndMessageList = message.With.Split("\r\n");
                     if (hashAndMessageList.Length != 2) 
                     {
@@ -87,7 +65,21 @@ namespace Frontend.Client.Models
                     var timestamp = DateTimeOffset.FromUnixTimeSeconds(message.At).DateTime; 
                     var hash = hashAndMessageList[0];
                     var content = hashAndMessageList[1];
-                    OnMessageReceived?.Invoke(new Message
+
+                    if (user.Equals(string.Empty))
+                    {
+                        OnMessageReceived?.Invoke(new UserMessage
+                        (
+                            user: null,
+                            hash: hash,
+                            content: content,
+                            timestamp: timestamp
+                        )); ;
+
+                        return;
+                    }
+
+                    OnMessageReceived?.Invoke(new UserMessage
                     (
                         user: user,
                         hash: hash,
@@ -97,7 +89,8 @@ namespace Frontend.Client.Models
 
                     return;
                 }
-                    Console.WriteLine("Error: Message format is invalid.");
+
+                Console.WriteLine("Error: Message format is invalid.");
             }
             catch (Exception e)
             {
@@ -107,6 +100,7 @@ namespace Frontend.Client.Models
 
         private static void OnClose() 
         {
+            _receiveMessagesTask?.Dispose();
             _isAuthenticated = false;
             OnClosed?.Invoke();
         }
@@ -141,7 +135,7 @@ namespace Frontend.Client.Models
             }
         }
 
-        public static async Task SendMessage(Message message)
+        public static async Task SendMessage(UserMessage message)
         {
             await SendMessage(message.Hash, message.Content);
         }

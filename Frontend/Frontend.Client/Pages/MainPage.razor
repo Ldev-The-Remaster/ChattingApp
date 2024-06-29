@@ -29,7 +29,7 @@
             </div>
         </div>
         <div class="chat-input-box">
-            <input type="text" placeholder="Type your message here" value="@currentMessage" @oninput="e => currentMessage = e.Value.ToString()" @onkeydown="HandleEnterKey" />
+            <textarea placeholder="Type your message here" value="@currentMessage" @oninput="e => currentMessage = e.Value.ToString()" @onkeydown="HandleEnterKey" />
             <button class="sendMessageButton" @onclick="SendMessage">➤</button>
         </div>
     </div>
@@ -47,7 +47,7 @@
 @code {
     private string currentMessage = string.Empty;
     private List<string> users = new List<string>();
-    private List<Message> messages = new List<Message>();
+    private List<UserMessage> messages = new List<UserMessage>();
     protected override void OnInitialized()
     {
         HandleDisconnect();
@@ -72,12 +72,12 @@
         Console.WriteLine("users in mainpage: " + string.Join(", ", users));
     }
 
-    public void MessageReceived(Message message)
+    public void MessageReceived(UserMessage message)
     {
-        Message? currentUserMessage = messages.Find(messageInList => message.Hash == messageInList.Hash);
-        if(currentMessage != null)
+        UserMessage? currentUserMessage = messages.Find(messageInList => message.Hash == messageInList.Hash);
+        if(currentUserMessage != null)
         {
-
+            // TO MID: IsConfirmed here
         }
         else
         {
@@ -93,7 +93,7 @@
             return;
         }
 
-        var newMessage = new Message(ClientManager.CurrentUser, currentMessage);
+        var newMessage = new UserMessage(ClientManager.CurrentUser, currentMessage);
         messages.Add(newMessage);
         await WebSocketService.SendMessage(newMessage);
         currentMessage = String.Empty;
@@ -101,7 +101,7 @@
 
     private async void HandleEnterKey(KeyboardEventArgs e)
     {
-        if (e.Key == "Enter")
+        if (e.Key == "Enter" && !e.ShiftKey)
         {
             await SendMessage();
         }

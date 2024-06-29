@@ -43,7 +43,7 @@ namespace Backend.ServerModules
 
         protected void SendAlert(string message)
         {
-            AlertMessage alert = new AlertMessage( message);
+            AlertMessage alert = new AlertMessage(message);
 
             SendToAll(alert);
         }

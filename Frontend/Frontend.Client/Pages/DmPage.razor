@@ -1,5 +1,4 @@
 ﻿@page "/dm"
-@using Models
 @inject NavigationManager navMan
 
 <div class="dmDiv">
@@ -14,24 +13,15 @@
     </div>
 
     <div class="messageForm">
-        <InputText class="textBox" id="enterMessageBox" placeholder="Message the Chat!" @bind-Value="textMessage.messageText"></InputText>
+        <InputText class="textBox" id="enterMessageBox" placeholder="Message the Chat!"></InputText>
         <button class="sendMessageButton">➤</button>
     </div>
 </div>
 @code {
-
-    public TextMessageInterface textMessage { get; set; } = new()
-        {
-            messageText = string.Empty,
-        };
-
-
     // Currently the function is not working,there is a problem with the interactivity settings of the frontend it seems,needs extra digging into documentation,time didn't serve, to be fixed soon.
     public void backToMain()
     {
         navMan.NavigateTo("login");
 
     }
-
-
 }

@@ -3,7 +3,6 @@ using WebSocketSharp;
 
 namespace Backend.Models.Messages
 {
-
     struct MessageParams
     {
         public string Do = "";

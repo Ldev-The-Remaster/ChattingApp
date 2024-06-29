@@ -275,7 +275,8 @@ input {
     margin-right: 30px;
 }
 
-    .chat-input-box input {
+    .chat-input-box textarea {
+        resize: none;
         color: white;
         background-color: #3c3a3e;
         width: 100%;
@@ -284,10 +285,14 @@ input {
         border-radius: 6px;
         border: none;
         padding: 0 10px;
+        font-family: "Inter","sans-seriff";
+        display: flex;
+        align-items: center;
+        justify-content: center;
     }
 
-        .chat-input-box input:hover,
-        .chat-input-box input:focus {
+        .chat-input-box textarea:hover,
+        .chat-input-box textarea:focus {
             outline: none;
         }
 

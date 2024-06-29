@@ -85,7 +85,7 @@
             ClientManager.CurrentUser = userInfo.username;
             NavigationManager.NavigateTo("/main-page");
         }
-        catch (Exception ex)
+        catch (Exception)
         {
             isLoading = false;
             errorMesages.Add("Failed to connect to server, please check the server info!");

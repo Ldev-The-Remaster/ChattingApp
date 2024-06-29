@@ -3,14 +3,14 @@ using System.Security.Cryptography;
 
 namespace Frontend.Client.Models
 {
-    public class Message
+    public class UserMessage
     {
         public string? User { get; set; }
         public string Hash { get; set; }
         public string Content { get; set; }
         public DateTime Timestamp { get; set; }
 
-        public Message(string? user, string hash, string content, DateTime timestamp)
+        public UserMessage(string? user, string hash, string content, DateTime timestamp)
         {
             User = user;
             Hash = hash;
@@ -19,7 +19,7 @@ namespace Frontend.Client.Models
         }
 
         // TO MID: update constructor to take isconfirmed and set it
-        public Message(string user, string content) 
+        public UserMessage(string user, string content) 
         { 
             User = user;
             Hash =  ComputeSha256Hash(content + DateTimeOffset.Now.ToUnixTimeMilliseconds());
