@@ -7,12 +7,18 @@ namespace Backend.Models.Messages
     {
         #region Fields
 
+        private string _hash = "AlertMessageHash";
         private string _content;
         private long _timestamp;
 
         #endregion
 
         #region Properties
+
+        public string Hash
+        {
+            get { return _hash; }
+        }
 
         public string Content
         {

@@ -112,6 +112,8 @@ namespace Backend.ServerModules
             msgString += NEW_LINE;
             msgString += $"WITH";
             msgString += NEW_LINE;
+            msgString += message.Hash;
+            msgString += NEW_LINE;
             msgString += message.Content;
 
             return msgString;
