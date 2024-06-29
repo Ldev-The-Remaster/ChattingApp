@@ -17,6 +17,7 @@ namespace Frontend.Client.Models
             public string? User { get; set; }
             public string? Content { get; set; }
             public DateTime Timestamp { get; set; }
+            public bool IsConfirmed { get; set; } = false;
         }
 
         private ClientWebSocket? _webSocket;
@@ -78,12 +79,15 @@ namespace Frontend.Client.Models
                     var user = message.From; // "FROM user"
                     var timestamp = DateTimeOffset.FromUnixTimeSeconds(message.At).DateTime; // "AT timestamp"
                     var content = message.With; // Content starts after "WITH" line
+                    var confirmed = true;
                     OnMessageReceived?.Invoke(new Message
                     {
                         User = user,
                         Content = content,
-                        Timestamp = timestamp
-                    });
+                        Timestamp = timestamp,
+                        IsConfirmed = confirmed
+
+                    }) ;
                     return;
                 }
                     Console.WriteLine("Error: Message format is invalid.");

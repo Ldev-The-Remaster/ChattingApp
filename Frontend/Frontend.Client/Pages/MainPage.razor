@@ -23,7 +23,7 @@
                     }
                     else
                     {
-                        <MessageComponent User="@message.User" MessageContent="@message.Content" Timestamp="@message.Timestamp" />
+                        <MessageComponent User="@message.User" MessageContent="@message.Content" Timestamp="@message.Timestamp" isConfirmed="@message.IsConfirmed" />
                     }
                 }
             </div>
@@ -48,7 +48,7 @@
     private string newMessage = string.Empty;
     private List<Message> messages = new List<Message>();
     private List<string> users = new List<string>();
-
+    
     protected override void OnInitialized()
     {
         HandleDisconnect();
@@ -68,7 +68,7 @@
 
     private void UpdateUserList()
     {
-        users = ClientManager.CurrentUsersList; 
+        users = ClientManager.CurrentUsersList;
         InvokeAsync(StateHasChanged);
         Console.WriteLine("users in mainpage: " + string.Join(", ", users));
     }
