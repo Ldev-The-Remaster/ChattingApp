@@ -52,6 +52,7 @@
         public static event Action? OnUserListUpdate;
         public static List<string> CurrentUsersList
             { get { return _users; } }
+        public static string CurrentUser { get; set; } = string.Empty;
 
         public static void UpdateUserList(string rawUserList)
         {

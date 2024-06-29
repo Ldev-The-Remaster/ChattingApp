@@ -3,7 +3,6 @@
 @using Models
 @using System.Net
 @inject NavigationManager NavigationManager
-@inject WebSocketService WebSocketService
 
 <PageTitle>Login</PageTitle>
 
@@ -83,6 +82,7 @@
                 return;
             }
 
+            ClientManager.CurrentUser = userInfo.username;
             NavigationManager.NavigateTo("/main-page");
         }
         catch (Exception ex)

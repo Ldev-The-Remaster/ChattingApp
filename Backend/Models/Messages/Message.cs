@@ -1,14 +1,16 @@
-﻿using WebSocketSharp;
+﻿using Backend.ServerModules;
+using WebSocketSharp;
 
 namespace Backend.Models.Messages
 {
+
     struct MessageParams
     {
         public string Do = "";
         public string From = "";
         public string To = "";
         public string In = "";
-        public long At = ((DateTimeOffset)DateTime.Now).ToUnixTimeSeconds();
+        public long At = DateTimeOffset.Now.ToUnixTimeSeconds();
         public string With = "";
 
         public MessageParams(string rawString)
@@ -48,6 +50,7 @@ namespace Backend.Models.Messages
             }
         }
     }
+
     public abstract class Message
     {
         #region Fields

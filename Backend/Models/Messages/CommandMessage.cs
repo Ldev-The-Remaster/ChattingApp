@@ -1,4 +1,5 @@
-﻿using Backend.Models.Users;
+﻿using Backend.Interfaces;
+using Backend.Models.Users;
 using Backend.ServerModules;
 using Backend.Utils;
 using WebSocketSharp;
@@ -123,7 +124,7 @@ namespace Backend.Models.Messages
             }
         }
 
-        private void SendToAll(TextMessage message)
+        private void SendToAll(IEncodable message)
         {
             foreach (User client in UserManager.UsersList)
             {
@@ -138,8 +139,7 @@ namespace Backend.Models.Messages
 
         private void SendAlert(string message)
         {
-            TextMessage alert = new TextMessage(null, "");
-            alert.Content = message;
+            AlertMessage alert = new AlertMessage(message);
 
             SendToAll(alert);
         }
