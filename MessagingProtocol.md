@@ -1,7 +1,7 @@
 # Technical specifications for the **L**eague **S**ockets **M**essaging **P**rotocol (LSMP)
 This document lists the technical specifications and details for implementing LSMP in your websocket server.  
 LSMP is a custom protocol intended for use on top of the websockets protocol for the purpose of a live chat messaging application.  
-*Version: 0.4.1*
+*Version: 0.5.0*
 
 # Client -> Server
 Websocket messages coming from the client should conform to the following pattern:
@@ -37,14 +37,18 @@ WITH
 \* `DO` is required for all verbs.
 - ### AUTH: Authenticate a user
    > Required params: `FROM <username>`
-- ### CONNECT: Connect to a channel
-   > Required params: `IN <channel-name>`
 - ### IDENTIFY: Request user list
    > Required params: `IN <channel-name>`
 - ### REMEMBER: Request message history
    > Required params: `FROM <message-order>`, `TO <message-order>`, `IN <channel-name>`
 - ### SEND: Send a message in a channel
    > Required params: `IN <channel-name>`, `WITH <message>`  
+---
+### Channel management (Admin only):
+- ### CREATE: Create a channel
+   > Required params: `WITH <channel-name>`  
+- ### DELETE: Delete a channel
+   > Required params: `WITH <channel-name>`
 ---
 ### Infractions (Admin only):
 - ### MUTE: Mute a user in a channel
@@ -115,7 +119,7 @@ The `AT` parameter for the timestamps is mainly used when the server is sending 
    > In channel (defaults to `general-chat`): `IN <channel-name>`  
    > With a timestamp from history (defaults to `date.now`): `AT <timestamp>`
 
-Besides displaying messages and alerts, the server also needs to respond to `AUTH` and `CONNECT` requests, as well as refuse `SEND` requests from unauthorized clients. This is done using the following verbs:
+Besides displaying messages and alerts, the server also needs to respond to `AUTH` requests, as well as refuse `SEND` requests from unauthorized clients. This is done using the following verbs:
 - ### ACCEPT: Accepts the request from the client
    > No params
 - ### REFUSE: Refuses the request from the client
