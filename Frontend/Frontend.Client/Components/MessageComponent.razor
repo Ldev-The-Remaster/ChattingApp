@@ -1,9 +1,10 @@
 @namespace Frontend.Client.Components
 @using Frontend.Client.Models
+@inject IJSRuntime JSRuntime
 
 <div class="message">
     <div class="message-header">
-        <span class="user">@User</span>
+        <span class="user" @oncontextmenu="e => ContextMenuService.ShowContextMenu(e, JSRuntime)" @oncontextmenu:preventDefault="true">@User</span>
         <span class="timestamp">@Timestamp</span>
     </div>
     <div class="message-content">
@@ -58,6 +59,11 @@
         color: #1E90FF;
     }
 
+    .user:hover{
+        text-decoration:underline;
+        cursor:pointer;
+    }
+
     .timestamp {
         color: #6c757d;
         font-size: 0.9em;
@@ -67,3 +73,4 @@
         white-space: pre-wrap;
     }
 </style>
+

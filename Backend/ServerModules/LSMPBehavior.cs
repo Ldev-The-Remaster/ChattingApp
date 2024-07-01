@@ -1,15 +1,12 @@
 ﻿
+using Backend.Interfaces;
 using Backend.Models.Messages;
 using Backend.Models.Users;
+using Backend.Utils;
 using WebSocketSharp.Server;
 
 namespace Backend.ServerModules
 {
-    public interface IEncodable
-    {
-        string EncodeToString();
-    }
-
     public class LSMPBehavior : WebSocketBehavior
     {
         #region Fields
@@ -31,7 +28,7 @@ namespace Backend.ServerModules
             Send(message);
         }
 
-        protected void SendToAll(TextMessage message)
+        protected void SendToAll(IEncodable message)
         {
             foreach (User client in UserManager.UsersList)
             {
@@ -46,8 +43,7 @@ namespace Backend.ServerModules
 
         protected void SendAlert(string message)
         {
-            TextMessage alert = new TextMessage(null, "");
-            alert.Content = message;
+            AlertMessage alert = new AlertMessage(message);
 
             SendToAll(alert);
         }
@@ -102,6 +98,74 @@ namespace Backend.ServerModules
             }
 
             return arrString;
+        }
+
+        public static string EncodeAlertMessageToString(AlertMessage message)
+        {
+            string msgString = string.Empty;
+            if (message.Content == string.Empty)
+            {
+                return msgString;
+            }
+
+            msgString += "DO SEND";
+            msgString += NEW_LINE;
+            msgString += $"WITH";
+            msgString += NEW_LINE;
+            msgString += message.Hash;
+            msgString += NEW_LINE;
+            msgString += message.Content;
+
+            return msgString;
+        }
+
+        public static string EncodeTextMessageToString(TextMessage message)
+        {
+            string msgString = "DO SEND";
+            msgString += NEW_LINE;
+
+            if (message.Sender != string.Empty)
+            {
+                msgString += $"FROM {message.Sender}";
+                msgString += NEW_LINE;
+            }
+
+            if (message.Channel != string.Empty)
+            {
+                msgString += $"IN {message.Channel}";
+                msgString += NEW_LINE;
+            }
+
+            if (message.TimeStamp != 0)
+            {
+                msgString += $"AT {message.TimeStamp}";
+                msgString += NEW_LINE;
+            }
+
+            if (message.Hash != string.Empty && message.Content != string.Empty)
+            {
+                msgString += $"WITH";
+                msgString += NEW_LINE;
+                msgString += message.Hash;
+                msgString += NEW_LINE;
+                msgString += message.Content;
+            }
+
+            return msgString;
+        }
+
+        public static (string, string) GetHashAndMessage(string withPayload)
+        {
+            var splitList = withPayload.Split("\r\n");
+            if (splitList.Length != 2)
+            {
+                CLogger.Error("Error: Missing message hash!");
+                return (string.Empty, withPayload);
+            }
+
+            var hash = splitList[0];
+            var content = splitList[1];
+            return (hash, content);
         }
 
         #endregion

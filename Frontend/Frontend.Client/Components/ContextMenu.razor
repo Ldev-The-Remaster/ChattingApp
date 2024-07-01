@@ -1,0 +1,100 @@
+﻿@namespace Frontend.Client.Components
+@page "/context"
+@using System
+@using System.Net
+
+@if (ContextMenuService.IsBeingShown)
+{
+        <div class="contextMenuDiv" @onclick:stopPropagation="true">
+            <ul>
+                <li @onclick="MessageUser">Message</li>
+                <li @onclick="MuteUser">Mute</li>
+                <li @onclick="BanUser">Ban</li>
+                <li @onclick="ViewIpUser">View IP</li>
+                <li @onclick="IpBanUser">IP Ban</li>
+            </ul>
+    </div>
+}
+
+
+@code {
+    public static int BoxWidth = 200;
+
+    protected override void OnInitialized()
+    {
+        ContextMenuService.OnChange += StateHasChanged;
+    }
+
+    public async void MessageUser()
+    {
+        hideOnAction();
+        return;
+    }
+
+    public async void MuteUser()
+    {
+        hideOnAction();
+        return;
+    }
+
+    public async void BanUser()
+    {
+        hideOnAction();
+        return;
+    }
+
+    public async void ViewIpUser()
+    {
+        hideOnAction();
+        return;
+    }
+
+    public async void IpBanUser()
+    {
+        hideOnAction();
+        return;
+    }
+
+    public void hideOnAction()
+    {
+        if (ContextMenuService.IsBeingShown)
+        {
+            ContextMenuService.HideContextMenu();
+        }
+    }
+}
+
+<style>
+    .contextMenuDiv {
+        top: @(ContextMenuService.Top)px;
+        left: @(ContextMenuService.Left)px;
+        position: absolute;
+        z-index: 1000;
+        background-color: #D9D9D9;
+        color: #111111;
+        border: solid 1px;
+        border-radius: 6px;
+        font-weight: bold;
+        width: @(BoxWidth)px;
+    }
+
+    .contextMenuDiv ul {
+        list-style: none;
+        margin-left: auto;
+        margin-right: auto;
+        padding:0;
+    }
+
+    .contextMenuDiv li {
+        margin: 0.5rem;
+        font-size: 1.1rem;
+        padding: 1rem;
+        text-align: center;
+        border-radius: 6px;
+    }
+
+    .contextMenuDiv li:hover {
+        cursor: pointer;
+        background-color: #ffffff4f
+    }
+</style>
