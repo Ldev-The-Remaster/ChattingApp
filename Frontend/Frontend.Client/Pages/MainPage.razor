@@ -3,7 +3,6 @@
 @using Models
 @using static Frontend.Client.Models.WebSocketService
 @inject NavigationManager NavigationManager
-@inject WebSocketService WebSocketService
 @inject IJSRuntime JSRuntime
 
 <PageTitle>Main Page</PageTitle>
@@ -30,7 +29,7 @@
             </div>
         </div>
         <div class="chat-input-box">
-            <input type="text" placeholder="Type your message here" value="@newMessage" @oninput="e => newMessage = e.Value.ToString()" @onkeydown="HandleEnterKey" />
+            <textarea placeholder="Type your message here" value="@currentMessage" @oninput="e => currentMessage = e.Value.ToString()" @onkeydown="HandleEnterKey" />
             <button class="sendMessageButton" @onclick="SendMessage">➤</button>
         </div>
     </div>
@@ -46,9 +45,9 @@
 </div>
 
 @code {
-    private string newMessage = string.Empty;
+    private string currentMessage = string.Empty;
     private List<string> users = new List<string>();
-    private List<Message> messages = new List<Message>();
+    private List<UserMessage> messages = new List<UserMessage>();
     protected override void OnInitialized()
     {
         HandleDisconnect();
@@ -73,24 +72,36 @@
         Console.WriteLine("users in mainpage: " + string.Join(", ", users));
     }
 
-    public void MessageReceived(Message message)
+    public void MessageReceived(UserMessage message)
     {
-        messages.Add(message);
+        UserMessage? currentUserMessage = messages.Find(messageInList => message.Hash == messageInList.Hash);
+        if(currentUserMessage != null)
+        {
+            // TO MID: IsConfirmed here
+        }
+        else
+        {
+            messages.Add(message);
+        }
         InvokeAsync(StateHasChanged);
     }
 
     private async Task SendMessage()
     {
-        if (!string.IsNullOrWhiteSpace(newMessage))
+        if (string.IsNullOrWhiteSpace(currentMessage))
         {
-            await WebSocketService.SendMessageAsync("DO SEND\r\nWITH\r\n" + newMessage);
-            newMessage = string.Empty;
+            return;
         }
+
+        var newMessage = new UserMessage(ClientManager.CurrentUser, currentMessage);
+        messages.Add(newMessage);
+        await WebSocketService.SendMessage(newMessage);
+        currentMessage = String.Empty;
     }
 
     private async void HandleEnterKey(KeyboardEventArgs e)
     {
-        if (e.Key == "Enter")
+        if (e.Key == "Enter" && !e.ShiftKey)
         {
             await SendMessage();
         }

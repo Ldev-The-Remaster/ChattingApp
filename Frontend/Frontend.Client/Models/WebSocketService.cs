@@ -1,10 +1,9 @@
 ﻿using System.Net.WebSockets;
 using System.Text;
-using static Frontend.Client.Models.ClientManager;
 
 namespace Frontend.Client.Models
 {
-    public class WebSocketService
+    public static class WebSocketService
     {
         enum ActiveCommand
         {
@@ -12,28 +11,21 @@ namespace Frontend.Client.Models
             NotSet
         }
 
-        public class Message
-        {
-            public string? User { get; set; }
-            public string? Content { get; set; }
-            public DateTime Timestamp { get; set; }
-        }
+        private static ClientWebSocket? _webSocket;
+        private static Task? _receiveMessagesTask;
+        public delegate void MessagesEventHandler(UserMessage messages);
+        public static event MessagesEventHandler? OnMessageReceived;
+        public static event Action? OnClosed;
+        private static bool _isAuthenticated = false;
+        private static ActiveCommand _activeCommand = ActiveCommand.NotSet;
+        private static readonly int AuthTimeOut = 10;
 
-        private ClientWebSocket? _webSocket;
-        private Task? _receiveMessagesTask;
-        public delegate void MessagesEventHandler(Message messages);
-        public event MessagesEventHandler? OnMessageReceived;
-        public event Action? OnClosed;
-        private bool _isAuthenticated = false;
-        private ActiveCommand _activeCommand = ActiveCommand.NotSet;
-        private readonly int AuthTimeOut = 10;
-
-        public bool IsAuthenticated
+        public static bool IsAuthenticated
         {
             get { return _isAuthenticated; }
         }
 
-        public async Task ConnectAsync(string uri)
+        public static async Task ConnectAsync(string uri)
         {
             if (_webSocket == null || _webSocket.State != WebSocketState.Open)
             {
@@ -43,7 +35,7 @@ namespace Frontend.Client.Models
             }
         }
 
-        private void OnMessage(MessageParams message)
+        private static void OnMessage(ClientManager.MessageParams message)
         {
             if (_activeCommand == ActiveCommand.Auth)
             {
@@ -60,33 +52,45 @@ namespace Frontend.Client.Models
                     return;
                 }
 
-                if (message.Do.Equals("SEND") && message.From.Equals(""))
+                if(message.Do.Equals("SEND"))
                 {
-                    var timestamp = DateTimeOffset.FromUnixTimeSeconds(message.At).DateTime;
-                    var content = message.With;
-                    OnMessageReceived?.Invoke(new Message
+                    var hashAndMessageList = message.With.Split("\r\n");
+                    if (hashAndMessageList.Length != 2) 
                     {
-                        User = null,
-                        Content = content,
-                        Timestamp = timestamp
-                    });
+                        Console.WriteLine("Error: Message format is invalid, missing hash or content.");
+                        return;
+                    }
+
+                    var user = message.From;
+                    var timestamp = DateTimeOffset.FromUnixTimeSeconds(message.At).DateTime; 
+                    var hash = hashAndMessageList[0];
+                    var content = hashAndMessageList[1];
+
+                    if (user.Equals(string.Empty))
+                    {
+                        OnMessageReceived?.Invoke(new UserMessage
+                        (
+                            user: null,
+                            hash: hash,
+                            content: content,
+                            timestamp: timestamp
+                        )); ;
+
+                        return;
+                    }
+
+                    OnMessageReceived?.Invoke(new UserMessage
+                    (
+                        user: user,
+                        hash: hash,
+                        content: content,
+                        timestamp: timestamp
+                    ));
+
                     return;
                 }
 
-                if(message.Do.Equals("SEND"))
-                {
-                    var user = message.From; // "FROM user"
-                    var timestamp = DateTimeOffset.FromUnixTimeSeconds(message.At).DateTime; // "AT timestamp"
-                    var content = message.With; // Content starts after "WITH" line
-                    OnMessageReceived?.Invoke(new Message
-                    {
-                        User = user,
-                        Content = content,
-                        Timestamp = timestamp
-                    });
-                    return;
-                }
-                    Console.WriteLine("Error: Message format is invalid.");
+                Console.WriteLine("Error: Message format is invalid.");
             }
             catch (Exception e)
             {
@@ -94,13 +98,14 @@ namespace Frontend.Client.Models
             }
         }
 
-        private void OnClose() 
+        private static void OnClose() 
         {
+            _receiveMessagesTask?.Dispose();
             _isAuthenticated = false;
             OnClosed?.Invoke();
         }
 
-        private async Task ReceiveMessagesAsync()
+        private static async Task ReceiveMessagesAsync()
         {
             var buffer = new byte[1024 * 4];
             while (_webSocket?.State == WebSocketState.Open)
@@ -111,7 +116,7 @@ namespace Frontend.Client.Models
                     var message = Encoding.UTF8.GetString(buffer, 0, result.Count);
                     if (message != null)
                     {                          
-                        OnMessage(new MessageParams(message));
+                        OnMessage(new ClientManager.MessageParams(message));
                     }
                 }
                 if (result.MessageType == WebSocketMessageType.Close)
@@ -121,7 +126,7 @@ namespace Frontend.Client.Models
             }
         }
 
-        public async Task SendMessageAsync(string message)
+        public static async Task SendMessageAsync(string message)
         {
             if (_webSocket != null && _webSocket.State == WebSocketState.Open)
             {
@@ -130,7 +135,20 @@ namespace Frontend.Client.Models
             }
         }
 
-        public async Task<bool> RequestAuth(string username)
+        public static async Task SendMessage(UserMessage message)
+        {
+            await SendMessage(message.Hash, message.Content);
+        }
+
+        public static async Task SendMessage(string hash, string message)
+        {
+            if (!string.IsNullOrWhiteSpace(message))
+            {
+                await SendMessageAsync($"DO SEND\r\nWITH\r\n{hash}\r\n{message}");
+            }
+        }
+
+        public static async Task<bool> RequestAuth(string username)
         {
             _activeCommand = ActiveCommand.Auth;
             await SendMessageAsync("DO AUTH\r\nFROM " + username);
