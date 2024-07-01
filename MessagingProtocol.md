@@ -90,7 +90,7 @@ how you been?
 > Request to send a message (defaults to `general-chat`) with the a hash of:  
 > `HASHABC123`
 > And a message of:
-> `yoo good morning`  
+> > `yoo good morning`  
 > `how you been?`
 
 ---
