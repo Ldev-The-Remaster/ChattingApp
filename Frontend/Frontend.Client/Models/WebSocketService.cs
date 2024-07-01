@@ -61,22 +61,6 @@ namespace Frontend.Client.Models
                         return;
                     }
 
-<<<<<<< HEAD
-                if(message.Do.Equals("SEND"))
-                {
-                    var user = message.From; // "FROM user"
-                    var timestamp = DateTimeOffset.FromUnixTimeSeconds(message.At).DateTime; // "AT timestamp"
-                    var content = message.With; // Content starts after "WITH" line
-                    var confirmed = true;
-                    OnMessageReceived?.Invoke(new Message
-                    {
-                        User = user,
-                        Content = content,
-                        Timestamp = timestamp,
-                        IsConfirmed = confirmed
-
-                    }) ;
-=======
                     var user = message.From;
                     var timestamp = DateTimeOffset.FromUnixTimeSeconds(message.At).DateTime; 
                     var hash = hashAndMessageList[0];
@@ -89,8 +73,9 @@ namespace Frontend.Client.Models
                             user: null,
                             hash: hash,
                             content: content,
-                            timestamp: timestamp
-                        )); ;
+                            timestamp: timestamp,
+                            isConfirmed: true
+                        ));
 
                         return;
                     }
@@ -100,10 +85,10 @@ namespace Frontend.Client.Models
                         user: user,
                         hash: hash,
                         content: content,
-                        timestamp: timestamp
+                        timestamp: timestamp,
+                        isConfirmed: true
                     ));
 
->>>>>>> main
                     return;
                 }
 

@@ -77,7 +77,7 @@
         UserMessage? currentUserMessage = messages.Find(messageInList => message.Hash == messageInList.Hash);
         if(currentUserMessage != null)
         {
-            // TO MID: IsConfirmed here
+            currentUserMessage.IsConfirmed = true;
         }
         else
         {
@@ -93,7 +93,7 @@
             return;
         }
 
-        var newMessage = new UserMessage(ClientManager.CurrentUser, currentMessage);
+        var newMessage = new UserMessage(ClientManager.CurrentUser, currentMessage, false);
         messages.Add(newMessage);
         await WebSocketService.SendMessage(newMessage);
         currentMessage = String.Empty;

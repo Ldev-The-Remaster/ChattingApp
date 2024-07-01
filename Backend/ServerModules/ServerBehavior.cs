@@ -57,6 +57,7 @@ namespace Backend.ServerModules
                         return;
                     }
 
+                    Thread.Sleep(1000);
                     var textMessage = new TextMessage(socket, rawString);
 
                     SendToAll(textMessage);
