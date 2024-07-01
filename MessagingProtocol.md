@@ -39,7 +39,6 @@ WITH
    > Required params: `FROM <username>`
 - ### IDENTIFY: Request user list
    > Required params: `IN <channel-name>`
-- ### INQUIRE: Request room list
 - ### REMEMBER: Request message history
    > Required params: `FROM <message-order>`, `TO <message-order>`, `IN <channel-name>`
 - ### SEND: Send a message in a channel
@@ -148,25 +147,6 @@ Asim
 /*$*/
 ```
 It's then up to the client to re-interpret the user array to populate the UI.
-
-### Channel list
-Same as the `INTRODUCE` verb for user list but for the list of channels using the verb `INFORM`.
-- ### INFORM: Send list of channels
-   > Required params: `WITH <array-of-channel-names>`
-Example:
-```
-DO INFORM
-WITH
-/*$*/
-general-chat
-/*$*/
-games
-/*$*/
-world-cup
-/*$*/
-eid-drip
-/*$*/
-```
 
 ### Message History
 When the server receives a `REMEMBER` request from a client, the server is expected to forward all the messages that users have sent in the specified period, this is done through the `REMIND` server verb. When sending a `REMIND` from the server, the `WITH` parameter will house multiple message requests from the server so the client can populate its UI with the message history.
