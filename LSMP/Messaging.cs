@@ -23,13 +23,33 @@ namespace LSMP
             return message;
         }
 
-        public static string UserListMessage<T>(List<T> array) where T : IEncodable
+        public static string UserListMessage<T>(List<T> userList) where T : IEncodable
         {
             string msg = $"DO INTRODUCE";
             msg += NEW_LINE;
             msg += "WITH";
             msg += NEW_LINE;
-            msg += EncodeArrayToString(array);
+            msg += EncodeArrayToString(userList);
+
+            return msg;
+        }
+
+        public static string RemindMessage<T>(List<T> messageHistory) where T : IEncodable
+        {
+            string msg = "DO REMIND";
+            msg += NEW_LINE;
+            msg += "WITH";
+            msg += NEW_LINE;
+            msg += EncodeArrayToString(messageHistory);
+
+            return msg;
+        }
+
+        public static string AuthMessage(string username)
+        {
+            string msg = "DO AUTH";
+            msg += NEW_LINE;
+            msg += $"FROM {username}";
 
             return msg;
         }
@@ -55,6 +75,11 @@ namespace LSMP
             }
 
             return arrString;
+        }
+
+        public static List<string> DecodeUserList(string rawUserList)
+        {
+            return rawUserList.Split(new[] { "/*$*/", "\r\n" }, StringSplitOptions.RemoveEmptyEntries).ToList();
         }
 
         public static string EncodeMessageToString(IMessage message)
