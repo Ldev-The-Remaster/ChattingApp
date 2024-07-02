@@ -1,12 +1,12 @@
 ﻿using Backend.Database;
-using Backend.Interfaces;
 using Backend.Models.Users;
 using Backend.ServerModules;
+using LSMP;
 using WebSocketSharp;
 
 namespace Backend.Models.Messages
 {
-    public class TextMessage : Message, IEncodable
+    public class TextMessage : Message, IEncodable, IMessage
     {
         #region Fields
 
@@ -76,7 +76,7 @@ namespace Backend.Models.Messages
             }
 
             _timestamp = _at;
-            (_hash, _content) = LSMPBehavior.GetHashAndMessage(_with);
+            (_hash, _content) = Messaging.GetHashAndMessage(_with);
         }
 
         #endregion
@@ -85,7 +85,7 @@ namespace Backend.Models.Messages
 
         public string EncodeToString()
         {
-            return LSMPBehavior.EncodeTextMessageToString(this);
+            return Messaging.EncodeMessageToString(this);
         }
 
         #endregion

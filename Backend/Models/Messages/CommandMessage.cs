@@ -1,7 +1,7 @@
-﻿using Backend.Interfaces;
-using Backend.Models.Users;
+﻿using Backend.Models.Users;
 using Backend.ServerModules;
-using Backend.Utils;
+using LSMP.Utils;
+using LSMP;
 using WebSocketSharp;
 
 namespace Backend.Models.Messages
@@ -119,8 +119,7 @@ namespace Backend.Models.Messages
         {
             if (_sender != null)
             {
-                string message = $"DO REFUSE\r\nWITH\r\n{reason}";
-                _sender.Socket.Send(message);
+                _sender.Socket.Send(Messaging.RefuseMessage(reason));
             }
         }
 
@@ -502,15 +501,11 @@ namespace Backend.Models.Messages
                 channel = _in;
             }
 
-            List<TextMessage> messageHistory = TextMessage.GetMessageHistory(channel, fromId, toId);
-
-            string msgString = "DO REMIND\r\nWITH\r\n";
-            string msgArray = LSMPBehavior.EncodeArrayToString(messageHistory);
-            msgString += msgArray;
+            var messageHistory = TextMessage.GetMessageHistory(channel, fromId, toId);
 
             if (_sender != null)
             {
-                _sender.Socket.Send(msgString);
+                _sender.Socket.Send(Messaging.RemindMessage(messageHistory));
             }
         }
 

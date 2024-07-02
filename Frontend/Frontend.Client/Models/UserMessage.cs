@@ -1,30 +1,32 @@
 ﻿using System.Text;
 using System.Security.Cryptography;
+using LSMP;
 
 namespace Frontend.Client.Models
 {
-    public class UserMessage
+    public class UserMessage: IMessage
     {
-        public string? User { get; set; }
+        public string? Sender { get; set; }
+        public string Channel { get; set; } = string.Empty;
+        public long TimeStamp { get; set; }
         public string Hash { get; set; }
         public string Content { get; set; }
-        public DateTime Timestamp { get; set; }
 
-        public UserMessage(string? user, string hash, string content, DateTime timestamp)
+        public UserMessage(string? user, string hash, string content, long timestamp)
         {
-            User = user;
+            Sender = user;
             Hash = hash;
             Content = content;
-            Timestamp = timestamp;
+            TimeStamp = timestamp;
         }
 
         // TO MID: update constructor to take isconfirmed and set it
         public UserMessage(string user, string content) 
         { 
-            User = user;
+            Sender = user;
             Hash =  ComputeSha256Hash(content + DateTimeOffset.Now.ToUnixTimeMilliseconds());
             Content = content;
-            Timestamp = DateTime.Now;
+            TimeStamp = DateTimeOffset.Now.ToUnixTimeSeconds();
         }
 
         private string ComputeSha256Hash(string hashInput)

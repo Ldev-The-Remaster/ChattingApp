@@ -17,13 +17,13 @@
             <div class="message-container" id="messageContainer">
                 @foreach (var message in messages)
                 {
-                    if (message.User == null)
+                    if (message.Sender == null)
                     {
-                        <ServerAlertMessageComponent MessageContent="@message.Content" Timestamp="@message.Timestamp" />
+                        <ServerAlertMessageComponent MessageContent="@message.Content" Timestamp="@DateTimeOffset.FromUnixTimeSeconds(message.TimeStamp).DateTime" />
                     }
                     else
                     {
-                        <MessageComponent User="@message.User" MessageContent="@message.Content" Timestamp="@message.Timestamp" />
+                        <MessageComponent User="@message.Sender" MessageContent="@message.Content" Timestamp="@DateTimeOffset.FromUnixTimeSeconds(message.TimeStamp).DateTime" />
                     }
                 }
             </div>
