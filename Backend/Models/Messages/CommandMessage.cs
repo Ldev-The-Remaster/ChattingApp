@@ -1,7 +1,7 @@
-﻿using Backend.Interfaces;
-using Backend.Models.Users;
+﻿using Backend.Models.Users;
 using Backend.ServerModules;
-using Backend.Utils;
+using LSMP.Utils;
+using LSMP;
 using WebSocketSharp;
 
 namespace Backend.Models.Messages
@@ -505,7 +505,7 @@ namespace Backend.Models.Messages
             List<TextMessage> messageHistory = TextMessage.GetMessageHistory(channel, fromId, toId);
 
             string msgString = "DO REMIND\r\nWITH\r\n";
-            string msgArray = LSMPBehavior.EncodeArrayToString(messageHistory);
+            string msgArray = Messaging.EncodeArrayToString(messageHistory);
             msgString += msgArray;
 
             if (_sender != null)

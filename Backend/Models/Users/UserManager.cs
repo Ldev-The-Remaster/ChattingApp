@@ -1,4 +1,4 @@
-﻿using Backend.Utils;
+﻿using LSMP.Utils;
 using WebSocketSharp;
 
 namespace Backend.Models.Users

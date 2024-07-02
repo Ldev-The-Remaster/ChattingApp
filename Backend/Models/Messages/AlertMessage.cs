@@ -1,13 +1,11 @@
-﻿using Backend.Interfaces;
-using Backend.ServerModules;
+﻿using LSMP;
 
 namespace Backend.Models.Messages
 {
-    public class AlertMessage : IEncodable
+    public class AlertMessage : IEncodable, IMessage
     {
         #region Fields
 
-        private string _hash = "AlertMessageHash";
         private string _content;
         private long _timestamp;
 
@@ -15,21 +13,21 @@ namespace Backend.Models.Messages
 
         #region Properties
 
-        public string Hash
-        {
-            get { return _hash; }
-        }
-
-        public string Content
-        {
-            get { return _content; }
-            set { _content = value; }
-        }
-
+        public string Sender { get; set; } = string.Empty;
+        public string Channel { get; set; } = string.Empty;
         public long TimeStamp
         {
             get { return _timestamp; }
             set { _timestamp = value; }
+        }
+        public string Hash
+        {
+            get { return "AlertMessageHash"; }
+        }
+        public string Content
+        {
+            get { return _content; }
+            set { _content = value; }
         }
 
         #endregion
@@ -48,7 +46,7 @@ namespace Backend.Models.Messages
 
         public string EncodeToString()
         {
-            return LSMPBehavior.EncodeAlertMessageToString(this);
+            return Messaging.EncodeMessageToString(this);
         }
 
         #endregion
