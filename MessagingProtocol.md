@@ -1,7 +1,7 @@
 # Technical specifications for the **L**eague **S**ockets **M**essaging **P**rotocol (LSMP)
 This document lists the technical specifications and details for implementing LSMP in your websocket server.  
 LSMP is a custom protocol intended for use on top of the websockets protocol for the purpose of a live chat messaging application.  
-*Version: 0.4.1*
+*Version: 0.5.0*
 
 # Client -> Server
 Websocket messages coming from the client should conform to the following pattern:
@@ -24,6 +24,7 @@ WITH
 - Payload: The text content of the message
 
 ## Details
+- The message payload starts with the message `hash` on its own line which ends with (CRLF: `\r\n`). On the next line is the contents of the message which can be broken into multiple lines using `\n`.
 - Request parameters must be seperated by new lines (CRLF: `\r\n`), with the parameter keyword (`DO`, `FROM`...etc) starting the line, followed by a space, then followed by the argument (the value associated with the parameter). And finally, the new line characters `\r\n`.
 - Each request must contain and start with the `DO` parameter.
 - Each parameter (`DO`, `FROM`...etc) should be in their own line with their respective argument (verb, subject...etc).
@@ -37,14 +38,18 @@ WITH
 \* `DO` is required for all verbs.
 - ### AUTH: Authenticate a user
    > Required params: `FROM <username>`
-- ### CONNECT: Connect to a channel
-   > Required params: `IN <channel-name>`
 - ### IDENTIFY: Request user list
    > Required params: `IN <channel-name>`
 - ### REMEMBER: Request message history
    > Required params: `FROM <message-order>`, `TO <message-order>`, `IN <channel-name>`
 - ### SEND: Send a message in a channel
-   > Required params: `IN <channel-name>`, `WITH <message>`  
+   > Required params: `IN <channel-name>`, `WITH <hash> <message>`  
+---
+### Channel management (Admin only):
+- ### CREATE: Create a channel
+   > Required params: `WITH <channel-name>`  
+- ### DELETE: Delete a channel
+   > Required params: `WITH <channel-name>`
 ---
 ### Infractions (Admin only):
 - ### MUTE: Mute a user in a channel
@@ -82,10 +87,13 @@ FROM Akram
 ```
 DO SEND
 WITH
+HASHABC123
 yoo good morning
 how you been?
 ```
-> Request to send a message (defaults to `general-chat`) with the message content being:  
+> Request to send a message (defaults to `general-chat`) with the a hash of:  
+> `HASHABC123`  
+> And a message of:  
 > `yoo good morning`  
 > `how you been?`
 
@@ -110,12 +118,12 @@ Keeping the details mentioned above in mind, besides performing backend operatio
 The `AT` parameter for the timestamps is mainly used when the server is sending the message history to a client. Otherwise it is omitted and is to be interpreted as `date.now` by the client.
 
 - ### SEND: Tells the client that a user has sent a message
-   > Required params: `WITH <message>`  
+   > Required params: `WITH <hash> <message>`  
    > From a user (omit for alert): `FROM <username>`  
    > In channel (defaults to `general-chat`): `IN <channel-name>`  
    > With a timestamp from history (defaults to `date.now`): `AT <timestamp>`
 
-Besides displaying messages and alerts, the server also needs to respond to `AUTH` and `CONNECT` requests, as well as refuse `SEND` requests from unauthorized clients. This is done using the following verbs:
+Besides displaying messages and alerts, the server also needs to respond to `AUTH` requests, as well as refuse `SEND` requests from unauthorized clients. This is done using the following verbs:
 - ### ACCEPT: Accepts the request from the client
    > No params
 - ### REFUSE: Refuses the request from the client
@@ -161,6 +169,7 @@ FROM Okkio
 IN general-chat
 AT 1714754642
 WITH
+HASH123HASH123
 yoo good morning
 how you been?
 /*$*/
@@ -169,6 +178,7 @@ FROM Psycho
 IN general-chat
 AT 1714754703
 WITH
+HASH123HASH123
 i'm good, just working on the protocol
 /*$*/
 DO SEND
@@ -176,12 +186,14 @@ FROM Forki
 IN general-chat
 AT 1714754754
 WITH
+HASH123HASH123
 league? 💀
 /*$*/
 DO SEND
 IN general-chat
 AT 1714715436
 WITH
+HASH123HASH123
 User Forki has been banned
 /*$*/
 ```

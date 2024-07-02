@@ -1,4 +1,4 @@
-﻿namespace Backend.Interfaces
+﻿namespace LSMP
 {
     public interface IEncodable
     {

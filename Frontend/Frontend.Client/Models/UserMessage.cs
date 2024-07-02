@@ -1,19 +1,22 @@
 ﻿using System.Text;
 using System.Security.Cryptography;
+using LSMP;
 
 namespace Frontend.Client.Models
 {
-    public class UserMessage
+    public class UserMessage: IMessage
     {
-        public string? User { get; set; }
+        public string? Sender { get; set; }
+        public string Channel { get; set; } = string.Empty;
+        public long TimeStamp { get; set; }
         public string Hash { get; set; }
         public string Content { get; set; }
-        public DateTime Timestamp { get; set; }
+        public long Timestamp { get; set; }
         public bool IsConfirmed { get; set; }
 
-        public UserMessage(string? user, string hash, string content, DateTime timestamp, bool isConfirmed)
+        public UserMessage(string? user, string hash, string content, long timestamp, bool isConfirmed)
         {
-            User = user;
+            Sender = user;
             Hash = hash;
             Content = content;
             Timestamp = timestamp;
@@ -22,10 +25,10 @@ namespace Frontend.Client.Models
 
         public UserMessage(string user, string content, bool isConfirmed) 
         { 
-            User = user;
+            Sender = user;
             Hash =  ComputeSha256Hash(content + DateTimeOffset.Now.ToUnixTimeMilliseconds());
             Content = content;
-            Timestamp = DateTime.Now;
+            TimeStamp = DateTimeOffset.Now.ToUnixTimeSeconds();
             IsConfirmed = isConfirmed;
         }
 

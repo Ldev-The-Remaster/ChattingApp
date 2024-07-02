@@ -1,5 +1,7 @@
 ﻿using System.Net.WebSockets;
 using System.Text;
+using LSMP;
+using LSMP.Utils;
 
 namespace Frontend.Client.Models
 {
@@ -35,36 +37,34 @@ namespace Frontend.Client.Models
             }
         }
 
-        private static void OnMessage(ClientManager.MessageParams message)
+        private static void OnMessage(MessageParser rawMessage)
         {
             if (_activeCommand == ActiveCommand.Auth)
             {
-                _isAuthenticated = message.Do.Equals("ACCEPT");
+                _isAuthenticated = rawMessage.Do.Equals("ACCEPT");
                 _activeCommand = ActiveCommand.NotSet;
                 return;
             }
 
             try
             {
-                if (message.Do.Equals("INTRODUCE"))
+                if (rawMessage.Do.Equals("INTRODUCE"))
                 {
-                    ClientManager.UpdateUserList(message.With);
+                    ClientManager.UpdateUserList(rawMessage.With);
                     return;
                 }
 
-                if(message.Do.Equals("SEND"))
+                if(rawMessage.Do.Equals("SEND"))
                 {
-                    var hashAndMessageList = message.With.Split("\r\n");
-                    if (hashAndMessageList.Length != 2) 
+                    var user = rawMessage.From;
+                    var timestamp = rawMessage.At;
+
+                    var (hash, message) = Messaging.GetHashAndMessage(rawMessage.With);
+                    if (hash == string.Empty) 
                     {
-                        Console.WriteLine("Error: Message format is invalid, missing hash or content.");
+                        CLogger.Error("Error: Message format is invalid, missing hash or content.");
                         return;
                     }
-
-                    var user = message.From;
-                    var timestamp = DateTimeOffset.FromUnixTimeSeconds(message.At).DateTime; 
-                    var hash = hashAndMessageList[0];
-                    var content = hashAndMessageList[1];
 
                     if (user.Equals(string.Empty))
                     {
@@ -72,10 +72,10 @@ namespace Frontend.Client.Models
                         (
                             user: null,
                             hash: hash,
-                            content: content,
+                            content: message,
                             timestamp: timestamp,
                             isConfirmed: true
-                        ));
+                        )); ;
 
                         return;
                     }
@@ -84,7 +84,7 @@ namespace Frontend.Client.Models
                     (
                         user: user,
                         hash: hash,
-                        content: content,
+                        content: message,
                         timestamp: timestamp,
                         isConfirmed: true
                     ));
@@ -92,11 +92,11 @@ namespace Frontend.Client.Models
                     return;
                 }
 
-                Console.WriteLine("Error: Message format is invalid.");
+                CLogger.Error("Error: Message format is invalid.");
             }
             catch (Exception e)
             {
-                Console.WriteLine($"Error processing message: {e.Message}");
+                CLogger.Error($"Error processing message: {e.Message}");
             }
         }
 
@@ -118,7 +118,7 @@ namespace Frontend.Client.Models
                     var message = Encoding.UTF8.GetString(buffer, 0, result.Count);
                     if (message != null)
                     {                          
-                        OnMessage(new ClientManager.MessageParams(message));
+                        OnMessage(new MessageParser(message));
                     }
                 }
                 if (result.MessageType == WebSocketMessageType.Close)
@@ -139,21 +139,13 @@ namespace Frontend.Client.Models
 
         public static async Task SendMessage(UserMessage message)
         {
-            await SendMessage(message.Hash, message.Content);
-        }
-
-        public static async Task SendMessage(string hash, string message)
-        {
-            if (!string.IsNullOrWhiteSpace(message))
-            {
-                await SendMessageAsync($"DO SEND\r\nWITH\r\n{hash}\r\n{message}");
-            }
+            await SendMessageAsync(Messaging.EncodeMessageToString(message));
         }
 
         public static async Task<bool> RequestAuth(string username)
         {
             _activeCommand = ActiveCommand.Auth;
-            await SendMessageAsync("DO AUTH\r\nFROM " + username);
+            await SendMessageAsync(Messaging.AuthMessage(username));
 
             var authTimeout = TimeSpan.FromSeconds(AuthTimeOut);
             var startTime = DateTime.Now;
