@@ -1,6 +1,7 @@
 ﻿using Backend.Models.Messages;
 using Backend.Models.Users;
-using Backend.Utils;
+using LSMP.Utils;
+using LSMP;
 using WebSocketSharp;
 using static Backend.Models.Messages.Message;
 
@@ -32,7 +33,7 @@ namespace Backend.ServerModules
                 return;
             }
 
-            if (IsAuthRequest(rawString))
+            if (Messaging.IsAuthRequest(rawString))
             {
                 string username = rawString.Substring(14);
                 username = username.Trim();

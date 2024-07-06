@@ -2,36 +2,25 @@
 using Backend.Models.Messages;
 using Backend.Models.Users;
 using WebSocketSharp.Server;
+using LSMP;
 
 namespace Backend.ServerModules
 {
-    public interface IEncodable
-    {
-        string EncodeToString();
-    }
-
     public class LSMPBehavior : WebSocketBehavior
     {
-        #region Fields
-
-        private static readonly string NEW_LINE = "\r\n";
-
-        #endregion
-
         #region Senders
 
         protected void SendAccept()
         {
-            Send("DO ACCEPT");
+            Send(Messaging.AcceptMessage());
         }
 
         protected void SendRefuse(string reason = "") 
         {
-            string message = $"DO REFUSE{NEW_LINE}WITH{NEW_LINE}{reason}";
-            Send(message);
+            Send(Messaging.RefuseMessage(reason));
         }
 
-        protected void SendToAll(TextMessage message)
+        protected void SendToAll(IEncodable message)
         {
             foreach (User client in UserManager.UsersList)
             {
@@ -46,25 +35,19 @@ namespace Backend.ServerModules
 
         protected void SendAlert(string message)
         {
-            TextMessage alert = new TextMessage(null, "");
-            alert.Content = message;
+            AlertMessage alert = new AlertMessage(message);
 
             SendToAll(alert);
         }
 
         protected void SendUserList()
         {
-            string encodedUserList = EncodeArrayToString(UserManager.UsersList);
-
-            string msg = $"DO INTRODUCE{NEW_LINE}WITH{NEW_LINE}{encodedUserList}";
-            Send(msg);
+            Send(Messaging.UserListMessage(UserManager.UsersList));
         }
 
         protected void SendUserListToAll()
         {
-            string encodedUserList = EncodeArrayToString(UserManager.UsersList);
-
-            string msg = $"DO INTRODUCE{NEW_LINE}WITH{NEW_LINE}{encodedUserList}";
+            string msg = Messaging.UserListMessage(UserManager.UsersList);
 
             foreach (User client in UserManager.UsersList)
             {
@@ -75,33 +58,6 @@ namespace Backend.ServerModules
 
                 client.Socket.Send(msg);
             }
-        }
-
-        #endregion
-
-        #region Methods
-
-        protected bool IsAuthRequest(string message)
-        {
-            return (message.Substring(3, 4).ToLower() == "auth");
-        }
-
-        public static string EncodeArrayToString<T>(List<T> array) where T : IEncodable
-        {
-            string arrString = "/*$*/";
-
-            foreach (T item in array)
-            {
-                if (item == null)
-                {
-                    continue;
-                }
-                arrString += NEW_LINE;
-                arrString += item.EncodeToString();
-                arrString += NEW_LINE + "/*$*/";
-            }
-
-            return arrString;
         }
 
         #endregion

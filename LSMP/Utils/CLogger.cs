@@ -1,4 +1,4 @@
-﻿namespace Backend.Utils
+﻿namespace LSMP.Utils
 {
     public static class CLogger
     {

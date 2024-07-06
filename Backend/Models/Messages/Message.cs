@@ -1,53 +1,9 @@
-﻿using WebSocketSharp;
+﻿using Backend.ServerModules;
+using WebSocketSharp;
 
+using LSMP;
 namespace Backend.Models.Messages
 {
-    struct MessageParams
-    {
-        public string Do = "";
-        public string From = "";
-        public string To = "";
-        public string In = "";
-        public long At = ((DateTimeOffset)DateTime.Now).ToUnixTimeSeconds();
-        public string With = "";
-
-        public MessageParams(string rawString)
-        {
-            try
-            {
-                string[] commandPairs = rawString.Split("\r\n");
-                foreach (string line in commandPairs)
-                {
-                    string[] commandPair = line.Split(' ');
-                    switch (commandPair[0])
-                    {
-                        case "DO":
-                            Do = commandPair[1];
-                            break;
-                        case "FROM":
-                            From = commandPair[1];
-                            break;
-                        case "TO":
-                            To = commandPair[1];
-                            break;
-                        case "IN":
-                            In = commandPair[1];
-                            break;
-                        case "AT":
-                            At = long.Parse(commandPair[1]);
-                            break;
-                        case "WITH":
-                            With = rawString.Split("WITH\r\n", 2)[1];
-                            break;
-                    }
-                }
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine($"Error Parsing: {e.Message}");
-            }
-        }
-    }
     public abstract class Message
     {
         #region Fields
@@ -84,7 +40,7 @@ namespace Backend.Models.Messages
 
         public Message(WebSocket? socket, string rawString)
         {
-            MessageParams messageParams = new MessageParams(rawString);
+            MessageParser messageParams = new MessageParser(rawString);
 
             _do = messageParams.Do;
             _from = messageParams.From;

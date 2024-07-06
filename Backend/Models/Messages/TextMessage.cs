@@ -1,11 +1,12 @@
 ﻿using Backend.Database;
 using Backend.Models.Users;
 using Backend.ServerModules;
+using LSMP;
 using WebSocketSharp;
 
 namespace Backend.Models.Messages
 {
-    public class TextMessage : Message, IEncodable
+    public class TextMessage : Message, IEncodable, IMessage
     {
         #region Fields
 
@@ -14,6 +15,7 @@ namespace Backend.Models.Messages
         private string _sender;
         private string _channel;
         private long _timestamp;
+        private string _hash;
         private string _content;
 
         #endregion
@@ -43,6 +45,11 @@ namespace Backend.Models.Messages
             get { return _content; }
             set { _content = value; }
         }
+        public string Hash
+        {
+            get { return _hash; }
+            set { _hash = value; }
+        }
 
         #endregion
 
@@ -54,16 +61,13 @@ namespace Backend.Models.Messages
             _sender = string.Empty;
             _channel = string.Empty;
             _timestamp = 0;
+            _hash = string.Empty;
             _content = string.Empty;
         }
 
-        public TextMessage(WebSocket? socket, string rawString) : base(socket, rawString)
+        public TextMessage(WebSocket socket, string rawString) : base(socket, rawString)
         {
-            _sender = string.Empty;
-            if (socket != null)
-            {
-                _sender = UserManager.GetUsernameBySocket(socket);
-            }
+            _sender = UserManager.GetUsernameBySocket(socket);
 
             _channel = "general-chat";
             if (_in != string.Empty)
@@ -72,7 +76,7 @@ namespace Backend.Models.Messages
             }
 
             _timestamp = _at;
-            _content = _with;
+            (_hash, _content) = Messaging.GetHashAndMessage(_with);
         }
 
         #endregion
@@ -81,29 +85,7 @@ namespace Backend.Models.Messages
 
         public string EncodeToString()
         {
-            string msgString = "DO SEND\r\n";
-
-            if (_sender != String.Empty)
-            {
-                msgString += $"FROM {_sender}\r\n"; 
-            }
-
-            if (_channel != String.Empty)
-            {
-                msgString += $"IN {_channel}\r\n";
-            }
-
-            if (_timestamp != 0)
-            {
-                msgString += $"AT {_timestamp}\r\n";
-            }
-
-            if (_content != String.Empty)
-            {
-                msgString += $"WITH\r\n{_content}";
-            }
-
-            return msgString;
+            return Messaging.EncodeMessageToString(this);
         }
 
         #endregion

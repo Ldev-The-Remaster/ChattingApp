@@ -3,11 +3,11 @@
 @using Models
 @using static Frontend.Client.Models.WebSocketService
 @inject NavigationManager NavigationManager
-@inject WebSocketService WebSocketService
+@inject IJSRuntime JSRuntime
 
 <PageTitle>Main Page</PageTitle>
 
-<div class="main-page">
+<div class="main-page" @onclick="HandleGlobalClick">
     <div class="main-block">
         <div class="main-top">
             <h1>Chat Room</h1>
@@ -17,19 +17,19 @@
             <div class="message-container" id="messageContainer">
                 @foreach (var message in messages)
                 {
-                    if (message.User == null)
+                    if (message.Sender == null)
                     {
-                        <ServerAlertMessageComponent MessageContent="@message.Content" Timestamp="@message.Timestamp" />
+                        <ServerAlertMessageComponent MessageContent="@message.Content" Timestamp="@DateTimeOffset.FromUnixTimeSeconds(message.TimeStamp).DateTime" />
                     }
                     else
                     {
-                        <MessageComponent User="@message.User" MessageContent="@message.Content" Timestamp="@message.Timestamp" isConfirmed="@message.IsConfirmed" />
+                        <MessageComponent User="@message.Sender" MessageContent="@message.Content" Timestamp="@DateTimeOffset.FromUnixTimeSeconds(message.TimeStamp).DateTime" />
                     }
                 }
             </div>
         </div>
         <div class="chat-input-box">
-            <input type="text" placeholder="Type your message here" value="@newMessage" @oninput="e => newMessage = e.Value.ToString()" @onkeydown="HandleEnterKey" />
+            <textarea placeholder="Type your message here" value="@currentMessage" @oninput="e => currentMessage = e.Value.ToString()" @onkeydown="HandleEnterKey" />
             <button class="sendMessageButton" @onclick="SendMessage">➤</button>
         </div>
     </div>
@@ -38,17 +38,16 @@
         <ul class="user-list">
             @foreach (var user in users)
             {
-                <li>@user</li>
+                <li @oncontextmenu="e => ContextMenuService.ShowContextMenu(e, JSRuntime)" @oncontextmenu:preventDefault="true">@user</li>
             }
         </ul>
     </div>
 </div>
 
 @code {
-    private string newMessage = string.Empty;
-    private List<Message> messages = new List<Message>();
+    private string currentMessage = string.Empty;
     private List<string> users = new List<string>();
-    
+    private List<UserMessage> messages = new List<UserMessage>();
     protected override void OnInitialized()
     {
         HandleDisconnect();
@@ -60,7 +59,7 @@
 
     private void HandleDisconnect()
     {
-        if(!WebSocketService.IsAuthenticated)
+        if (!WebSocketService.IsAuthenticated)
         {
             NavigationManager.NavigateTo("/login");
         }
@@ -73,26 +72,47 @@
         Console.WriteLine("users in mainpage: " + string.Join(", ", users));
     }
 
-    public void MessageReceived(Message message)
+    public void MessageReceived(UserMessage message)
     {
-        messages.Add(message);
+        UserMessage? currentUserMessage = messages.Find(messageInList => message.Hash == messageInList.Hash);
+        if(currentUserMessage != null)
+        {
+            // TO MID: IsConfirmed here
+        }
+        else
+        {
+            messages.Add(message);
+        }
         InvokeAsync(StateHasChanged);
     }
 
     private async Task SendMessage()
     {
-        if (!string.IsNullOrWhiteSpace(newMessage))
+        if (string.IsNullOrWhiteSpace(currentMessage))
         {
-            await WebSocketService.SendMessageAsync("DO SEND\r\nWITH\r\n" + newMessage);
-            newMessage = string.Empty;
+            return;
         }
+
+        var newMessage = new UserMessage(ClientManager.CurrentUser, currentMessage);
+        messages.Add(newMessage);
+        await WebSocketService.SendMessage(newMessage);
+        currentMessage = String.Empty;
     }
 
     private async void HandleEnterKey(KeyboardEventArgs e)
     {
-        if (e.Key == "Enter")
+        if (e.Key == "Enter" && !e.ShiftKey)
         {
             await SendMessage();
         }
     }
+    private void HandleGlobalClick()
+    {
+        if (ContextMenuService.IsBeingShown)
+        {
+            ContextMenuService.HideContextMenu();
+        }
+    }
 }
+
+
