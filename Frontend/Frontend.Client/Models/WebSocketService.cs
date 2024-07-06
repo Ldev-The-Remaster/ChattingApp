@@ -73,7 +73,8 @@ namespace Frontend.Client.Models
                             user: null,
                             hash: hash,
                             content: message,
-                            timestamp: timestamp
+                            timestamp: timestamp,
+                            isConfirmed: true
                         )); ;
 
                         return;
@@ -84,7 +85,8 @@ namespace Frontend.Client.Models
                         user: user,
                         hash: hash,
                         content: message,
-                        timestamp: timestamp
+                        timestamp: timestamp,
+                        isConfirmed: true
                     ));
 
                     return;
