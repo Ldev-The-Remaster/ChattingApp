@@ -25,17 +25,10 @@
     [Parameter]
     public bool IsConfirmed { get; set; }
 
-    private double GetMessageClass()
-    {
-        double opacity;
-        opacity = IsConfirmed ? 1.0 : 0.6;
-        return opacity;
-    }
 }
 
 <style>
     .message {
-        opacity:@GetMessageClass();
         align-items: center;
         color: white;
         background-color: #333333;

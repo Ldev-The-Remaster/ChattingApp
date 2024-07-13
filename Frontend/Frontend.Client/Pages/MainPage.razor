@@ -23,7 +23,10 @@
                     }
                     else
                     {
-                        <MessageComponent User="@message.Sender" MessageContent="@message.Content" Timestamp="@DateTimeOffset.FromUnixTimeSeconds(message.TimeStamp).DateTime" isConfirmed="@message.IsConfirmed"/>
+                        string messageConfirm = message.IsConfirmed ? "confirmed-message" : "unconfirmed-message";
+                        <div class="@messageConfirm">
+                            <MessageComponent User="@message.Sender" MessageContent="@message.Content" Timestamp="@DateTimeOffset.FromUnixTimeSeconds(message.TimeStamp).DateTime" isConfirmed="@message.IsConfirmed" />
+                        </div>
                     }
                 }
             </div>
@@ -115,4 +118,12 @@
     }
 }
 
+<style>
+    .confirmed-message {
+        opacity: 1;
+    }
 
+    .unconfirmed-message {
+        opacity: 0.5;
+    }
+</style>
