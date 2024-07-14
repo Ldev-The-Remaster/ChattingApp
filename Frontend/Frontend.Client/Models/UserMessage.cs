@@ -11,22 +11,24 @@ namespace Frontend.Client.Models
         public long TimeStamp { get; set; }
         public string Hash { get; set; }
         public string Content { get; set; }
+        public bool IsConfirmed { get; set; }
 
-        public UserMessage(string? user, string hash, string content, long timestamp)
+        public UserMessage(string? user, string hash, string content, long timestamp, bool isConfirmed)
         {
             Sender = user;
             Hash = hash;
             Content = content;
             TimeStamp = timestamp;
+            IsConfirmed = true;
         }
 
-        // TO MID: update constructor to take isconfirmed and set it
-        public UserMessage(string user, string content) 
+        public UserMessage(string user, string content, bool isConfirmed) 
         { 
             Sender = user;
             Hash =  ComputeSha256Hash(content + DateTimeOffset.Now.ToUnixTimeMilliseconds());
             Content = content;
             TimeStamp = DateTimeOffset.Now.ToUnixTimeSeconds();
+            IsConfirmed = isConfirmed;
         }
 
         private string ComputeSha256Hash(string hashInput)

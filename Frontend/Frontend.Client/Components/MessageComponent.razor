@@ -1,10 +1,11 @@
 @namespace Frontend.Client.Components
+@using Frontend.Client.Models
 @inject IJSRuntime JSRuntime
 
 <div class="message">
     <div class="message-header">
         <span class="user" @oncontextmenu="e => ContextMenuService.ShowContextMenu(e, JSRuntime)" @oncontextmenu:preventDefault="true">@User</span>
-        <span class="timestamp">@Timestamp</span>
+        <span class="timestamp">@TimeStamp</span>
     </div>
     <div class="message-content">
         @MessageContent
@@ -19,7 +20,11 @@
     public string? MessageContent { get; set; }
 
     [Parameter]
-    public DateTime Timestamp { get; set; }
+    public DateTime TimeStamp { get; set; }
+
+    [Parameter]
+    public bool IsConfirmed { get; set; }
+
 }
 
 <style>

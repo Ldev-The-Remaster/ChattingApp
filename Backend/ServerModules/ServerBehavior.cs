@@ -51,14 +51,14 @@ namespace Backend.ServerModules
             {
                 case MessageType.TextMessage:
                 {
-                    if (user.IsMuted)
+                    var textMessage = new TextMessage(socket, rawString);
+                    if (user.IsMuted && textMessage.Channel.Equals("general-chat"))
                     {
                         SendRefuse("You are muted!");
                         CLogger.Error($"Failed send attempt from muted user: {user.Username}");
                         return;
                     }
 
-                    var textMessage = new TextMessage(socket, rawString);
 
                     SendToAll(textMessage);
                     textMessage.SaveToDb();
