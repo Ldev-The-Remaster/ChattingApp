@@ -1,10 +1,11 @@
+@using Frontend.Client.Models
 @namespace Frontend.Client.Components
 @using Frontend.Client.Models
 @inject IJSRuntime JSRuntime
 
 <div class="message">
     <div class="message-header">
-        <span class="user" @oncontextmenu="e => ContextMenuService.ShowContextMenu(e, JSRuntime)" @oncontextmenu:preventDefault="true">@User</span>
+        <span style="color: @UsernameColorizer.GenerateColorFromUsername(User)" @oncontextmenu="e => ContextMenuService.ShowContextMenu(e, JSRuntime)" @oncontextmenu:preventDefault="true">@User</span>
         <span class="timestamp">@TimeStamp</span>
     </div>
     <div class="message-content">
@@ -14,10 +15,10 @@
 
 @code {
     [Parameter]
-    public string? User { get; set; }
+    public required string User { get; set; }
 
     [Parameter]
-    public string? MessageContent { get; set; }
+    public required string MessageContent { get; set; }
 
     [Parameter]
     public DateTime TimeStamp { get; set; }
@@ -46,10 +47,6 @@
         display: flex;
         justify-content: space-between;
         font-weight: bold;
-    }
-
-    .user {
-        color: #1E90FF;
     }
 
     .user:hover{
