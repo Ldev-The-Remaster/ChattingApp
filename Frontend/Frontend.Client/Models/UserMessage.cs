@@ -6,13 +6,13 @@ namespace Frontend.Client.Models
 {
     public class UserMessage: IMessage
     {
-        public string? Sender { get; set; }
+        public string Sender { get; set; }
         public string Channel { get; set; } = string.Empty;
         public long TimeStamp { get; set; }
         public string Hash { get; set; }
         public string Content { get; set; }
 
-        public UserMessage(string? user, string hash, string content, long timestamp)
+        public UserMessage(string user, string hash, string content, long timestamp)
         {
             Sender = user;
             Hash = hash;
