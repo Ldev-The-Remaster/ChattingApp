@@ -5,7 +5,7 @@
 
 <div class="message">
     <div class="message-header">
-        <span class="user" style="color: @UsernameColorizer.GenerateColorFromUsername(User)" @oncontextmenu="e => ContextMenuService.ShowContextMenu(e, JSRuntime)" @oncontextmenu:preventDefault="true">@User</span>
+        <span style="color: @UsernameColorizer.GenerateColorFromUsername(User)" @oncontextmenu="e => ContextMenuService.ShowContextMenu(e, JSRuntime)" @oncontextmenu:preventDefault="true">@User</span>
         <span class="timestamp">@TimeStamp</span>
     </div>
     <div class="message-content">
@@ -47,9 +47,6 @@
         display: flex;
         justify-content: space-between;
         font-weight: bold;
-    }
-
-    .user {
     }
 
     .user:hover{
