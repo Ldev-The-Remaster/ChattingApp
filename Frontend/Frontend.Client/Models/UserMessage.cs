@@ -11,7 +11,6 @@ namespace Frontend.Client.Models
         public long TimeStamp { get; set; }
         public string Hash { get; set; }
         public string Content { get; set; }
-        public long Timestamp { get; set; }
         public bool IsConfirmed { get; set; }
 
         public UserMessage(string? user, string hash, string content, long timestamp, bool isConfirmed)
@@ -19,7 +18,7 @@ namespace Frontend.Client.Models
             Sender = user;
             Hash = hash;
             Content = content;
-            Timestamp = timestamp;
+            TimeStamp = timestamp;
             IsConfirmed = true;
         }
 
