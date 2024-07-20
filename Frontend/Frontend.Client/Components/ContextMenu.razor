@@ -2,17 +2,22 @@
 @page "/context"
 @using System
 @using System.Net
+@using Models
 
 @if (ContextMenuService.IsBeingShown)
 {
-        <div class="contextMenuDiv" @onclick:stopPropagation="true">
-            <ul>
-                <li @onclick="MessageUser">Message</li>
+    <div class="contextMenuDiv" @onclick:stopPropagation="true">
+        <ul>
+            <li @onclick="MessageUser">Message</li>
+            @* possible if check here for the purpose of rendering if user is admin *@
+            @if (ClientManager.IsAdmin)
+            {
                 <li @onclick="MuteUser">Mute</li>
                 <li @onclick="BanUser">Ban</li>
-                <li @onclick="ViewIpUser">View IP</li>
                 <li @onclick="IpBanUser">IP Ban</li>
-            </ul>
+            }
+
+        </ul>
     </div>
 }
 
@@ -25,25 +30,23 @@
         ContextMenuService.OnChange += StateHasChanged;
     }
 
+    // can possible use ContextMenuService.targetUser and pass it in to these functions
+
     public async void MessageUser()
     {
+        Console.WriteLine(ContextMenuService.TargetUser);
         hideOnAction();
         return;
     }
 
     public async void MuteUser()
     {
+        await WebSocketService.SendMessageAsync("");
         hideOnAction();
         return;
     }
 
     public async void BanUser()
-    {
-        hideOnAction();
-        return;
-    }
-
-    public async void ViewIpUser()
     {
         hideOnAction();
         return;
@@ -78,23 +81,23 @@
         width: @(BoxWidth)px;
     }
 
-    .contextMenuDiv ul {
-        list-style: none;
-        margin-left: auto;
-        margin-right: auto;
-        padding:0;
-    }
+        .contextMenuDiv ul {
+            list-style: none;
+            margin-left: auto;
+            margin-right: auto;
+            padding: 0;
+        }
 
-    .contextMenuDiv li {
-        margin: 0.5rem;
-        font-size: 1.1rem;
-        padding: 1rem;
-        text-align: center;
-        border-radius: 6px;
-    }
+        .contextMenuDiv li {
+            margin: 0.5rem;
+            font-size: 1.1rem;
+            padding: 1rem;
+            text-align: center;
+            border-radius: 6px;
+        }
 
-    .contextMenuDiv li:hover {
-        cursor: pointer;
-        background-color: #ffffff4f
-    }
+            .contextMenuDiv li:hover {
+                cursor: pointer;
+                background-color: #ffffff4f
+            }
 </style>

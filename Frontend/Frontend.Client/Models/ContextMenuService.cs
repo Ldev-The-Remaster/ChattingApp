@@ -4,7 +4,8 @@ using Microsoft.JSInterop;
 
 public static class ContextMenuService
 {
-
+    // make a targetUser property
+    public static string? TargetUser { get; set; }
     public static double Top { get; set; }
     public static double Left { get; set; }
 
