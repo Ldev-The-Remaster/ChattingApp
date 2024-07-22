@@ -41,10 +41,7 @@
         <ul class="user-list">
             @foreach (var user in users)
             {
-                @* can make a variable here to save the target user for each iteration of showing the user
-                target user can then be passed to ContextMenuService by making a variable for it there *@
-                ContextMenuService.TargetUser = user;
-                <li @oncontextmenu="e => ContextMenuService.ShowContextMenu(e, JSRuntime)" @oncontextmenu:preventDefault="true">@user</li>
+                <li @oncontextmenu="e => ContextMenuService.ShowContextMenu(e, JSRuntime, user)" @oncontextmenu:preventDefault="true">@user</li>
             }
         </ul>
     </div>

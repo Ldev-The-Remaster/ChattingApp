@@ -4,7 +4,6 @@ using Microsoft.JSInterop;
 
 public static class ContextMenuService
 {
-    // make a targetUser property
     public static string? TargetUser { get; set; }
     public static double Top { get; set; }
     public static double Left { get; set; }
@@ -12,10 +11,11 @@ public static class ContextMenuService
     public static event Action? OnChange;
     public static bool IsBeingShown { get; private set; }
 
-    public static async Task ShowContextMenu(MouseEventArgs e, IJSRuntime jsRuntime)
+    public static async Task ShowContextMenu(MouseEventArgs e, IJSRuntime jsRuntime, string user)
     {
         Top = e.ClientY;
         Left = e.ClientX;
+        TargetUser = user;
 
         double pageWidth = await jsRuntime.InvokeAsync<double>("getPageWidth");
         double offset = ContextMenu.BoxWidth - (pageWidth - e.ClientX);

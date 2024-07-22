@@ -3,16 +3,17 @@
 @using System
 @using System.Net
 @using Models
+@using LSMP
 
 @if (ContextMenuService.IsBeingShown)
 {
     <div class="contextMenuDiv" @onclick:stopPropagation="true">
         <ul>
             <li @onclick="MessageUser">Message</li>
-            @* possible if check here for the purpose of rendering if user is admin *@
             @if (ClientManager.IsAdmin)
             {
                 <li @onclick="MuteUser">Mute</li>
+                <li @onclick="KickUser">Kick</li>
                 <li @onclick="BanUser">Ban</li>
                 <li @onclick="IpBanUser">IP Ban</li>
             }
@@ -30,24 +31,29 @@
         ContextMenuService.OnChange += StateHasChanged;
     }
 
-    // can possible use ContextMenuService.targetUser and pass it in to these functions
-
     public async void MessageUser()
     {
-        Console.WriteLine(ContextMenuService.TargetUser);
         hideOnAction();
         return;
     }
 
     public async void MuteUser()
     {
-        await WebSocketService.SendMessageAsync("");
+        await WebSocketService.SendMessageAsync(Messaging.MuteMessage(ContextMenuService.TargetUser));
+        hideOnAction();
+        return;
+    }
+
+    public async void KickUser()
+    {
+        await WebSocketService.SendMessageAsync(Messaging.KickMessage(ContextMenuService.TargetUser));
         hideOnAction();
         return;
     }
 
     public async void BanUser()
     {
+        await WebSocketService.SendMessageAsync(Messaging.BanMessage(ContextMenuService.TargetUser));
         hideOnAction();
         return;
     }

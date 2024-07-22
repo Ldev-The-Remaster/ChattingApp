@@ -45,6 +45,42 @@ namespace LSMP
             return msg;
         }
 
+        public static string MuteMessage(string targetUser)
+        {
+            string msg = "DO MUTE";
+            msg += NEW_LINE;
+            msg += "TO " + targetUser;
+            msg += NEW_LINE;
+            return msg;
+        }
+
+        public static string BanMessage(string targetUser)
+        {
+            string msg = "DO BAN";
+            msg += NEW_LINE;
+            msg += "TO " + targetUser;
+            msg += NEW_LINE;
+            return msg;
+        }
+
+        public static string KickMessage(string targetUser)
+        {
+            string msg = "DO KICK";
+            msg += NEW_LINE;
+            msg += "TO " + targetUser;
+            msg += NEW_LINE;
+            return msg;
+        }
+
+        public static string BanIpMessage(string targetUser)
+        {
+            string msg = "DO BANIP";
+            msg += NEW_LINE;
+            msg += "TO " + targetUser;
+            msg += NEW_LINE;
+            return msg;
+        }
+
         public static string AuthMessage(string username)
         {
             string msg = "DO AUTH";
