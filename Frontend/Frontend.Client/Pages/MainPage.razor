@@ -41,7 +41,7 @@
         <ul class="user-list">
             @foreach (var user in users)
             {
-                <li @oncontextmenu="e => ContextMenuService.ShowContextMenu(e, JSRuntime)" @oncontextmenu:preventDefault="true">@user</li>
+                <li @oncontextmenu="e => ContextMenuService.ShowContextMenu(e, JSRuntime, user)" @oncontextmenu:preventDefault="true">@user</li>
             }
         </ul>
     </div>
@@ -114,6 +114,11 @@
         if (ContextMenuService.IsBeingShown)
         {
             ContextMenuService.HideContextMenu();
+        }
+
+        if (ContextMenuModalService.modalShown)
+        {
+            ContextMenuModalService.hideModal();
         }
     }
 }

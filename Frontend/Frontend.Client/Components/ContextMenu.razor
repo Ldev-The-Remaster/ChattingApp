@@ -1,18 +1,22 @@
 ﻿@namespace Frontend.Client.Components
-@page "/context"
 @using System
 @using System.Net
+@using Models
+@using LSMP
 
 @if (ContextMenuService.IsBeingShown)
 {
-        <div class="contextMenuDiv" @onclick:stopPropagation="true">
-            <ul>
-                <li @onclick="MessageUser">Message</li>
+    <div class="contextMenuDiv" @onclick:stopPropagation="true">
+        <ul>
+            <li @onclick="MessageUser">Message</li>
+            @if (ClientManager.IsAdmin)
+            {
                 <li @onclick="MuteUser">Mute</li>
+                <li @onclick="KickUser">Kick</li>
                 <li @onclick="BanUser">Ban</li>
-                <li @onclick="ViewIpUser">View IP</li>
                 <li @onclick="IpBanUser">IP Ban</li>
-            </ul>
+            }
+        </ul>
     </div>
 }
 
@@ -33,24 +37,32 @@
 
     public async void MuteUser()
     {
+        ContextMenuModalService.Type = "mute";
+        ContextMenuModalService.showModal();
+        hideOnAction();
+        return;
+    }
+
+    public async void KickUser()
+    {
+        ContextMenuModalService.Type = "kick";
+        ContextMenuModalService.showModal();
         hideOnAction();
         return;
     }
 
     public async void BanUser()
     {
-        hideOnAction();
-        return;
-    }
-
-    public async void ViewIpUser()
-    {
+        ContextMenuModalService.Type = "ban";
+        ContextMenuModalService.showModal();
         hideOnAction();
         return;
     }
 
     public async void IpBanUser()
     {
+        ContextMenuModalService.Type = "ipBan";
+        ContextMenuModalService.showModal();
         hideOnAction();
         return;
     }
@@ -82,7 +94,7 @@
         list-style: none;
         margin-left: auto;
         margin-right: auto;
-        padding:0;
+        padding: 0;
     }
 
     .contextMenuDiv li {

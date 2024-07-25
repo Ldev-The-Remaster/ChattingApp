@@ -83,6 +83,10 @@
             }
 
             ClientManager.CurrentUser = userInfo.username;
+            if(userInfo.ip == "127.0.0.1" || userInfo.ip == "localhost")
+            {
+                ClientManager.IsAdmin = true;
+            }
             NavigationManager.NavigateTo("/main-page");
         }
         catch (Exception)
