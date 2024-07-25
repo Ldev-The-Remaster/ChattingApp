@@ -115,6 +115,11 @@
         {
             ContextMenuService.HideContextMenu();
         }
+
+        if (InfractionModalService.modalShown)
+        {
+            InfractionModalService.hideInfractionModal();
+        }
     }
 }
 

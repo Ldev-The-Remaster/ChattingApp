@@ -1,0 +1,131 @@
+﻿﻿@using Models
+@using LSMP
+@page "/infraction"
+
+@if (InfractionModalService.modalShown)
+{
+    <div class="modal-overlay" @onclick="InfractionModalService.hideInfractionModal">
+        <div class="infraction-modal" @onclick:stopPropagation="true">
+            <div style="font-weight:bolder">@InfractionModalService.InfractionType.ToUpper() REASON</div>
+            <div class="reason-input-box">
+                <textarea placeholder="Type the reason here (leave empty incase of no reason)" value="@infractionReason" @oninput="e => infractionReason = e.Value.ToString()" />
+            </div>
+            <button class="sendReasonButton" @onclick="SendReason">@InfractionModalService.InfractionType.ToUpper() @ContextMenuService.TargetUser</button>
+        </div>
+    </div>
+
+}
+
+
+@code {
+    public string infractionReason = string.Empty;
+
+    protected override void OnInitialized()
+    {
+        InfractionModalService.OnModalChange += StateHasChanged;
+    }
+
+    public async void SendReason()
+    {
+        if (InfractionModalService.InfractionType == "mute")
+        {
+            await WebSocketService.SendMessageAsync(Messaging.MuteMessage(ContextMenuService.TargetUser, infractionReason));
+            InfractionModalService.hideInfractionModal();
+        }
+
+        if (InfractionModalService.InfractionType == "kick")
+        {
+            await WebSocketService.SendMessageAsync(Messaging.KickMessage(ContextMenuService.TargetUser, infractionReason));
+            InfractionModalService.hideInfractionModal();
+        }
+
+        if (InfractionModalService.InfractionType == "ban")
+        {
+            await WebSocketService.SendMessageAsync(Messaging.BanMessage(ContextMenuService.TargetUser, infractionReason));
+            InfractionModalService.hideInfractionModal();
+        }
+
+        if (InfractionModalService.InfractionType == "ipBan")
+        {
+            await WebSocketService.SendMessageAsync(Messaging.BanIpMessage(ContextMenuService.TargetUser, infractionReason));
+            InfractionModalService.hideInfractionModal();
+        }
+
+        infractionReason = "";
+    }
+}
+
+<style>
+    .modal-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.5); 
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 999; 
+    }
+
+    .infraction-modal {
+        width: 25rem;
+        padding: 10px;
+        border: 1px solid;
+        border-radius: 7px;
+        display: flex;
+        flex-direction: column;
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        background-color: #D9D9D9;
+        transform: translate(-50%, -50%);
+        align-items: center;
+        justify-content: center;
+        z-index: 1000;
+    }
+
+    .reason-input-box {
+        padding: 10px;
+        background-color: #D9D9D9;
+        width: 80%;
+        display: flex;
+        justify-content: center;
+    }
+
+    .sendReasonButton {
+        height: 3.5rem;
+        font-size: 0.9rem;
+        font-weight: bolder;
+        color: #D9D9D9;
+        border: 1px;
+        border-radius: 6px;
+        background-color: #525CEB;
+        margin-left: 0.5rem;
+        width: 9rem;
+    }
+
+    .reason-input-box textarea {
+        text-align: justify;
+        resize: none;
+        color: white;
+        background-color: #3c3a3e;
+        width: 80%;
+        height: 5rem;
+        font-size: 1rem;
+        border-radius: 6px;
+        border: none;
+        padding: 0 10px;
+        font-family: "Inter","sans-seriff";
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .chat-input-box textarea:hover,
+    .chat-input-box textarea:focus {
+        outline: none;
+    }
+
+</style>

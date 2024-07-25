@@ -9,7 +9,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Frontend", "Frontend\Fronte
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Frontend.Client", "Frontend\Frontend.Client\Frontend.Client.csproj", "{82B88FBA-C824-4A58-8169-2D79B22A6454}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LSMP", "LSMP\LSMP.csproj", "{CB0EFD1A-B37A-43AF-9665-7776DB80BAF0}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LSMP", "LSMP\LSMP.csproj", "{CB0EFD1A-B37A-43AF-9665-7776DB80BAF0}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

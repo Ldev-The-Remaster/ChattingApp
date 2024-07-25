@@ -39,27 +39,32 @@
 
     public async void MuteUser()
     {
-        await WebSocketService.SendMessageAsync(Messaging.MuteMessage(ContextMenuService.TargetUser));
+        InfractionModalService.InfractionType = "mute";
+        InfractionModalService.showInfractionModal();
         hideOnAction();
         return;
     }
 
     public async void KickUser()
     {
-        await WebSocketService.SendMessageAsync(Messaging.KickMessage(ContextMenuService.TargetUser));
+        InfractionModalService.InfractionType = "kick";
+        InfractionModalService.showInfractionModal();
         hideOnAction();
         return;
     }
 
     public async void BanUser()
     {
-        await WebSocketService.SendMessageAsync(Messaging.BanMessage(ContextMenuService.TargetUser));
+        InfractionModalService.InfractionType = "ban";
+        InfractionModalService.showInfractionModal();
         hideOnAction();
         return;
     }
 
     public async void IpBanUser()
     {
+        InfractionModalService.InfractionType = "ipBan";
+        InfractionModalService.showInfractionModal();
         hideOnAction();
         return;
     }
