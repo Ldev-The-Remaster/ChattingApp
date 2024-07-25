@@ -62,7 +62,7 @@ WITH
    > Required params: `TO <username>`  
    > With reason: `WITH <reason>`
 - ### BANIP: Ban an IP
-   > Required params: `TO <ip>`  
+   > Required params: `TO <username>`  
    > With reason: `WITH <reason>`
 - ### UNMUTE: Unmute a user
    > Required params: `TO <username>`  
