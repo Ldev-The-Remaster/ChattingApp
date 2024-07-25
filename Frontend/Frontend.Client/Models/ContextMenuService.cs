@@ -1,4 +1,5 @@
 ﻿using Frontend.Client.Components;
+using Frontend.Client.Models;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.JSInterop;
 
@@ -16,7 +17,7 @@ public static class ContextMenuService
         Top = e.ClientY;
         Left = e.ClientX;
         TargetUser = user;
-
+        if (ClientManager.CurrentUser == TargetUser) { return; }
         double pageWidth = await jsRuntime.InvokeAsync<double>("getPageWidth");
         double offset = ContextMenu.BoxWidth - (pageWidth - e.ClientX);
 
