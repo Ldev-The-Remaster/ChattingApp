@@ -17,7 +17,6 @@
                 <li @onclick="BanUser">Ban</li>
                 <li @onclick="IpBanUser">IP Ban</li>
             }
-
         </ul>
     </div>
 }
@@ -39,32 +38,32 @@
 
     public async void MuteUser()
     {
-        InfractionModalService.InfractionType = "mute";
-        InfractionModalService.showInfractionModal();
+        ContextMenuModalService.Type = "mute";
+        ContextMenuModalService.showModal();
         hideOnAction();
         return;
     }
 
     public async void KickUser()
     {
-        InfractionModalService.InfractionType = "kick";
-        InfractionModalService.showInfractionModal();
+        ContextMenuModalService.Type = "kick";
+        ContextMenuModalService.showModal();
         hideOnAction();
         return;
     }
 
     public async void BanUser()
     {
-        InfractionModalService.InfractionType = "ban";
-        InfractionModalService.showInfractionModal();
+        ContextMenuModalService.Type = "ban";
+        ContextMenuModalService.showModal();
         hideOnAction();
         return;
     }
 
     public async void IpBanUser()
     {
-        InfractionModalService.InfractionType = "ipBan";
-        InfractionModalService.showInfractionModal();
+        ContextMenuModalService.Type = "ipBan";
+        ContextMenuModalService.showModal();
         hideOnAction();
         return;
     }

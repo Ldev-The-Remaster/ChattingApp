@@ -1,18 +1,18 @@
 ﻿namespace Frontend.Client.Models
 {
-    public static class InfractionModalService
+    public static class ContextMenuModalService
     {
         public static bool modalShown { get; private set; }
         public static event Action? OnModalChange;
-        public static string? InfractionType;
+        public static string? Type;
 
-        public static void showInfractionModal()
+        public static void showModal()
         {
             modalShown = true;
             OnModalChange?.Invoke();
         }
 
-        public static void hideInfractionModal()
+        public static void hideModal()
         {
             modalShown = false;
             OnModalChange?.Invoke();

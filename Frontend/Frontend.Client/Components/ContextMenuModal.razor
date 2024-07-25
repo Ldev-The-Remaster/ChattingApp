@@ -1,56 +1,55 @@
 ﻿﻿@using Models
 @using LSMP
-@page "/infraction"
+@page "/ContextMenuModal"
 
-@if (InfractionModalService.modalShown)
+@if (ContextMenuModalService.modalShown)
 {
-    <div class="modal-overlay" @onclick="InfractionModalService.hideInfractionModal">
+    <div class="modal-overlay" @onclick="ContextMenuModalService.hideModal">
         <div class="infraction-modal" @onclick:stopPropagation="true">
-            <div style="font-weight:bolder">@InfractionModalService.InfractionType.ToUpper() REASON</div>
+            <div style="font-weight:bolder">@ContextMenuModalService.Type.ToUpper() REASON</div>
             <div class="reason-input-box">
-                <textarea placeholder="Type the reason here (leave empty incase of no reason)" value="@infractionReason" @oninput="e => infractionReason = e.Value.ToString()" />
+                <textarea placeholder="Reason..." value="@Reason" @oninput="e => Reason = e.Value.ToString()" />
             </div>
-            <button class="sendReasonButton" @onclick="SendReason">@InfractionModalService.InfractionType.ToUpper() @ContextMenuService.TargetUser</button>
+            <button class="sendReasonButton" @onclick="SendReason">@ContextMenuModalService.Type.ToUpper() @ContextMenuService.TargetUser</button>
         </div>
     </div>
 }
 
-
 @code {
-    public string infractionReason = string.Empty;
+    public string Reason = string.Empty;
 
     protected override void OnInitialized()
     {
-        InfractionModalService.OnModalChange += StateHasChanged;
+        ContextMenuModalService.OnModalChange += StateHasChanged;
     }
 
     public async void SendReason()
     {
-        if (InfractionModalService.InfractionType == "mute")
+        if (ContextMenuModalService.Type == "mute")
         {
-            await WebSocketService.SendMessageAsync(Messaging.MuteMessage(ContextMenuService.TargetUser, infractionReason));
-            InfractionModalService.hideInfractionModal();
+            await WebSocketService.SendMessageAsync(Messaging.MuteMessage(ContextMenuService.TargetUser, Reason));
+            ContextMenuModalService.hideModal();
         }
 
-        if (InfractionModalService.InfractionType == "kick")
+        if (ContextMenuModalService.Type == "kick")
         {
-            await WebSocketService.SendMessageAsync(Messaging.KickMessage(ContextMenuService.TargetUser, infractionReason));
-            InfractionModalService.hideInfractionModal();
+            await WebSocketService.SendMessageAsync(Messaging.KickMessage(ContextMenuService.TargetUser, Reason));
+            ContextMenuModalService.hideModal();
         }
 
-        if (InfractionModalService.InfractionType == "ban")
+        if (ContextMenuModalService.Type == "ban")
         {
-            await WebSocketService.SendMessageAsync(Messaging.BanMessage(ContextMenuService.TargetUser, infractionReason));
-            InfractionModalService.hideInfractionModal();
+            await WebSocketService.SendMessageAsync(Messaging.BanMessage(ContextMenuService.TargetUser, Reason));
+            ContextMenuModalService.hideModal();
         }
 
-        if (InfractionModalService.InfractionType == "ipBan")
+        if (ContextMenuModalService.Type == "ipBan")
         {
-            await WebSocketService.SendMessageAsync(Messaging.BanIpMessage(ContextMenuService.TargetUser, infractionReason));
-            InfractionModalService.hideInfractionModal();
+            await WebSocketService.SendMessageAsync(Messaging.BanIpMessage(ContextMenuService.TargetUser, Reason));
+            ContextMenuModalService.hideModal();
         }
 
-        infractionReason = "";
+        Reason = "";
     }
 }
 
