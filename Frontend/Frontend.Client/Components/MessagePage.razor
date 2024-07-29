@@ -1,16 +1,19 @@
-﻿@page "/dm"
-@inject NavigationManager NavigationManager
+﻿@page "/messagePage"
+@using Frontend.Client.Pages
 @using Models
-@using Components
+@inject IJSRuntime JSRuntime
+
+
 
 <div class="main-page" @onclick="HandleGlobalClick">
     <div class="main-block">
         <div class="main-top">
             <h1>Chat Room</h1>
+            <button>SETTINGS</button>
         </div>
         <div class="main-content">
             <div class="message-container" id="messageContainer">
-                @foreach (var message in messages)
+                @foreach (var message in ChannelManager.GetCurrentChannelData().MessageHistory)
                 {
                     if (message.Sender == null)
                     {
@@ -34,32 +37,19 @@
     <div class="user-block">
         <h1>CONNECTED USERS</h1>
         <ul class="user-list">
-                <li>@ContextMenuService.TargetUser</li>
+            @foreach (var user in ChannelManager.GetCurrentChannelData().userList)
+            {
+                <li @oncontextmenu="e => ContextMenuService.ShowContextMenu(e, JSRuntime, user)" @oncontextmenu:preventDefault="true">@user</li>
+            }
         </ul>
     </div>
 </div>
 
 
+
 @code {
+   
     private string currentMessage = string.Empty;
-    private List<string> users = new List<string>();
-
-    [Parameter] public List<UserMessage> messages { get; set; }
-    protected override void OnInitialized()
-    {
-        //HandleDisconnect();
-        // WebSocketService.OnClosed += HandleDisconnect;
-        WebSocketService.OnMessageReceived += MessageReceived;
-        
-    }
-
-    // private void HandleDisconnect()
-    // {
-    //     if (!WebSocketService.IsAuthenticated)
-    //     {
-    //         NavigationManager.NavigateTo("/login");
-    //     }
-    // }
 
     public void MessageReceived(UserMessage message)
     {
@@ -95,14 +85,19 @@
             await SendMessage();
         }
     }
-
     private void HandleGlobalClick()
     {
         if (ContextMenuService.IsBeingShown)
         {
             ContextMenuService.HideContextMenu();
         }
+
+        if (ContextMenuModalService.modalShown)
+        {
+            ContextMenuModalService.hideModal();
+        }
     }
+
 }
 
 <style>
@@ -114,4 +109,5 @@
         opacity: 0.5;
     }
 </style>
+
 }

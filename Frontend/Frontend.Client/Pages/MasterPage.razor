@@ -1,0 +1,33 @@
+﻿@using Pages
+@using Models
+@inject NavigationManager NavigationManager
+
+<MessagePage ></MessagePage>
+
+
+@code {
+    
+
+    protected override void OnInitialized()
+    {
+        HandleDisconnect();
+        ChannelManager.OnChannelChange += StateHasChanged;
+
+
+    }
+
+    
+    public void OpenChannel(string channelName)
+    {
+        
+    }
+
+    private void HandleDisconnect()
+    {
+        if (!WebSocketService.IsAuthenticated)
+        {
+            NavigationManager.NavigateTo("/login");
+        }
+    }
+
+}

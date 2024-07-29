@@ -54,6 +54,10 @@ namespace Frontend.Client.Models
                     return;
                 }
 
+                if (rawMessage.Do.Equals("REMIND")){
+
+                }
+
                 if(rawMessage.Do.Equals("SEND"))
                 {
                     var user = rawMessage.From;
