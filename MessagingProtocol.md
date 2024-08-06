@@ -86,17 +86,29 @@ FROM Akram
 ---
 ```
 DO SEND
+IN general-chat
 WITH
 HASHABC123
 yoo good morning
 how you been?
 ```
-> Request to send a message (defaults to `general-chat`) with the a hash of:  
+> Request to send a message with the a hash of:  
 > `HASHABC123`  
 > And a message of:  
 > `yoo good morning`  
 > `how you been?`
-
+> 
+---
+### Direct Messages (DM's)
+```
+DO SEND
+IN $DM-user1-user2
+WITH
+Hey there user2 how
+are you?
+```
+> DM channel names are formatted as $DM-`USER1`-`USER2` where the username positions
+> do not matter and messages to $DM-`USER2`-`USER1` will be considered the same as $DM-`USER1`-`USER2`.
 ---
 ```
 DO BAN
