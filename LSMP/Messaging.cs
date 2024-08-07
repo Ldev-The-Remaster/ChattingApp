@@ -1,5 +1,7 @@
 ﻿
 using LSMP.Utils;
+using System.Security.Cryptography;
+using System.Text;
 
 namespace LSMP
 {
@@ -179,6 +181,20 @@ namespace LSMP
             var hash = splitList[0];
             var content = splitList[1];
             return (hash, content);
+        }
+
+        public static string GetDirectMessageChannelHash(string from, string to)
+        {
+            string[] users = { from, to };
+            Array.Sort(users);
+
+            string combinedString = users[0] + users[1];
+
+            using (SHA256 sha256 = SHA256.Create())
+            {
+                byte[] hashBytes = sha256.ComputeHash(Encoding.UTF8.GetBytes(combinedString));
+                return BitConverter.ToString(hashBytes).ToLower();
+            }
         }
     }
 }
