@@ -102,13 +102,13 @@ how you been?
 ### Direct Messages (DM's)
 ```
 DO SEND
-IN $DM-user1-user2
+IN DMCHANNELHASH
 WITH
 Hey there user2 how
 are you?
 ```
-> DM channel names are formatted as $DM-`USER1`-`USER2` where the username positions
-> do not matter and messages to $DM-`USER2`-`USER1` will be considered the same as $DM-`USER1`-`USER2`.
+> DM channel names are generated via LSMP hashing algorithm found in the Messaging namespace under
+> the function `GetDirectMessageChannelHash`.
 ---
 ```
 DO BAN
