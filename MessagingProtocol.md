@@ -102,7 +102,7 @@ how you been?
 ### Direct Messages (DM's)
 ```
 DO SEND
-IN DMCHANNELHASH
+IN dm-h2ae3fae65b
 WITH
 Hey there user2 how
 are you?
