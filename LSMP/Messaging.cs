@@ -193,7 +193,7 @@ namespace LSMP
             using (SHA256 sha256 = SHA256.Create())
             {
                 byte[] hashBytes = sha256.ComputeHash(Encoding.UTF8.GetBytes(combinedString));
-                return BitConverter.ToString(hashBytes).ToLower();
+                return $"dm-{BitConverter.ToString(hashBytes).ToLower()}";
             }
         }
     }
