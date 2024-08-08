@@ -39,17 +39,17 @@ WITH
 - ### AUTH: Authenticate a user
    > Required params: `FROM <username>`
 - ### IDENTIFY: Request user list
-   > Required params: `IN <channel-name>`
+   > Required params: `IN <channel-hash>`
 - ### REMEMBER: Request message history
-   > Required params: `FROM <message-order>`, `TO <message-order>`, `IN <channel-name>`
+   > Required params: `FROM <message-order>`, `TO <message-order>`, `IN <channel-hash>`
 - ### SEND: Send a message in a channel
-   > Required params: `IN <channel-name>`, `WITH <hash> <message>`  
+   > Required params: `IN <channel-hash>`, `WITH <hash> <message>`  
 ---
 ### Channel management (Admin only):
 - ### CREATE: Create a channel
-   > Required params: `WITH <channel-name>`  
+   > Required params: `WITH <channel-hash>`  
 - ### DELETE: Delete a channel
-   > Required params: `WITH <channel-name>`
+   > Required params: `WITH <channel-hash>`
 ---
 ### Infractions (Admin only):
 - ### MUTE: Mute a user in a channel
@@ -132,7 +132,7 @@ The `AT` parameter for the timestamps is mainly used when the server is sending 
 - ### SEND: Tells the client that a user has sent a message
    > Required params: `WITH <hash> <message>`  
    > From a user (omit for alert): `FROM <username>`  
-   > In channel (defaults to `general-chat`): `IN <channel-name>`  
+   > In channel (defaults to `general-chat`): `IN <channel-hash>`  
    > With a timestamp from history (defaults to `date.now`): `AT <timestamp>`
 
 Besides displaying messages and alerts, the server also needs to respond to `AUTH` requests, as well as refuse `SEND` requests from unauthorized clients. This is done using the following verbs:
@@ -147,7 +147,7 @@ When a new client authenticates using `AUTH`, the server will send the list of u
 The client may also ask for the user list using the `IDENTIFY` verb.  
 This is done via the `INTRODUCE` server verb, in which the server will provide the list of connected users in the form of an array.
 - ### INTRODUCE: Send list of online users
-   > Required params: `IN <channel-name>`, `WITH <array-of-users>`
+   > Required params: `IN <channel-hash>`, `WITH <array-of-users>`
 
 In the `WITH` argument, the list of usernames should start, end, and be seperated using the character sequence `/*$*/` (forward slash, asterisk, dollar sign, asterisk, forward slash) with the seperator and each username in a different line like so:
 ```
@@ -168,7 +168,7 @@ It's then up to the client to re-interpret the user array to populate the UI.
 When the server receives a `REMEMBER` request from a client, the server is expected to forward all the messages that users have sent in the specified period, this is done through the `REMIND` server verb. When sending a `REMIND` from the server, the `WITH` parameter will house multiple message requests from the server so the client can populate its UI with the message history.
 
 - ### REMIND: Send multiple messages at once
-   > Required params: `IN <channel-name>`, `WITH <array-of-messages>`
+   > Required params: `IN <channel-hash>`, `WITH <array-of-messages>`
 
 In the `WITH` argument, seperate message requests should start, end, and be seperated using the character sequence `/*$*/` (forward slash, asterisk, dollar sign, asterisk, forward slash) like so:
 ```
