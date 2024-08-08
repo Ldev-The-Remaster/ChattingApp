@@ -1,7 +1,7 @@
 # Technical specifications for the **L**eague **S**ockets **M**essaging **P**rotocol (LSMP)
 This document lists the technical specifications and details for implementing LSMP in your websocket server.  
 LSMP is a custom protocol intended for use on top of the websockets protocol for the purpose of a live chat messaging application.  
-*Version: 0.5.0*
+*Version: 0.5.1*
 
 # Client -> Server
 Websocket messages coming from the client should conform to the following pattern:
@@ -86,17 +86,29 @@ FROM Akram
 ---
 ```
 DO SEND
+IN general-chat
 WITH
 HASHABC123
 yoo good morning
 how you been?
 ```
-> Request to send a message (defaults to `general-chat`) with the a hash of:  
+> Request to send a message with the a hash of:  
 > `HASHABC123`  
 > And a message of:  
 > `yoo good morning`  
 > `how you been?`
-
+> 
+---
+### Direct Messages (DM's)
+```
+DO SEND
+IN dm-h2ae3fae65b
+WITH
+Hey there user2 how
+are you?
+```
+> DM channel names are generated via LSMP hashing algorithm found in the Messaging namespace under
+> the function `GetDirectMessageChannelHash`.
 ---
 ```
 DO BAN
