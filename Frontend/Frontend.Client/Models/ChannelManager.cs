@@ -5,26 +5,20 @@ namespace Frontend.Client.Models
 {
     public static class ChannelManager
     {
-        // main needs to be an always present channel and it's message history and userlist need to be initialized on load and displayed accordingly
         public class ChannelData
         {
             public List<UserMessage> MessageHistory { get; set; } = new List<UserMessage>();
             public List<string> UserList { get; set; } = new List<string>();
         }
 
-        // function that sends message to channel that takes a message and target channel
         public static Dictionary<string, ChannelData> channels = new Dictionary<string, ChannelData>
         {
             {"general-chat", new ChannelData() }
         };
 
-
         public static string CurrentChannel { get; set; } = "general-chat";
 
         public static event Action? OnStateChange;
-
-        // here we are sending the message through the websocket and simultaneously adding it to the current channel' message history
-        // we also set the message.Channel propety to the current channel it's being sent in
 
         public static string CreateDmChannel(string targetUser)
         {
@@ -105,7 +99,6 @@ namespace Frontend.Client.Models
             return new ChannelData();
 
         }
-
     }
 
 }
