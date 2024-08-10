@@ -50,7 +50,7 @@ namespace Frontend.Client.Models
             {
                 if (rawMessage.Do.Equals("INTRODUCE"))
                 {
-                    ClientManager.UpdateUserList(rawMessage.With);
+                    ChannelManager.UpdateChannelUserList("general-chat", Messaging.DecodeUserList(rawMessage.With));
                     return;
                 }
 

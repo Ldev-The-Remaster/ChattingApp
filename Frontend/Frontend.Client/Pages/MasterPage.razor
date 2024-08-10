@@ -10,7 +10,6 @@
 
     protected override void OnInitialized(){
         HandleDisconnect();
-        ChannelManager.OnChannelChange += StateHasChanged;
         WebSocketService.OnClosed += HandleDisconnect;
     }
 

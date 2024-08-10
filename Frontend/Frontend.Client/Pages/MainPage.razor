@@ -68,12 +68,7 @@
         }
     }
 
-    private void UpdateUserList()
-    {
-        users = ClientManager.CurrentUsersList;
-        InvokeAsync(StateHasChanged);
-        Console.WriteLine("users in mainpage: " + string.Join(", ", users));
-    }
+   
 
     public void MessageReceived(UserMessage message)
     {

@@ -37,7 +37,6 @@
     <div class="user-block">
         <h1>CONNECTED USERS</h1>
         <ul class="user-list">
-            @* for a DM, this can be made as contextmenu.targetuser *@
             @foreach (var user in userList)
             {
                 <li @oncontextmenu="e => ContextMenuService.ShowContextMenu(e, JSRuntime, user)" @oncontextmenu:preventDefault="true">@user</li>
@@ -51,18 +50,25 @@
 @code {
 
     private string currentMessage = string.Empty;
-    public List<string> userList = ChannelManager.GetCurrentChannelData().UserList;
-    public List<UserMessage> messageHistory = ChannelManager.GetCurrentChannelData().MessageHistory;
+    public List<string> userList = new List<string>();
+    public List<UserMessage> messageHistory = new List<UserMessage>();
 
     protected override void OnInitialized()
     {
-        ClientManager.OnUserListUpdate += UpdateUserList;
+        RefreshChannelData();
+        ChannelManager.OnStateChange += RefreshChannelData;
         WebSocketService.OnMessageReceived += MessageReceived;
-
     }
 
-     public void MessageReceived(UserMessage message)
-     {
+    public void RefreshChannelData()
+    {
+        userList = ChannelManager.GetCurrentChannelData().UserList;
+        messageHistory = ChannelManager.GetCurrentChannelData().MessageHistory;
+        StateHasChanged();
+    }
+
+    public void MessageReceived(UserMessage message)
+    {
          UserMessage? currentUserMessage = messageHistory.Find(messageInList => message.Hash == messageInList.Hash);
          if (currentUserMessage != null)
          {
@@ -75,13 +81,7 @@
          InvokeAsync(StateHasChanged);
      }
 
-    private void UpdateUserList()
-    {
-        userList = ClientManager.CurrentUsersList;
-        InvokeAsync(StateHasChanged);
-        Console.WriteLine("users in mainpage: " + string.Join(", ", userList));
-    }
-
+    
     private async Task SendMessage()
     {
         if (string.IsNullOrWhiteSpace(currentMessage))

@@ -1,4 +1,7 @@
-﻿namespace Frontend.Client.Models
+﻿using LSMP;
+using static Frontend.Client.Models.ChannelManager;
+
+namespace Frontend.Client.Models
 {
     public static class ChannelManager
     {
@@ -10,35 +13,69 @@
         }
 
         // function that sends message to channel that takes a message and target channel
-        public static Dictionary<string, ChannelData> channels = new Dictionary<string, ChannelData>();
-       
-        
-        public static string CurrentChannel { get; set; } = string.Empty;
+        public static Dictionary<string, ChannelData> channels = new Dictionary<string, ChannelData>
+        {
+            {"general-chat", new ChannelData() }
+        };
 
-        public static event Action? OnChannelChange;
+
+        public static string CurrentChannel { get; set; } = "general-chat";
+
+        public static event Action? OnStateChange;
 
         // here we are sending the message through the websocket and simultaneously adding it to the current channel' message history
         // we also set the message.Channel propety to the current channel it's being sent in
 
-        public static void UpdateOrCreateChannel(string channelName, ChannelData channelData)
+        public static string CreateDmChannel(string targetUser)
+        {
+            var channelData = new ChannelData
+            {
+                UserList = new List<string>
+                {
+                    ClientManager.CurrentUser,
+                    targetUser
+                }
+                //TO DO: Get message history from server
+            };
+
+            var dmChannelName = Messaging.GetDirectMessageChannelHash(ClientManager.CurrentUser, targetUser);
+            channels.Add(dmChannelName, channelData);
+            OnStateChange?.Invoke();
+            return dmChannelName;
+        }
+
+        public static void CreateChannel(string channelName, ChannelData channelData)
         {
             if (channels.ContainsKey(channelName))
             {
                 channels[channelName] = channelData;
+                OnStateChange?.Invoke();
                 return;
             }
             
             channels.Add(channelName, channelData); 
         }
 
-        public static void UpdateChannelUserList(string channelName, List<string> userList)
+        public static bool UpdateChannelUserList(string channelName, List<string> userList)
         {
-
+            if (channels.ContainsKey(channelName))
+            {
+                channels[channelName].UserList= userList;
+                OnStateChange?.Invoke();
+                return true;
+            }
+            return false;
         }
 
-        public static void UpdateChannelMessageHistory(string channelName, List<UserMessage> messageHistory)
+        public static bool UpdateChannelMessageHistory(string channelName, List<UserMessage> messageHistory)
         {
-
+            if (channels.ContainsKey(channelName))
+            {
+                channels[channelName].MessageHistory = messageHistory;
+                OnStateChange?.Invoke();
+                return true;
+            }
+            return false;
         }
 
         public static async Task SendMessage(UserMessage message)
@@ -54,7 +91,7 @@
         public static void SetCurrentChannel(string channel)
         {
             CurrentChannel = channel;
-            OnChannelChange?.Invoke();
+            OnStateChange?.Invoke();
         }
 
         public static ChannelData GetCurrentChannelData()
