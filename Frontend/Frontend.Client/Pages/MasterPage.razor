@@ -1,25 +1,22 @@
-﻿@using Pages
+﻿@page "/master-page"
+@using Pages
 @using Models
 @inject NavigationManager NavigationManager
 
-<MessagePage ></MessagePage>
+<Frontend.Client.Components.MessagePageComponent></Frontend.Client.Components.MessagePageComponent>
 
 
 @code {
-    
 
-    protected override void OnInitialized()
-    {
+    protected override void OnInitialized(){
         HandleDisconnect();
         ChannelManager.OnChannelChange += StateHasChanged;
-
-
+        WebSocketService.OnClosed += HandleDisconnect;
     }
 
-    
-    public void OpenChannel(string channelName)
+    public void SetChannel(string channelName)
     {
-        
+        ChannelManager.SetCurrentChannel(channelName);
     }
 
     private void HandleDisconnect()

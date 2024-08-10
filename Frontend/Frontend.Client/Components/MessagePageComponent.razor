@@ -1,16 +1,19 @@
-﻿@page "/dm"
-@inject NavigationManager NavigationManager
+﻿@page "/messagePage"
+@using Frontend.Client.Pages
 @using Models
-@using Components
+@inject IJSRuntime JSRuntime
+
+<PageTitle>@ChannelManager.CurrentChannel</PageTitle>
 
 <div class="main-page" @onclick="HandleGlobalClick">
     <div class="main-block">
         <div class="main-top">
             <h1>Chat Room</h1>
+            <button>SETTINGS</button>
         </div>
         <div class="main-content">
             <div class="message-container" id="messageContainer">
-                @foreach (var message in messages)
+                @foreach (var message in messageHistory)
                 {
                     if (message.Sender == null)
                     {
@@ -34,45 +37,49 @@
     <div class="user-block">
         <h1>CONNECTED USERS</h1>
         <ul class="user-list">
-                <li>@ContextMenuService.TargetUser</li>
+            @* for a DM, this can be made as contextmenu.targetuser *@
+            @foreach (var user in userList)
+            {
+                <li @oncontextmenu="e => ContextMenuService.ShowContextMenu(e, JSRuntime, user)" @oncontextmenu:preventDefault="true">@user</li>
+            }
         </ul>
     </div>
 </div>
 
 
-@code {
-    private string currentMessage = string.Empty;
-    private List<string> users = new List<string>();
 
-    [Parameter] public List<UserMessage> messages { get; set; }
+@code {
+
+    private string currentMessage = string.Empty;
+    public List<string> userList = ChannelManager.GetCurrentChannelData().UserList;
+    public List<UserMessage> messageHistory = ChannelManager.GetCurrentChannelData().MessageHistory;
+
     protected override void OnInitialized()
     {
-        //HandleDisconnect();
-        // WebSocketService.OnClosed += HandleDisconnect;
+        ClientManager.OnUserListUpdate += UpdateUserList;
         WebSocketService.OnMessageReceived += MessageReceived;
-        
+
     }
 
-    // private void HandleDisconnect()
-    // {
-    //     if (!WebSocketService.IsAuthenticated)
-    //     {
-    //         NavigationManager.NavigateTo("/login");
-    //     }
-    // }
+     public void MessageReceived(UserMessage message)
+     {
+         UserMessage? currentUserMessage = messageHistory.Find(messageInList => message.Hash == messageInList.Hash);
+         if (currentUserMessage != null)
+         {
+             currentUserMessage.IsConfirmed = true;
+         }
+         else
+         {
+             messageHistory.Add(message);
+         }
+         InvokeAsync(StateHasChanged);
+     }
 
-    public void MessageReceived(UserMessage message)
+    private void UpdateUserList()
     {
-        UserMessage? currentUserMessage = messages.Find(messageInList => message.Hash == messageInList.Hash);
-        if (currentUserMessage != null)
-        {
-            currentUserMessage.IsConfirmed = true;
-        }
-        else
-        {
-            messages.Add(message);
-        }
+        userList = ClientManager.CurrentUsersList;
         InvokeAsync(StateHasChanged);
+        Console.WriteLine("users in mainpage: " + string.Join(", ", userList));
     }
 
     private async Task SendMessage()
@@ -83,8 +90,7 @@
         }
 
         var newMessage = new UserMessage(ClientManager.CurrentUser, currentMessage, false);
-        messages.Add(newMessage);
-        await WebSocketService.SendMessage(newMessage);
+        await ChannelManager.SendMessage(newMessage);
         currentMessage = String.Empty;
     }
 
@@ -102,7 +108,13 @@
         {
             ContextMenuService.HideContextMenu();
         }
+
+        if (ContextMenuModalService.modalShown)
+        {
+            ContextMenuModalService.hideModal();
+        }
     }
+
 }
 
 <style>
@@ -114,4 +126,5 @@
         opacity: 0.5;
     }
 </style>
-}
+
+

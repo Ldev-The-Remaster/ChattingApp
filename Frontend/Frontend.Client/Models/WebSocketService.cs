@@ -106,9 +106,9 @@ namespace Frontend.Client.Models
 
         private static void OnClose() 
         {
-            _receiveMessagesTask?.Dispose();
             _isAuthenticated = false;
             OnClosed?.Invoke();
+            _receiveMessagesTask?.Dispose();
         }
 
         private static async Task ReceiveMessagesAsync()
