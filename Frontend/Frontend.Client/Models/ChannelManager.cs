@@ -33,6 +33,11 @@ namespace Frontend.Client.Models
             };
 
             var dmChannelName = Messaging.GetDirectMessageChannelHash(ClientManager.CurrentUser, targetUser);
+            if (channels.ContainsKey(dmChannelName)) 
+            {
+                return dmChannelName;
+            }
+
             channels.Add(dmChannelName, channelData);
             OnStateChange?.Invoke();
             return dmChannelName;
@@ -58,6 +63,7 @@ namespace Frontend.Client.Models
                 OnStateChange?.Invoke();
                 return true;
             }
+
             return false;
         }
 
@@ -69,6 +75,7 @@ namespace Frontend.Client.Models
                 OnStateChange?.Invoke();
                 return true;
             }
+
             return false;
         }
 
@@ -79,6 +86,7 @@ namespace Frontend.Client.Models
                 channels[message.Channel].MessageHistory.Add(message);
                 message.Channel = CurrentChannel;
             }
+
             await WebSocketService.SendMessage(message);
         }
 
@@ -100,5 +108,4 @@ namespace Frontend.Client.Models
 
         }
     }
-
 }

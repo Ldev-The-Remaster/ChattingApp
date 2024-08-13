@@ -48,7 +48,6 @@
 
 
 @code {
-
     private string currentMessage = string.Empty;
     public List<string> userList = new List<string>();
     public List<UserMessage> messageHistory = new List<UserMessage>();
@@ -78,6 +77,7 @@
          {
              messageHistory.Add(message);
          }
+
          InvokeAsync(StateHasChanged);
      }
 
@@ -114,7 +114,6 @@
             ContextMenuModalService.hideModal();
         }
     }
-
 }
 
 <style>
