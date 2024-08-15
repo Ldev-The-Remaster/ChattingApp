@@ -1,7 +1,8 @@
-﻿@page "/messagePage"
+﻿@page "/channel/{channelName}"
 @using Frontend.Client.Pages
 @using Models
 @inject IJSRuntime JSRuntime
+@inject NavigationManager Navigation
 
 <PageTitle>@ChannelManager.CurrentChannel</PageTitle>
 
@@ -48,6 +49,8 @@
 
 
 @code {
+    [Parameter]
+    public string channelName { get; set; }
     private string currentMessage = string.Empty;
     public List<string> userList = new List<string>();
     public List<UserMessage> messageHistory = new List<UserMessage>();
@@ -63,6 +66,7 @@
     {
         userList = ChannelManager.GetCurrentChannelData().UserList;
         messageHistory = ChannelManager.GetCurrentChannelData().MessageHistory;
+        Navigation.NavigateTo("/channel/" + ChannelManager.CurrentChannel);
         StateHasChanged();
     }
 
