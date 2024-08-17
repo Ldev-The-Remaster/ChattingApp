@@ -50,8 +50,12 @@ namespace Frontend.Client.Models
             {
                 if (rawMessage.Do.Equals("INTRODUCE"))
                 {
-                    ClientManager.UpdateUserList(rawMessage.With);
+                    ChannelManager.UpdateChannelUserList("general-chat", Messaging.DecodeUserList(rawMessage.With));
                     return;
+                }
+
+                if (rawMessage.Do.Equals("REMIND")){
+
                 }
 
                 if(rawMessage.Do.Equals("SEND"))
@@ -102,9 +106,9 @@ namespace Frontend.Client.Models
 
         private static void OnClose() 
         {
-            _receiveMessagesTask?.Dispose();
             _isAuthenticated = false;
             OnClosed?.Invoke();
+            _receiveMessagesTask?.Dispose();
         }
 
         private static async Task ReceiveMessagesAsync()

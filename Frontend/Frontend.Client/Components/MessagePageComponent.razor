@@ -1,11 +1,10 @@
-﻿@page "/main-page"
-@using Frontend.Client.Components
+﻿@page "/channel/{channelName}"
+@using Frontend.Client.Pages
 @using Models
-@using static Frontend.Client.Models.WebSocketService
-@inject NavigationManager NavigationManager
 @inject IJSRuntime JSRuntime
+@inject NavigationManager Navigation
 
-<PageTitle>Main Page</PageTitle>
+<PageTitle>@ChannelManager.CurrentChannel</PageTitle>
 
 <div class="main-page" @onclick="HandleGlobalClick">
     <div class="main-block">
@@ -15,7 +14,7 @@
         </div>
         <div class="main-content">
             <div class="message-container" id="messageContainer">
-                @foreach (var message in messages)
+                @foreach (var message in messageHistory)
                 {
                     if (message.Sender == null)
                     {
@@ -39,7 +38,7 @@
     <div class="user-block">
         <h1>CONNECTED USERS</h1>
         <ul class="user-list">
-            @foreach (var user in users)
+            @foreach (var user in userList)
             {
                 <li @oncontextmenu="e => ContextMenuService.ShowContextMenu(e, JSRuntime, user)" @oncontextmenu:preventDefault="true">@user</li>
             }
@@ -47,48 +46,46 @@
     </div>
 </div>
 
+
+
 @code {
+    [Parameter]
+    public string channelName { get; set; }
     private string currentMessage = string.Empty;
-    private List<string> users = new List<string>();
-    private List<UserMessage> messages = new List<UserMessage>();
+    public List<string> userList = new List<string>();
+    public List<UserMessage> messageHistory = new List<UserMessage>();
+
     protected override void OnInitialized()
     {
-        HandleDisconnect();
-        users = ClientManager.CurrentUsersList;
-        WebSocketService.OnClosed += HandleDisconnect;
+        RefreshChannelData();
+        ChannelManager.OnStateChange += RefreshChannelData;
         WebSocketService.OnMessageReceived += MessageReceived;
-        ClientManager.OnUserListUpdate += UpdateUserList;
     }
 
-    private void HandleDisconnect()
+    public void RefreshChannelData()
     {
-        if (!WebSocketService.IsAuthenticated)
-        {
-            NavigationManager.NavigateTo("/login");
-        }
-    }
-
-    private void UpdateUserList()
-    {
-        users = ClientManager.CurrentUsersList;
-        InvokeAsync(StateHasChanged);
-        Console.WriteLine("users in mainpage: " + string.Join(", ", users));
+        userList = ChannelManager.GetCurrentChannelData().UserList;
+        messageHistory = ChannelManager.GetCurrentChannelData().MessageHistory;
+        Navigation.NavigateTo("/channel/" + ChannelManager.CurrentChannel);
+        StateHasChanged();
     }
 
     public void MessageReceived(UserMessage message)
     {
-        UserMessage? currentUserMessage = messages.Find(messageInList => message.Hash == messageInList.Hash);
-        if(currentUserMessage != null)
-        {
-            currentUserMessage.IsConfirmed = true;
-        }
-        else
-        {
-            messages.Add(message);
-        }
-        InvokeAsync(StateHasChanged);
-    }
+         UserMessage? currentUserMessage = messageHistory.Find(messageInList => message.Hash == messageInList.Hash);
+         if (currentUserMessage != null)
+         {
+             currentUserMessage.IsConfirmed = true;
+         }
+         else
+         {
+             messageHistory.Add(message);
+         }
 
+         InvokeAsync(StateHasChanged);
+     }
+
+    
     private async Task SendMessage()
     {
         if (string.IsNullOrWhiteSpace(currentMessage))
@@ -97,8 +94,7 @@
         }
 
         var newMessage = new UserMessage(ClientManager.CurrentUser, currentMessage, false);
-        messages.Add(newMessage);
-        await WebSocketService.SendMessage(newMessage);
+        await ChannelManager.SendMessage(newMessage);
         currentMessage = String.Empty;
     }
 
@@ -109,6 +105,7 @@
             await SendMessage();
         }
     }
+
     private void HandleGlobalClick()
     {
         if (ContextMenuService.IsBeingShown)
@@ -132,3 +129,5 @@
         opacity: 0.5;
     }
 </style>
+
+

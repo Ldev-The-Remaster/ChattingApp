@@ -5,7 +5,7 @@ using Microsoft.JSInterop;
 
 public static class ContextMenuService
 {
-    public static string? TargetUser { get; set; }
+    public static string TargetUser { get; set; } = string.Empty;
     public static double Top { get; set; }
     public static double Left { get; set; }
 

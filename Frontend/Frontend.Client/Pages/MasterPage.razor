@@ -1,0 +1,30 @@
+﻿@page "/master-page"
+@using Pages
+@using Models
+@inject NavigationManager NavigationManager
+
+<Frontend.Client.Components.MessagePageComponent></Frontend.Client.Components.MessagePageComponent>
+
+
+@code {
+
+    protected override void OnInitialized(){
+        HandleDisconnect();
+        WebSocketService.OnClosed += HandleDisconnect;
+    }
+
+    public void SetChannel(string channelName)
+    {
+        ChannelManager.SetCurrentChannel(channelName);
+    }
+
+    private void HandleDisconnect()
+    {
+        if (!WebSocketService.IsAuthenticated)
+        {
+            NavigationManager.NavigateTo("/login");
+        }
+    }
+
+}
+
