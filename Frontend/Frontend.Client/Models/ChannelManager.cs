@@ -28,7 +28,12 @@ namespace Frontend.Client.Models
                 {
                     ClientManager.CurrentUser,
                     targetUser
+                },
+                MessageHistory = new List<UserMessage>
+                {
+
                 }
+
                 //TO DO: Get message history from server
             };
 

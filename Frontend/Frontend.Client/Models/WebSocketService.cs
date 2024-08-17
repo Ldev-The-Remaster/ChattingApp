@@ -55,7 +55,14 @@ namespace Frontend.Client.Models
                 }
 
                 if (rawMessage.Do.Equals("REMIND")){
-
+                    List<UserMessage> messagesDetails = new List<UserMessage>();
+                    foreach (var item in Messaging.DecodeMessageHistory(rawMessage.With)) {
+                        MessageParser messageDetails = new MessageParser(item);
+                        List<string> hashContentSplitter = messageDetails.With.Split(new[] {"\r\n"},2,StringSplitOptions.RemoveEmptyEntries).ToList();
+                        UserMessage message = new UserMessage(messageDetails.From, hashContentSplitter[0], hashContentSplitter[1],messageDetails.At,true);
+                        messagesDetails.Add(message);
+                    }
+                    ChannelManager.UpdateChannelMessageHistory(rawMessage.In, messagesDetails);
                 }
 
                 if(rawMessage.Do.Equals("SEND"))

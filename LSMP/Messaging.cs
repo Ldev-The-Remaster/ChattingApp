@@ -132,6 +132,11 @@ namespace LSMP
             return rawUserList.Split(new[] { "/*$*/", "\r\n" }, StringSplitOptions.RemoveEmptyEntries).ToList();
         }
 
+        public static List<string> DecodeMessageHistory(string rawMessageHistory)
+        {
+            return rawMessageHistory.Split(new[] { "/*$*/" },StringSplitOptions.RemoveEmptyEntries).ToList();
+        }
+
         public static string EncodeMessageToString(IMessage message)
         {
             string msgString = "DO SEND";
