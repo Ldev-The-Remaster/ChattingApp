@@ -22,6 +22,12 @@ namespace Frontend.Client.Models
 
         public static string CreateDmChannel(string targetUser)
         {
+            var dmChannelName = Messaging.GetDirectMessageChannelHash(ClientManager.CurrentUser, targetUser);
+            if (channels.ContainsKey(dmChannelName))
+            {
+                return dmChannelName;
+            }
+
             var channelData = new ChannelData
             {
                 UserList = new List<string>
@@ -29,35 +35,31 @@ namespace Frontend.Client.Models
                     ClientManager.CurrentUser,
                     targetUser
                 },
-                MessageHistory = new List<UserMessage>
-                {
+                MessageHistory = GetMessageHistory(dmChannelName)
 
-                }
-
-                //TO DO: Get message history from server
+            //TO DO: Get message history from server
             };
-
-            var dmChannelName = Messaging.GetDirectMessageChannelHash(ClientManager.CurrentUser, targetUser);
-            if (channels.ContainsKey(dmChannelName)) 
-            {
-                return dmChannelName;
-            }
 
             channels.Add(dmChannelName, channelData);
             OnStateChange?.Invoke();
             return dmChannelName;
         }
 
-        public static void CreateChannel(string channelName, ChannelData channelData)
+        public static void InitializeMainChannel()
         {
-            if (channels.ContainsKey(channelName))
-            {
-                channels[channelName] = channelData;
-                OnStateChange?.Invoke();
-                return;
-            }
-            
-            channels.Add(channelName, channelData); 
+            UpdateChannelUserList("general-chat", GetUserList("general-chat"));
+            UpdateChannelMessageHistory("general-chat", GetMessageHistory("general-chat"));
+            OnStateChange?.Invoke();
+        }
+
+        public static List<string> GetUserList(string channelName)
+        {
+            return new List<string>();
+        }
+
+        public static List<UserMessage> GetMessageHistory(string channelName)
+        {
+            return new List<UserMessage>();
         }
 
         public static bool UpdateChannelUserList(string channelName, List<string> userList)
