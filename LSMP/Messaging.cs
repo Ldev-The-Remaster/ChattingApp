@@ -25,9 +25,11 @@ namespace LSMP
             return message;
         }
 
-        public static string UserListMessage<T>(List<T> userList) where T : IEncodable
+        public static string UserListMessage<T>(List<T> userList, string channel) where T : IEncodable
         {
             string msg = $"DO INTRODUCE";
+            msg += NEW_LINE;
+            msg += $"IN {channel}";
             msg += NEW_LINE;
             msg += "WITH";
             msg += NEW_LINE;
@@ -36,9 +38,24 @@ namespace LSMP
             return msg;
         }
 
-        public static string RemindMessage<T>(List<T> messageHistory) where T : IEncodable
+        public static string RequestMessageHistory(string channel, int from, int to)
+        {
+            string msg = "DO REMEMBER";
+            msg += NEW_LINE;
+            msg += $"FROM {from}" ;
+            msg += NEW_LINE;
+            msg += $"TO {to}";
+            msg += NEW_LINE;
+            msg += "IN " + channel;
+
+            return msg;
+        }
+
+        public static string RemindMessage<T>(List<T> messageHistory, string channel) where T : IEncodable
         {
             string msg = "DO REMIND";
+            msg += NEW_LINE;
+            msg += $"IN {channel}";
             msg += NEW_LINE;
             msg += "WITH";
             msg += NEW_LINE;
@@ -119,9 +136,9 @@ namespace LSMP
                 {
                     continue;
                 }
-                arrString += NEW_LINE;
+
                 arrString += item.EncodeToString();
-                arrString += NEW_LINE + "/*$*/";
+                arrString += "/*$*/";
             }
 
             return arrString;

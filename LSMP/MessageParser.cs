@@ -36,7 +36,7 @@
                             break;
                         case "WITH":
                             With = rawString.Split("WITH\r\n", 2)[1];
-                            break;
+                            return;
                     }
                 }
             }

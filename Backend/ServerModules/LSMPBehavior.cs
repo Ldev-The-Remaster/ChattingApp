@@ -40,14 +40,9 @@ namespace Backend.ServerModules
             SendToAll(alert);
         }
 
-        protected void SendUserList()
+        protected void SendUserListToAll(string channelName = "general-chat")
         {
-            Send(Messaging.UserListMessage(UserManager.UsersList));
-        }
-
-        protected void SendUserListToAll()
-        {
-            string msg = Messaging.UserListMessage(UserManager.UsersList);
+            string msg = Messaging.UserListMessage(UserManager.UsersList, channelName);
 
             foreach (User client in UserManager.UsersList)
             {

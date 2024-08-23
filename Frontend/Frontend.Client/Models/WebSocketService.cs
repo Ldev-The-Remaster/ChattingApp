@@ -58,10 +58,11 @@ namespace Frontend.Client.Models
                     List<UserMessage> messagesDetails = new List<UserMessage>();
                     foreach (var item in Messaging.DecodeMessageHistory(rawMessage.With)) {
                         MessageParser messageDetails = new MessageParser(item);
-                        List<string> hashContentSplitter = messageDetails.With.Split(new[] {"\r\n"},2,StringSplitOptions.RemoveEmptyEntries).ToList();
-                        UserMessage message = new UserMessage(messageDetails.From, hashContentSplitter[0], hashContentSplitter[1],messageDetails.At,true);
+                        (string hash, string content) = Messaging.GetHashAndMessage(messageDetails.With);
+                        UserMessage message = new UserMessage(messageDetails.From, messageDetails.In, hash, content, messageDetails.At, true);
                         messagesDetails.Add(message);
                     }
+
                     ChannelManager.UpdateChannelMessageHistory(rawMessage.In, messagesDetails);
                 }
 
@@ -69,11 +70,11 @@ namespace Frontend.Client.Models
                 {
                     var user = rawMessage.From;
                     var timestamp = rawMessage.At;
-
+                    var channel = rawMessage.In;
                     var (hash, message) = Messaging.GetHashAndMessage(rawMessage.With);
                     if (hash == string.Empty) 
                     {
-                        CLogger.Error("Error: Message format is invalid, missing hash or content.");
+                        // CLogger.Error("Error: Message format is invalid, missing hash or content.");
                         return;
                     }
 
@@ -83,6 +84,7 @@ namespace Frontend.Client.Models
                         (
                             user: null,
                             hash: hash,
+                            channel: channel,
                             content: message,
                             timestamp: timestamp,
                             isConfirmed: true
@@ -95,6 +97,7 @@ namespace Frontend.Client.Models
                     (
                         user: user,
                         hash: hash,
+                        channel: channel,
                         content: message,
                         timestamp: timestamp,
                         isConfirmed: true
@@ -103,11 +106,11 @@ namespace Frontend.Client.Models
                     return;
                 }
 
-                CLogger.Error("Error: Message format is invalid.");
+                // CLogger.Error("Error: Message format is invalid.");
             }
             catch (Exception e)
             {
-                CLogger.Error($"Error processing message: {e.Message}");
+                // CLogger.Error($"Error processing message: {e.Message}");
             }
         }
 

@@ -36,8 +36,6 @@ namespace Frontend.Client.Models
                     targetUser
                 },
                 MessageHistory = GetMessageHistory(dmChannelName)
-
-            //TO DO: Get message history from server
             };
 
             channels.Add(dmChannelName, channelData);
@@ -45,20 +43,9 @@ namespace Frontend.Client.Models
             return dmChannelName;
         }
 
-        public static void InitializeMainChannel()
-        {
-            UpdateChannelUserList("general-chat", GetUserList("general-chat"));
-            UpdateChannelMessageHistory("general-chat", GetMessageHistory("general-chat"));
-            OnStateChange?.Invoke();
-        }
-
-        public static List<string> GetUserList(string channelName)
-        {
-            return new List<string>();
-        }
-
         public static List<UserMessage> GetMessageHistory(string channelName)
         {
+            _ = WebSocketService.SendMessageAsync(Messaging.RequestMessageHistory(channelName, 1, 10));
             return new List<UserMessage>();
         }
 
