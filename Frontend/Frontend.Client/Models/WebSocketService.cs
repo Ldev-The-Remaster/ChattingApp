@@ -74,7 +74,7 @@ namespace Frontend.Client.Models
                     var (hash, message) = Messaging.GetHashAndMessage(rawMessage.With);
                     if (hash == string.Empty) 
                     {
-                        // CLogger.Error("Error: Message format is invalid, missing hash or content.");
+                        Console.WriteLine("Error: Message format is invalid, missing hash or content.");
                         return;
                     }
 
@@ -106,11 +106,11 @@ namespace Frontend.Client.Models
                     return;
                 }
 
-                // CLogger.Error("Error: Message format is invalid.");
+                 Console.WriteLine("Error: Message format is invalid.");
             }
             catch (Exception e)
             {
-                // CLogger.Error($"Error processing message: {e.Message}");
+                 Console.WriteLine($"Error processing message: {e.Message}");
             }
         }
 
