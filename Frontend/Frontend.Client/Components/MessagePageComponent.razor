@@ -10,7 +10,10 @@
     <div class="main-block">
         <div class="main-top">
             <h1>Chat Room</h1>
-            <button>SETTINGS</button>
+            @if (ClientManager.IsAdmin)
+			{
+				<button @onclick="HandleSettings">SETTINGS</button>
+			}
         </div>
         <div class="main-content">
             <div class="message-container" id="messageContainer">
@@ -117,6 +120,11 @@
         {
             ContextMenuModalService.hideModal();
         }
+    }
+
+    private void HandleSettings()
+    {
+		Navigation.NavigateTo("/settings");
     }
 }
 
