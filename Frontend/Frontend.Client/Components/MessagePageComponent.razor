@@ -57,6 +57,7 @@
 
     protected override void OnInitialized()
     {
+        ChannelManager.UpdateChannelMessageHistory("general-chat", ChannelManager.GetMessageHistory("general-chat"));
         RefreshChannelData();
         ChannelManager.OnStateChange += RefreshChannelData;
         WebSocketService.OnMessageReceived += MessageReceived;
@@ -72,7 +73,12 @@
 
     public void MessageReceived(UserMessage message)
     {
-         UserMessage? currentUserMessage = messageHistory.Find(messageInList => message.Hash == messageInList.Hash);
+        if(message.Channel != ChannelManager.CurrentChannel)
+        {
+            return;
+        }
+
+        UserMessage? currentUserMessage = messageHistory.Find(messageInList => message.Hash == messageInList.Hash);
          if (currentUserMessage != null)
          {
              currentUserMessage.IsConfirmed = true;
@@ -93,7 +99,7 @@
             return;
         }
 
-        var newMessage = new UserMessage(ClientManager.CurrentUser, currentMessage, false);
+        var newMessage = new UserMessage(ClientManager.CurrentUser, ChannelManager.CurrentChannel, currentMessage, false);
         await ChannelManager.SendMessage(newMessage);
         currentMessage = String.Empty;
     }

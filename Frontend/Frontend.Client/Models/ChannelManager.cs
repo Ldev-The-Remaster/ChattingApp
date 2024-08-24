@@ -22,37 +22,31 @@ namespace Frontend.Client.Models
 
         public static string CreateDmChannel(string targetUser)
         {
+            var dmChannelName = Messaging.GetDirectMessageChannelHash(ClientManager.CurrentUser, targetUser);
+            if (channels.ContainsKey(dmChannelName))
+            {
+                return dmChannelName;
+            }
+
             var channelData = new ChannelData
             {
                 UserList = new List<string>
                 {
                     ClientManager.CurrentUser,
                     targetUser
-                }
-                //TO DO: Get message history from server
+                },
+                MessageHistory = GetMessageHistory(dmChannelName)
             };
-
-            var dmChannelName = Messaging.GetDirectMessageChannelHash(ClientManager.CurrentUser, targetUser);
-            if (channels.ContainsKey(dmChannelName)) 
-            {
-                return dmChannelName;
-            }
 
             channels.Add(dmChannelName, channelData);
             OnStateChange?.Invoke();
             return dmChannelName;
         }
 
-        public static void CreateChannel(string channelName, ChannelData channelData)
+        public static List<UserMessage> GetMessageHistory(string channelName)
         {
-            if (channels.ContainsKey(channelName))
-            {
-                channels[channelName] = channelData;
-                OnStateChange?.Invoke();
-                return;
-            }
-            
-            channels.Add(channelName, channelData); 
+            _ = WebSocketService.SendMessageAsync(Messaging.RequestMessageHistory(channelName, 1, 10));
+            return new List<UserMessage>();
         }
 
         public static bool UpdateChannelUserList(string channelName, List<string> userList)

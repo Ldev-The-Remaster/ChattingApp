@@ -505,7 +505,7 @@ namespace Backend.Models.Messages
 
             if (_sender != null)
             {
-                _sender.Socket.Send(Messaging.RemindMessage(messageHistory));
+                _sender.Socket.Send(Messaging.RemindMessage(messageHistory, channel));
             }
         }
 

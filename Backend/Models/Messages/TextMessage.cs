@@ -102,9 +102,13 @@ namespace Backend.Models.Messages
 
         public static List<TextMessage> GetMessageHistory(string channel, int from, int to)
         {
-            List<TextMessage> messageHistory = context.TextMessages
-                .Where(m => m.TextMessageId >= from && m.TextMessageId < to && m.Channel == channel)
+            var filteredMessages = context.TextMessages
+                .Where(m => m.Channel.Equals(channel))
                 .ToList();
+            filteredMessages.Reverse();
+            var messageHistory = filteredMessages.Skip(from - 1).Take(to - from + 1)
+                .ToList();
+            messageHistory.Reverse();
 
             return messageHistory;
         }
