@@ -23,6 +23,10 @@ namespace Frontend.Client.Models
         public static string CreateDmChannel(string targetUser)
         {
             var dmChannelName = Messaging.GetDirectMessageChannelHash(ClientManager.CurrentUser, targetUser);
+            if(ClientManager.dmChannels.ContainsKey(targetUser) == false) 
+            {
+                ClientManager.dmChannels.Add(targetUser,dmChannelName);
+            }
             if (channels.ContainsKey(dmChannelName))
             {
                 return dmChannelName;
