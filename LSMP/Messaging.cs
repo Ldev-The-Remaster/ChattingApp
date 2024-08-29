@@ -38,7 +38,7 @@ namespace LSMP
             return msg;
         }
 
-        public static string RequestMessageHistory(string channel, int from, int to)
+        public static string RememberMessage(string channel, int from, int to)
         {
             string msg = "DO REMEMBER";
             msg += NEW_LINE;

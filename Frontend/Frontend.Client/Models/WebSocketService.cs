@@ -59,7 +59,7 @@ namespace Frontend.Client.Models
                     foreach (var item in Messaging.DecodeMessageHistory(rawMessage.With)) {
                         MessageParser messageDetails = new MessageParser(item);
                         (string hash, string content) = Messaging.GetHashAndMessage(messageDetails.With);
-                        UserMessage message = new UserMessage(messageDetails.From, messageDetails.In, hash, content, messageDetails.At, true);
+                        UserMessage message = new UserMessage(messageDetails.From, hash, messageDetails.In, content, messageDetails.At, true);
                         messagesDetails.Add(message);
                     }
 

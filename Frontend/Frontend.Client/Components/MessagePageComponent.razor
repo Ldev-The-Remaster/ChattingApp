@@ -14,17 +14,18 @@
         </div>
         <div class="main-content">
             <div class="message-container" id="messageContainer">
+                <MessageLazyLoader/>
                 @foreach (var message in messageHistory)
                 {
                     if (message.Sender == null)
                     {
-                        <ServerAlertMessageComponent MessageContent="@message.Content" Timestamp="@DateTimeOffset.FromUnixTimeSeconds(message.TimeStamp).DateTime" />
+                        <ServerAlertMessageComponent MessageContent="@message.Content" Hash=@message.Hash Timestamp ="@DateTimeOffset.FromUnixTimeSeconds(message.TimeStamp).DateTime" />
                     }
                     else
                     {
                         string messageConfirm = message.IsConfirmed ? "confirmed-message" : "unconfirmed-message";
                         <div class="@messageConfirm">
-                            <MessageComponent User="@message.Sender" MessageContent="@message.Content" Timestamp="@DateTimeOffset.FromUnixTimeSeconds(message.TimeStamp).DateTime" isConfirmed="@message.IsConfirmed" />
+                            <MessageComponent User="@message.Sender" Hash=@message.Hash MessageContent="@message.Content" Timestamp="@DateTimeOffset.FromUnixTimeSeconds(message.TimeStamp).DateTime" isConfirmed="@message.IsConfirmed" />
                         </div>
                     }
                 }
@@ -54,20 +55,31 @@
     private string currentMessage = string.Empty;
     public List<string> userList = new List<string>();
     public List<UserMessage> messageHistory = new List<UserMessage>();
+    private ValueTask<string> topElementReference;
 
     protected override void OnInitialized()
     {
-        ChannelManager.UpdateChannelMessageHistory("general-chat", ChannelManager.GetMessageHistory("general-chat"));
+        ChannelManager.RequestMessageHistory("general-chat", 10);
         RefreshChannelData();
         ChannelManager.OnStateChange += RefreshChannelData;
         WebSocketService.OnMessageReceived += MessageReceived;
     }
 
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if(!firstRender)
+        {
+
+        }
+    }
+
     public void RefreshChannelData()
     {
+        topElementReference = JSRuntime.InvokeAsync<string>("getFirstMessageElementId");
         userList = ChannelManager.GetCurrentChannelData().UserList;
         messageHistory = ChannelManager.GetCurrentChannelData().MessageHistory;
-        Navigation.NavigateTo("/channel/" + ChannelManager.CurrentChannel);
+        // Navigation.NavigateTo("/channel/" + ChannelManager.CurrentChannel);
+        ScrollToLastTopMessage();
         StateHasChanged();
     }
 
@@ -79,19 +91,19 @@
         }
 
         UserMessage? currentUserMessage = messageHistory.Find(messageInList => message.Hash == messageInList.Hash);
-         if (currentUserMessage != null)
-         {
-             currentUserMessage.IsConfirmed = true;
-         }
-         else
-         {
-             messageHistory.Add(message);
-         }
+        if (currentUserMessage != null)
+        {
+            currentUserMessage.IsConfirmed = true;
+        }
+        else
+        {
+            messageHistory.Add(message);
+        }
 
-         InvokeAsync(StateHasChanged);
-     }
+        InvokeAsync(StateHasChanged);
+    }
 
-    
+
     private async Task SendMessage()
     {
         if (string.IsNullOrWhiteSpace(currentMessage))
@@ -101,6 +113,7 @@
 
         var newMessage = new UserMessage(ClientManager.CurrentUser, ChannelManager.CurrentChannel, currentMessage, false);
         await ChannelManager.SendMessage(newMessage);
+        await JSRuntime.InvokeVoidAsync("scrollToBottom", "messageContainer");
         currentMessage = String.Empty;
     }
 
@@ -122,6 +135,15 @@
         if (ContextMenuModalService.modalShown)
         {
             ContextMenuModalService.hideModal();
+        }
+    }
+
+    private async void ScrollToLastTopMessage()
+    {
+        string hash = await topElementReference;
+        if (hash != string.Empty)
+        {
+            await JSRuntime.InvokeAsync<string>("scrollToMessageByHash", hash);
         }
     }
 }

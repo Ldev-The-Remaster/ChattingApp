@@ -7,6 +7,7 @@ namespace Frontend.Client.Models
     {
         public class ChannelData
         {
+            public bool fullHistoryLoaded { get; set; } = false;
             public List<UserMessage> MessageHistory { get; set; } = new List<UserMessage>();
             public List<string> UserList { get; set; } = new List<string>();
         }
@@ -35,7 +36,6 @@ namespace Frontend.Client.Models
                     ClientManager.CurrentUser,
                     targetUser
                 },
-                MessageHistory = GetMessageHistory(dmChannelName)
             };
 
             channels.Add(dmChannelName, channelData);
@@ -43,10 +43,14 @@ namespace Frontend.Client.Models
             return dmChannelName;
         }
 
-        public static List<UserMessage> GetMessageHistory(string channelName)
+        public static void RequestMessageHistory(string channelName, int count)
         {
-            _ = WebSocketService.SendMessageAsync(Messaging.RequestMessageHistory(channelName, 1, 10));
-            return new List<UserMessage>();
+            if (channels.ContainsKey(channelName))
+            {
+                int from = channels[channelName].MessageHistory.Count + 1;
+                int to = from + count - 1;
+                _ = WebSocketService.SendMessageAsync(Messaging.RememberMessage(channelName, from, to));
+            }
         }
 
         public static bool UpdateChannelUserList(string channelName, List<string> userList)
@@ -65,7 +69,12 @@ namespace Frontend.Client.Models
         {
             if (channels.ContainsKey(channelName))
             {
-                channels[channelName].MessageHistory = messageHistory;
+                if (messageHistory.Count == 0)
+                {
+                    channels[channelName].fullHistoryLoaded = true;
+                }
+
+                channels[channelName].MessageHistory.InsertRange(0, messageHistory);
                 OnStateChange?.Invoke();
                 return true;
             }
@@ -97,9 +106,17 @@ namespace Frontend.Client.Models
                 return channelData;
             }
 
-            // Return a new empty ChannelData if currentChannel is not found
             return new ChannelData();
+        }
 
+        public static bool IsCurrentChannelHistoryFullyLoaded(string channel)
+        {
+            if (channels.ContainsKey(channel))
+            {
+                return channels[channel].fullHistoryLoaded;
+            }
+
+            return false;
         }
     }
 }

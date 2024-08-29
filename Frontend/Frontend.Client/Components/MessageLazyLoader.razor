@@ -1,0 +1,113 @@
+﻿@using Frontend.Client.Models
+@inject IJSRuntime JSRuntime
+
+<div @ref="observedElement">
+    @if (loading)
+    {
+        <div class="lazy-loading-element">
+            <div class="snippet" data-title="dot-flashing">
+                <div class="stage">
+                    <div class="dot-flashing"></div>
+                </div>
+            </div>
+        </div>
+    }
+</div>
+
+
+@code {
+    private bool loading = true;
+    private ElementReference observedElement;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            await JSRuntime.InvokeVoidAsync("intersectionObserver.observeElement",
+                                             observedElement,
+                                             DotNetObjectReference.Create(this));
+        }
+    }
+
+    [JSInvokable]
+    public void OnIntersectionChange(bool isIntersecting)
+    {
+        if(ChannelManager.IsCurrentChannelHistoryFullyLoaded(ChannelManager.CurrentChannel))
+        {
+            JSRuntime.InvokeVoidAsync("intersectionObserver.unobserveElement",
+                                            observedElement,
+                                            DotNetObjectReference.Create(this));
+            loading = false;
+            StateHasChanged();
+            return;
+        }
+
+        if (isIntersecting)
+        {
+            loading = true;
+            StateHasChanged();
+            ChannelManager.RequestMessageHistory(ChannelManager.CurrentChannel, 10);
+        }
+        else
+        {
+            loading = false;
+            StateHasChanged();
+        }
+    }
+}
+
+<style>
+    .lazy-loading-element{
+        display:flex;
+        width:100%;
+        margin:20px 0px;
+        justify-content:center;
+        height:auto;
+    }
+
+    .dot-flashing {
+      position: relative;
+      width: 20px;
+      height: 20px;
+      border-radius: 10px;
+      background-color: #525CEB;
+      color: #525CEB;
+      animation: dot-flashing 1s infinite linear alternate;
+      animation-delay: 0.5s;
+    }
+    .dot-flashing::before, .dot-flashing::after {
+      content: "";
+      display: inline-block;
+      position: absolute;
+      top: 0;
+    }
+    .dot-flashing::before {
+      left: -30px;
+      width: 20px;
+      height: 20px;
+      border-radius: 10px;
+      background-color: #525CEB;
+      color: #525CEB;
+      animation: dot-flashing 1s infinite alternate;
+      animation-delay: 0s;
+    }
+    .dot-flashing::after {
+      left: 30px;
+      width: 20px;
+      height: 20px;
+      border-radius: 10px;
+      background-color: #525CEB;
+      color: #525CEB;
+      animation: dot-flashing 1s infinite alternate;
+      animation-delay: 1s;
+    }
+
+    @@keyframes dot-flashing {
+      0% {
+        background-color: #525CEB;
+      }
+      50%, 100% {
+        background-color: rgba(82, 92, 235, 0.2);
+      }
+    }
+</style>
