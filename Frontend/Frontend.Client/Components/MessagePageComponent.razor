@@ -59,8 +59,9 @@
 
     protected override void OnInitialized()
     {
+        LoadChannel();
         ChannelManager.RequestMessageHistory("general-chat", 10);
-        RefreshChannelData();
+        ChannelManager.OnChannelChanged += LoadChannel;
         ChannelManager.OnStateChange += RefreshChannelData;
         WebSocketService.OnMessageReceived += MessageReceived;
     }
@@ -70,8 +71,15 @@
         topElementReference = JSRuntime.InvokeAsync<string>("getFirstMessageElementId");
         userList = ChannelManager.GetCurrentChannelData().UserList;
         messageHistory = ChannelManager.GetCurrentChannelData().MessageHistory;
-        Navigation.NavigateTo("/channel/" + ChannelManager.CurrentChannel);
         ScrollToLastTopMessage();
+        StateHasChanged();
+    }
+
+    public void LoadChannel()
+    {
+        userList = ChannelManager.GetCurrentChannelData().UserList;
+        messageHistory = ChannelManager.GetCurrentChannelData().MessageHistory;
+        Navigation.NavigateTo("/channel/" + ChannelManager.CurrentChannel);
         StateHasChanged();
     }
 
@@ -107,6 +115,7 @@
         await ChannelManager.SendMessage(newMessage);
         await JSRuntime.InvokeVoidAsync("scrollToBottom", "messageContainer");
         currentMessage = String.Empty;
+        StateHasChanged();
     }
 
     private async void HandleEnterKey(KeyboardEventArgs e)

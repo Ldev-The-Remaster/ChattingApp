@@ -1,5 +1,4 @@
 ﻿using LSMP;
-using static Frontend.Client.Models.ChannelManager;
 
 namespace Frontend.Client.Models
 {
@@ -20,6 +19,7 @@ namespace Frontend.Client.Models
         public static string CurrentChannel { get; set; } = "general-chat";
 
         public static event Action? OnStateChange;
+        public static event Action? OnChannelChanged;
 
         public static string CreateDmChannel(string targetUser)
         {
@@ -96,7 +96,7 @@ namespace Frontend.Client.Models
         public static void SetCurrentChannel(string channel)
         {
             CurrentChannel = channel;
-            OnStateChange?.Invoke();
+            OnChannelChanged?.Invoke();
         }
 
         public static ChannelData GetCurrentChannelData()
