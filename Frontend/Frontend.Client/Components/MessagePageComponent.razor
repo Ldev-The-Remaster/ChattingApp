@@ -65,20 +65,12 @@
         WebSocketService.OnMessageReceived += MessageReceived;
     }
 
-    protected override async Task OnAfterRenderAsync(bool firstRender)
-    {
-        if(!firstRender)
-        {
-
-        }
-    }
-
     public void RefreshChannelData()
     {
         topElementReference = JSRuntime.InvokeAsync<string>("getFirstMessageElementId");
         userList = ChannelManager.GetCurrentChannelData().UserList;
         messageHistory = ChannelManager.GetCurrentChannelData().MessageHistory;
-        // Navigation.NavigateTo("/channel/" + ChannelManager.CurrentChannel);
+        Navigation.NavigateTo("/channel/" + ChannelManager.CurrentChannel);
         ScrollToLastTopMessage();
         StateHasChanged();
     }
