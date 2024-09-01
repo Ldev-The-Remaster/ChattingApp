@@ -98,7 +98,6 @@
 
     public void NavigateToChannel(string channel)
     {
-        ChannelManager.UpdateChannelMessageHistory(channel, ChannelManager.GetMessageHistory(channel));
         ChannelManager.SetCurrentChannel(channel);
     }
 
@@ -118,7 +117,7 @@
         {
             messageHistory.Add(message);
         }
-		
+
         InvokeAsync(StateHasChanged);
     }
 
