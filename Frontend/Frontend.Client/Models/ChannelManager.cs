@@ -6,7 +6,6 @@ namespace Frontend.Client.Models
     {
         public class ChannelData
         {
-            public bool fullHistoryLoaded { get; set; } = false;
             public List<UserMessage> MessageHistory { get; set; } = new List<UserMessage>();
             public List<string> UserList { get; set; } = new List<string>();
         }
@@ -20,6 +19,8 @@ namespace Frontend.Client.Models
 
         public static event Action? OnStateChange;
         public static event Action? OnChannelChanged;
+        public static event Action? OnFinishLoadingFullMessageHistory;
+        public static event Action? OnFinishedCurrentLoadingOperation;
 
         public static string CreateDmChannel(string targetUser)
         {
@@ -71,11 +72,12 @@ namespace Frontend.Client.Models
             {
                 if (messageHistory.Count == 0)
                 {
-                    channels[channelName].fullHistoryLoaded = true;
+                    OnFinishLoadingFullMessageHistory?.Invoke();
                 }
 
-                channels[channelName].MessageHistory.InsertRange(0, messageHistory);
+                channels[channelName].MessageHistory.AddRange(messageHistory);
                 OnStateChange?.Invoke();
+                OnFinishedCurrentLoadingOperation.Invoke();
                 return true;
             }
 
@@ -86,7 +88,7 @@ namespace Frontend.Client.Models
         {
             if (channels.ContainsKey(message.Channel))
             {
-                channels[message.Channel].MessageHistory.Add(message);
+                channels[message.Channel].MessageHistory.Insert(0, message);
                 message.Channel = CurrentChannel;
             }
 
@@ -107,16 +109,6 @@ namespace Frontend.Client.Models
             }
 
             return new ChannelData();
-        }
-
-        public static bool IsCurrentChannelHistoryFullyLoaded(string channel)
-        {
-            if (channels.ContainsKey(channel))
-            {
-                return channels[channel].fullHistoryLoaded;
-            }
-
-            return false;
         }
     }
 }

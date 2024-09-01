@@ -33,27 +33,3 @@ window.scrollToBottom = function (elementId) {
         element.scrollTop = element.scrollHeight;
     }
 };
-
-window.scrollToMessageByHash= function (hash) {
-    var container = document.getElementById('messageContainer');
-    if (container) {
-        var element = document.getElementById(hash);
-        if (element) {
-            var position = element.offsetTop;
-            container.scrollTop = position;
-        }
-    }
-};
-
-window.getFirstMessageElementId = function () {
-    var container = document.getElementById('messageContainer');
-    if (container) {
-        console.log("Found container");
-        var firstMessageElement = container.querySelector(".message");
-        if (firstMessageElement) {
-            return firstMessageElement.id;
-        }
-    }
-
-    return "";
-};

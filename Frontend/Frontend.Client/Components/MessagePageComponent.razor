@@ -14,7 +14,6 @@
         </div>
         <div class="main-content">
             <div class="message-container" id="messageContainer">
-                <MessageLazyLoader/>
                 @foreach (var message in messageHistory)
                 {
                     if (message.Sender == null)
@@ -29,6 +28,7 @@
                         </div>
                     }
                 }
+                <MessageLazyLoader />
             </div>
         </div>
         <div class="chat-input-box">
@@ -60,7 +60,6 @@
     protected override void OnInitialized()
     {
         LoadChannel();
-        ChannelManager.RequestMessageHistory("general-chat", 10);
         ChannelManager.OnChannelChanged += LoadChannel;
         ChannelManager.OnStateChange += RefreshChannelData;
         WebSocketService.OnMessageReceived += MessageReceived;
@@ -68,10 +67,8 @@
 
     public void RefreshChannelData()
     {
-        topElementReference = JSRuntime.InvokeAsync<string>("getFirstMessageElementId");
         userList = ChannelManager.GetCurrentChannelData().UserList;
         messageHistory = ChannelManager.GetCurrentChannelData().MessageHistory;
-        ScrollToLastTopMessage();
         StateHasChanged();
     }
 
@@ -113,9 +110,9 @@
 
         var newMessage = new UserMessage(ClientManager.CurrentUser, ChannelManager.CurrentChannel, currentMessage, false);
         await ChannelManager.SendMessage(newMessage);
-        await JSRuntime.InvokeVoidAsync("scrollToBottom", "messageContainer");
         currentMessage = String.Empty;
         StateHasChanged();
+        await JSRuntime.InvokeVoidAsync("scrollToBottom", "messageContainer");
     }
 
     private async void HandleEnterKey(KeyboardEventArgs e)
@@ -136,15 +133,6 @@
         if (ContextMenuModalService.modalShown)
         {
             ContextMenuModalService.hideModal();
-        }
-    }
-
-    private async void ScrollToLastTopMessage()
-    {
-        string hash = await topElementReference;
-        if (hash != string.Empty)
-        {
-            await JSRuntime.InvokeAsync<string>("scrollToMessageByHash", hash);
         }
     }
 }

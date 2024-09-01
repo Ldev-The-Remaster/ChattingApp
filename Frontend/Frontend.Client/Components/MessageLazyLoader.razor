@@ -1,14 +1,12 @@
 ﻿@using Frontend.Client.Models
 @inject IJSRuntime JSRuntime
 
-<div @ref="observedElement">
+<div class="lazy-loading-element" @ref="observedElement">
     @if (loading)
     {
-        <div class="lazy-loading-element">
-            <div class="snippet" data-title="dot-flashing">
-                <div class="stage">
-                    <div class="dot-flashing"></div>
-                </div>
+        <div class="snippet" data-title="dot-flashing">
+            <div class="stage">
+                <div class="dot-flashing"></div>
             </div>
         </div>
     }
@@ -16,7 +14,7 @@
 
 
 @code {
-    private bool loading = true;
+    private bool loading = false;
     private ElementReference observedElement;
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
@@ -26,22 +24,33 @@
             await JSRuntime.InvokeVoidAsync("intersectionObserver.observeElement",
                                              observedElement,
                                              DotNetObjectReference.Create(this));
+
+            ChannelManager.OnFinishLoadingFullMessageHistory += UnObserve;
+            ChannelManager.OnFinishedCurrentLoadingOperation += OnFinishedLoadingOperation;
+        }
+    }
+
+    public void UnObserve()
+    {
+        JSRuntime.InvokeVoidAsync("intersectionObserver.unobserveElement",
+                                            observedElement,
+                                            DotNetObjectReference.Create(this));
+        loading = false;
+        StateHasChanged();
+        return;
+    }
+
+    public void OnFinishedLoadingOperation()
+    {
+        if (loading)
+        {
+            ChannelManager.RequestMessageHistory(ChannelManager.CurrentChannel, 10);
         }
     }
 
     [JSInvokable]
     public void OnIntersectionChange(bool isIntersecting)
     {
-        if(ChannelManager.IsCurrentChannelHistoryFullyLoaded(ChannelManager.CurrentChannel))
-        {
-            JSRuntime.InvokeVoidAsync("intersectionObserver.unobserveElement",
-                                            observedElement,
-                                            DotNetObjectReference.Create(this));
-            loading = false;
-            StateHasChanged();
-            return;
-        }
-
         if (isIntersecting)
         {
             loading = true;
@@ -60,7 +69,7 @@
     .lazy-loading-element{
         display:flex;
         width:100%;
-        margin:20px 0px;
+        padding:20px 0px;
         justify-content:center;
         height:auto;
     }
