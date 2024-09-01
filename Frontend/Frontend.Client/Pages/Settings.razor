@@ -1,0 +1,110 @@
+﻿@page "/settings"
+@using Models
+@inject NavigationManager NavigationManager
+
+<PageTitle>Settings - Ban List</PageTitle>
+
+<div class="settings-page-container">
+    <button class="settings-back-button" @onclick="GoBack">BACK</button>
+    <div class="settings-main-block">
+        <div class="settings-main-top">
+            <h1>Ban List</h1>
+        </div>
+        <div class="settings-main-content">
+            <table class="settings-ban-table">
+                <thead>
+                    <tr>
+                        <th>Banned Usernames</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var ban in bans)
+                    {
+                        <tr @onclick="() => ShowBanDetails(ban)">
+                            <td>@ban.Username</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+            <table class="settings-ban-table">
+                <thead>
+                    <tr>
+                        <th>Banned IP Addresses</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var ban in bans)
+                    {
+                        <tr @onclick="() => ShowBanDetails(ban)">
+                            <td>@ban.IpAddress</td>
+                        </tr>
+                    }
+                </tbody>
+                </table>
+        </div>
+    </div>
+</div>
+
+@if (showPopup)
+{
+    <div class="ban-popup-overlay" @onclick="HandleOverlayClick">
+        <div class="ban-popup-content" @onclick:stopPropagation="true">
+            <h2>Ban Details</h2>
+            <p><strong>Username:</strong> @selectedBan.Username</p>
+            <p><strong>IP Address:</strong> @selectedBan.IpAddress</p>
+            <p><strong>Reason:</strong> @selectedBan.Reason</p>
+            <div class="ban-popup-buttons">
+                <button class="ban-popup-button" @onclick="ClosePopup">Back</button>
+                <button class="ban-popup-button unban" @onclick="() => UnbanUser(selectedBan)">Unban</button>
+            </div>
+        </div>
+    </div>
+}
+
+@code {
+    private List<Ban> bans = new List<Ban>
+    {
+        new Ban { Id = 1, Username = "JohnDoe", IpAddress = "192.168.1.1", Reason = "Spamming", IsBanned = true },
+        new Ban { Id = 2, Username = "JaneDoe", IpAddress = "192.168.1.2", Reason = "Abusive Language", IsBanned = true }
+    };
+
+    private Ban selectedBan;
+    private bool showPopup = false;
+
+    private void ShowBanDetails(Ban ban)
+    {
+        selectedBan = ban;
+        showPopup = true;
+    }
+
+    private void HandleOverlayClick()
+    {
+        ClosePopup();
+    }
+
+    private void ClosePopup()
+    {
+        showPopup = false;
+    }
+
+    private void UnbanUser(Ban ban)
+    {
+        // Add your unban logic here
+        bans.Remove(ban);
+        ClosePopup();
+    }
+
+    private void GoBack()
+    {
+        NavigationManager.NavigateTo("/channel/" + ChannelManager.CurrentChannel);
+    }
+
+    public class Ban
+    {
+        public int Id { get; set; }
+        public string? Username { get; set; }
+        public string? IpAddress { get; set; }
+        public string? Reason { get; set; }
+        public bool? IsBanned { get; set; }
+    }
+}

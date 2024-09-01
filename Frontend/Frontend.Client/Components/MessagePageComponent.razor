@@ -7,10 +7,26 @@
 <PageTitle>@ChannelManager.CurrentChannel</PageTitle>
 
 <div class="main-page" @onclick="HandleGlobalClick">
+    <div class="user-block">
+        <ul class="user-list">
+            <h1>DIRECT MESSAGES</h1>
+            @foreach (KeyValuePair<string,string> channelHashPair in ClientManager.dmChannels)
+            {
+                <li onclick="@(() => NavigateToChannel(channelHashPair.Value))">@channelHashPair.Key</li>
+            }
+        </ul>
+    </div>
     <div class="main-block">
         <div class="main-top">
+            @if (ChannelManager.CurrentChannel != "general-chat")
+            {
+                <button onclick=@(() => NavigateToChannel("general-chat"))>BACK TO MAIN</button>
+            }
             <h1>Chat Room</h1>
-            <button>SETTINGS</button>
+            @if (ClientManager.IsAdmin)
+			{
+				<button @onclick="HandleSettings">SETTINGS</button>
+			}
         </div>
         <div class="main-content">
             <div class="message-container" id="messageContainer">
@@ -80,6 +96,12 @@
         StateHasChanged();
     }
 
+    public void NavigateToChannel(string channel)
+    {
+        ChannelManager.UpdateChannelMessageHistory(channel, ChannelManager.GetMessageHistory(channel));
+        ChannelManager.SetCurrentChannel(channel);
+    }
+
     public void MessageReceived(UserMessage message)
     {
         if(message.Channel != ChannelManager.CurrentChannel)
@@ -96,7 +118,7 @@
         {
             messageHistory.Add(message);
         }
-
+		
         InvokeAsync(StateHasChanged);
     }
 
@@ -134,6 +156,11 @@
         {
             ContextMenuModalService.hideModal();
         }
+    }
+
+    private void HandleSettings()
+    {
+		Navigation.NavigateTo("/settings");
     }
 }
 
