@@ -47,8 +47,8 @@
 
 @if (showPopup)
 {
-    <div class="ban-popup-overlay">
-        <div class="ban-popup-content">
+    <div class="ban-popup-overlay" @onclick="HandleOverlayClick">
+        <div class="ban-popup-content" @onclick:stopPropagation="true">
             <h2>Ban Details</h2>
             <p><strong>Username:</strong> @selectedBan.Username</p>
             <p><strong>IP Address:</strong> @selectedBan.IpAddress</p>
@@ -75,6 +75,11 @@
     {
         selectedBan = ban;
         showPopup = true;
+    }
+
+    private void HandleOverlayClick()
+    {
+        ClosePopup();
     }
 
     private void ClosePopup()
