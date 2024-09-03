@@ -27,6 +27,7 @@
         if (ContextMenuModalService.Type == "mute")
         {
             await WebSocketService.SendMessageAsync(Messaging.MuteMessage(ContextMenuService.TargetUser, Reason));
+            ContextMenuService.MutedUsers.Add(ContextMenuService.TargetUser);
             ContextMenuModalService.hideModal();
         }
 

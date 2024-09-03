@@ -76,6 +76,18 @@ namespace LSMP
             return msg;
         }
 
+        public static string UnmuteMessage(string targetUser, string reason)
+        {
+            string msg = "DO UNMUTE";
+            msg += NEW_LINE;
+            msg += "TO " + targetUser;
+            msg += NEW_LINE;
+            msg += "WITH";
+            msg += NEW_LINE;
+            msg += reason;
+            return msg;
+        }
+
         public static string BanMessage(string targetUser, string reason)
         {
             string msg = "DO BAN";
