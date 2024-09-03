@@ -115,7 +115,7 @@
         }
         else
         {
-            messageHistory.Add(message);
+            messageHistory.Insert(0, message);
         }
 
         InvokeAsync(StateHasChanged);
