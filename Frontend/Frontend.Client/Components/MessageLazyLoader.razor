@@ -40,9 +40,9 @@
         return;
     }
 
-    public void OnFinishedLoadingOperation()
+    public async void OnFinishedLoadingOperation()
     {
-        if (loading)
+        if (await IsLazyLoaderOnScreen())
         {
             ChannelManager.RequestMessageHistory(ChannelManager.CurrentChannel, 10);
         }
@@ -57,10 +57,19 @@
             StateHasChanged();
             ChannelManager.RequestMessageHistory(ChannelManager.CurrentChannel, 10);
         }
-        else
+    }
+
+    private async Task<bool> IsLazyLoaderOnScreen()
+    {
+        try
         {
-            loading = false;
-            StateHasChanged();
+            bool isIntersecting = await JSRuntime.InvokeAsync<bool>("checkElementIntersection", observedElement);
+            return isIntersecting;
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error: {ex.Message}");
+            return false;
         }
     }
 }

@@ -81,7 +81,7 @@ namespace Frontend.Client.Models
 
                 channels[channelName].MessageHistory.AddRange(messageHistory);
                 OnStateChange?.Invoke();
-                OnFinishedCurrentLoadingOperation.Invoke();
+                OnFinishedCurrentLoadingOperation?.Invoke();
                 return true;
             }
 
