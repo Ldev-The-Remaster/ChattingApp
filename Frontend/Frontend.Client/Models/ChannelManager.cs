@@ -1,5 +1,4 @@
 ﻿using LSMP;
-using static Frontend.Client.Models.ChannelManager;
 
 namespace Frontend.Client.Models
 {
@@ -19,6 +18,9 @@ namespace Frontend.Client.Models
         public static string CurrentChannel { get; set; } = "general-chat";
 
         public static event Action? OnStateChange;
+        public static event Action? OnChannelChanged;
+        public static event Action? OnFinishLoadingFullMessageHistory;
+        public static event Action? OnFinishedCurrentLoadingOperation;
 
         public static string CreateDmChannel(string targetUser)
         {
@@ -39,7 +41,6 @@ namespace Frontend.Client.Models
                     ClientManager.CurrentUser,
                     targetUser
                 },
-                MessageHistory = GetMessageHistory(dmChannelName)
             };
 
             channels.Add(dmChannelName, channelData);
@@ -47,10 +48,14 @@ namespace Frontend.Client.Models
             return dmChannelName;
         }
 
-        public static List<UserMessage> GetMessageHistory(string channelName)
+        public static void RequestMessageHistory(string channelName, int count)
         {
-            _ = WebSocketService.SendMessageAsync(Messaging.RequestMessageHistory(channelName, 1, 10));
-            return new List<UserMessage>();
+            if (channels.ContainsKey(channelName))
+            {
+                int from = channels[channelName].MessageHistory.Count + 1;
+                int to = from + count - 1;
+                _ = WebSocketService.SendMessageAsync(Messaging.RememberMessage(channelName, from, to));
+            }
         }
 
         public static bool UpdateChannelUserList(string channelName, List<string> userList)
@@ -69,8 +74,14 @@ namespace Frontend.Client.Models
         {
             if (channels.ContainsKey(channelName))
             {
-                channels[channelName].MessageHistory = messageHistory;
+                if (messageHistory.Count == 0)
+                {
+                    OnFinishLoadingFullMessageHistory?.Invoke();
+                }
+
+                channels[channelName].MessageHistory.AddRange(messageHistory);
                 OnStateChange?.Invoke();
+                OnFinishedCurrentLoadingOperation?.Invoke();
                 return true;
             }
 
@@ -81,7 +92,7 @@ namespace Frontend.Client.Models
         {
             if (channels.ContainsKey(message.Channel))
             {
-                channels[message.Channel].MessageHistory.Add(message);
+                channels[message.Channel].MessageHistory.Insert(0, message);
                 message.Channel = CurrentChannel;
             }
 
@@ -91,7 +102,7 @@ namespace Frontend.Client.Models
         public static void SetCurrentChannel(string channel)
         {
             CurrentChannel = channel;
-            OnStateChange?.Invoke();
+            OnChannelChanged?.Invoke();
         }
 
         public static ChannelData GetCurrentChannelData()
@@ -101,9 +112,7 @@ namespace Frontend.Client.Models
                 return channelData;
             }
 
-            // Return a new empty ChannelData if currentChannel is not found
             return new ChannelData();
-
         }
     }
 }

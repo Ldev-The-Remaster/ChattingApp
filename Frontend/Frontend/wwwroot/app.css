@@ -209,18 +209,19 @@ input {
 .main-top h1 {
     color: white;
     margin: 0;
-    flex-grow: 1;
+    width:90%;
     text-align: center;
 }
 
 .main-top button {
-    margin-left: auto;
-    margin-right: 10px;
+    left: auto;
+    right: 10px;
     font-size: 0.9rem;
     font-weight: bolder;
     color: #D9D9D9;
     height: 2.8rem;
     width: 5.8rem;
+    position:absolute;
     border: 1px;
     border-radius: 6px;
     background-color: #525CEB;
@@ -240,9 +241,9 @@ input {
 .message-container {
     flex: 1;
     display: flex;
-    flex-direction: column;
+    flex-direction: column-reverse;
     overflow-y: auto;
-    padding: 10px;
+    padding: 0px 10px;
 }
 
     .message-container::-webkit-scrollbar {

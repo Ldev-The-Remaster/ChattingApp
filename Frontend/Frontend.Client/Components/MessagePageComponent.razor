@@ -34,16 +34,17 @@
                 {
                     if (message.Sender == null)
                     {
-                        <ServerAlertMessageComponent MessageContent="@message.Content" Timestamp="@DateTimeOffset.FromUnixTimeSeconds(message.TimeStamp).DateTime" />
+                        <ServerAlertMessageComponent MessageContent="@message.Content" Hash=@message.Hash Timestamp ="@DateTimeOffset.FromUnixTimeSeconds(message.TimeStamp).DateTime" />
                     }
                     else
                     {
                         string messageConfirm = message.IsConfirmed ? "confirmed-message" : "unconfirmed-message";
                         <div class="@messageConfirm">
-                            <MessageComponent User="@message.Sender" MessageContent="@message.Content" Timestamp="@DateTimeOffset.FromUnixTimeSeconds(message.TimeStamp).DateTime" isConfirmed="@message.IsConfirmed" />
+                            <MessageComponent User="@message.Sender" Hash=@message.Hash MessageContent="@message.Content" Timestamp="@DateTimeOffset.FromUnixTimeSeconds(message.TimeStamp).DateTime" isConfirmed="@message.IsConfirmed" />
                         </div>
                     }
                 }
+                <MessageLazyLoader />
             </div>
         </div>
         <div class="chat-input-box">
@@ -70,16 +71,24 @@
     private string currentMessage = string.Empty;
     public List<string> userList = new List<string>();
     public List<UserMessage> messageHistory = new List<UserMessage>();
+    private ValueTask<string> topElementReference;
 
     protected override void OnInitialized()
     {
-        ChannelManager.UpdateChannelMessageHistory("general-chat", ChannelManager.GetMessageHistory("general-chat"));
-        RefreshChannelData();
+        LoadChannel();
+        ChannelManager.OnChannelChanged += LoadChannel;
         ChannelManager.OnStateChange += RefreshChannelData;
         WebSocketService.OnMessageReceived += MessageReceived;
     }
 
     public void RefreshChannelData()
+    {
+        userList = ChannelManager.GetCurrentChannelData().UserList;
+        messageHistory = ChannelManager.GetCurrentChannelData().MessageHistory;
+        StateHasChanged();
+    }
+
+    public void LoadChannel()
     {
         userList = ChannelManager.GetCurrentChannelData().UserList;
         messageHistory = ChannelManager.GetCurrentChannelData().MessageHistory;
@@ -89,7 +98,6 @@
 
     public void NavigateToChannel(string channel)
     {
-        ChannelManager.UpdateChannelMessageHistory(channel, ChannelManager.GetMessageHistory(channel));
         ChannelManager.SetCurrentChannel(channel);
     }
 
@@ -107,11 +115,12 @@
         }
         else
         {
-            messageHistory.Add(message);
+            messageHistory.Insert(0, message);
         }
 
         InvokeAsync(StateHasChanged);
     }
+
 
     private async Task SendMessage()
     {
@@ -123,6 +132,8 @@
         var newMessage = new UserMessage(ClientManager.CurrentUser, ChannelManager.CurrentChannel, currentMessage, false);
         await ChannelManager.SendMessage(newMessage);
         currentMessage = String.Empty;
+        StateHasChanged();
+        await JSRuntime.InvokeVoidAsync("scrollToBottom", "messageContainer");
     }
 
     private async void HandleEnterKey(KeyboardEventArgs e)
