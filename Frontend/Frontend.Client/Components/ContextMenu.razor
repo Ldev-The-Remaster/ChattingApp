@@ -11,7 +11,15 @@
             <li @onclick="MessageUser">Message</li>
             @if (ClientManager.IsAdmin)
             {
-                <li @onclick="MuteUser">Mute</li>
+                @if (ContextMenuService.MutedUsers.Contains(ContextMenuService.TargetUser))
+                {
+                    <li @onclick="UnmuteUser">Unmute</li>
+                }
+                else
+                {
+                    <li @onclick="MuteUser">Mute</li>
+                }
+
                 <li @onclick="KickUser">Kick</li>
                 <li @onclick="BanUser">Ban</li>
                 <li @onclick="IpBanUser">IP Ban</li>
@@ -40,6 +48,14 @@
     {
         ContextMenuModalService.Type = "mute";
         ContextMenuModalService.showModal();
+        hideOnAction();
+        return;
+    }
+
+    public async void UnmuteUser()
+    {
+        await WebSocketService.SendMessageAsync(Messaging.UnmuteMessage(ContextMenuService.TargetUser, ""));
+        ContextMenuService.MutedUsers.Remove(ContextMenuService.TargetUser);
         hideOnAction();
         return;
     }

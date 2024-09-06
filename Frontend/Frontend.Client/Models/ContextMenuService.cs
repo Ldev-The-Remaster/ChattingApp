@@ -6,6 +6,7 @@ using Microsoft.JSInterop;
 public static class ContextMenuService
 {
     public static string TargetUser { get; set; } = string.Empty;
+    public static List<string>? MutedUsers = new List<string>();    
     public static double Top { get; set; }
     public static double Left { get; set; }
 
