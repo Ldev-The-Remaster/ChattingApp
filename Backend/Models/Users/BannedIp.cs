@@ -72,11 +72,10 @@ namespace Backend.Models.Users
 
             foreach (BannedIp bannedIp in bannedIps)
             {
-                arrString += "\r\n";
                 arrString += bannedIp.IpAddress;
                 arrString += "\r\n";
                 arrString += bannedIp.BanReason;
-                arrString += "\r\n" + "/*$*/";
+                arrString += "/*$*/";
             }
             return arrString;
         }

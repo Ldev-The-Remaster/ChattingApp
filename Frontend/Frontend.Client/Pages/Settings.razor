@@ -21,10 +21,19 @@
                     </tr>
                 </thead>
                 <tbody>
-                    @foreach (var userBan in ClientManager.userBans)
+                    @if (ClientManager.userBans != null && ClientManager.userBans.Any())
                     {
-                        <tr @onclick="() => ShowUserBanDetails(userBan)">
-                            <td>@userBan.Username</td>
+                        @foreach (var userBan in ClientManager.userBans)
+                        {
+                            <tr @onclick="() => ShowUserBanDetails(userBan)">
+                                <td>@userBan.Username</td>
+                            </tr>
+                        }
+                    }
+                    else
+                    {
+                        <tr>
+                            <td>No banned users.</td>
                         </tr>
                     }
                 </tbody>
@@ -38,10 +47,19 @@
                     </tr>
                 </thead>
                 <tbody>
-                    @foreach (var ipBan in ClientManager.ipBans)
+                    @if (ClientManager.ipBans != null && ClientManager.ipBans.Any())
                     {
-                        <tr @onclick="() => ShowIpBanDetails(ipBan)">
-                            <td>@ipBan.IpAddress</td>
+                        @foreach (var ipBan in ClientManager.ipBans)
+                        {
+                            <tr @onclick="() => ShowIpBanDetails(ipBan)">
+                                <td>@ipBan.IpAddress</td>
+                            </tr>
+                        }
+                    }
+                    else
+                    {
+                        <tr>
+                            <td>No banned IP addresses.</td>
                         </tr>
                     }
                 </tbody>
@@ -81,7 +99,6 @@
 }
 
 
-
 @code {
 
     private UserBan selectedUserBan;
@@ -91,6 +108,18 @@
     private bool showIpPopup = false;
 
 
+    protected override void OnInitialized()
+    {
+        _ = RetrieveBans();
+        ClientManager.OnBanListUpdate += StateHasChanged;
+    }
+
+    private async Task RetrieveBans()
+    {
+        await WebSocketService.SendMessageAsync(Messaging.FetchBanUsersMessage());
+        await WebSocketService.SendMessageAsync(Messaging.FetchBanIpsMessage());
+        StateHasChanged();
+    }
 
     private void ShowUserBanDetails(UserBan ban)
     {

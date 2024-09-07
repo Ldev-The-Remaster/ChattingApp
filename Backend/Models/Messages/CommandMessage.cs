@@ -20,7 +20,7 @@ namespace Backend.Models.Messages
             Unbanip,
             Remember,
             Unmute,
-            Retrieve,
+            Fetchbans,
             Unknown
         }
 
@@ -67,8 +67,8 @@ namespace Backend.Models.Messages
                     return CommandType.Remember;
                 case "unmute":
                     return CommandType.Unmute;
-                case "retrieve":
-                    return CommandType.Retrieve;
+                case "fetchbans":
+                    return CommandType.Fetchbans;
                 default:
                     return CommandType.Unknown;
             }
@@ -102,8 +102,8 @@ namespace Backend.Models.Messages
                 case CommandType.Unmute:
                     ProcessUnmute();
                     break;
-                case CommandType.Retrieve:
-                    ProcessRetrieve();
+                case CommandType.Fetchbans:
+                    ProcessFetchBan();
                     break;
                 case CommandType.Unknown:
                     break;
@@ -340,7 +340,7 @@ namespace Backend.Models.Messages
                 return;
             }
 
-            UserManager.Ban(userToBan);
+            UserManager.Ban(userToBan,_with);
             SendAccept();
             CLogger.Event($"User has been Banned: {_target}. Reason: {_with}");
             SendAlert($"User {_target} has been Banned for: {_with}");
@@ -515,12 +515,12 @@ namespace Backend.Models.Messages
             }
         }
 
-        private void ProcessRetrieve()
+        private void ProcessFetchBan()
         {
             string bans = "";
             if (_from == null)
             {
-                SendRefuse("Error: No target for retrival found");
+                SendRefuse("Error: No target for Fetch found");
                 return;
             }
 
@@ -532,7 +532,7 @@ namespace Backend.Models.Messages
                     SendRefuse("No banned users found");
                     return;
                 }
-                bans = "DO RETRIEVE\r\n" + "WITH\r\n" + User.UserListToString(BannedUsernames);
+                bans = "DO RETRIEVE\r\n" + "FROM BANNEDUSERS\r\n" + "WITH\r\n" + User.UserListToString(BannedUsernames);
             }
 
             if (_from == "BANNEDIPS")
@@ -543,7 +543,7 @@ namespace Backend.Models.Messages
                     SendRefuse("No banned IPs found");
                     return;
                 }
-                bans = "DO RETRIEVE\r\n" + "WITH\r\n" + BannedIp.BannedIpListToString(BannedIps);
+                bans = "DO RETRIEVE\r\n" + "FROM BANNEDIPS\r\n" + "WITH\r\n" + BannedIp.BannedIpListToString(BannedIps);
             }
 
             if (_sender != null) 

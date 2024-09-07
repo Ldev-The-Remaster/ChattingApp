@@ -14,6 +14,12 @@ namespace Frontend.Client.Models
         public static List<UserBan> userBans = new List<UserBan>();
         public static List<IpBan> ipBans = new List<IpBan>();
 
+        public static event Action? OnBanListUpdate;
+
+        public static void UpdateBanList()
+        {
+            OnBanListUpdate?.Invoke();
+        }
 
         public static void AddUserBan(string username, string reason)
         {

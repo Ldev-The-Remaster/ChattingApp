@@ -143,11 +143,10 @@ namespace Backend.Models.Users
 
             foreach (User user in users)
             {
-                arrString += "\r\n";
                 arrString += user.Username;
                 arrString += "\r\n";
                 arrString += user.BanReason;
-                arrString += "\r\n" + "/*$*/";
+                arrString += "/*$*/";
             }
             return arrString;
         }

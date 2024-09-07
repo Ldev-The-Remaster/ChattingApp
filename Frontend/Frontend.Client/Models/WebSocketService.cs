@@ -72,17 +72,22 @@ namespace Frontend.Client.Models
 
                 if (rawMessage.Do.Equals("RETRIEVE"))
                 {
-                    List<string> banWithReason = rawMessage.With.Split(new[] {"/*$*/"}, StringSplitOptions.None).ToList();
+                    List<string> banWithReason = rawMessage.With.Split(new[] {"/*$*/"}, StringSplitOptions.RemoveEmptyEntries).ToList();
 
                     if (rawMessage.From.Equals("BANNEDUSERS"))
                     {
                         foreach (var ban in banWithReason)
                         {
                             var user = ban.Split(new[] {"\r\n"},StringSplitOptions.None);
-                            var username = user[0];
-                            var reason = user[1];
 
-                            ClientManager.AddUserBan(username, reason);
+                            if (user.Length == 2)
+                            {
+                                var username = user[0];
+                                var reason = user[1];
+
+                                ClientManager.AddUserBan(username, reason);
+                            }
+
                         }
                     }
                     else 
@@ -90,17 +95,21 @@ namespace Frontend.Client.Models
                         foreach (var ban in banWithReason)
                         {
                             var ip = ban.Split(new[] {"\r\n"}, StringSplitOptions.None);
-                            var ipAddress = ip[0];
-                            var reason = ip[1];
 
-                            ClientManager.AddIpBan(ipAddress, reason);
+                            if (ip.Length == 2)
+                            {
+                                var ipAddress = ip[0];
+                                var reason = "" + ip[1];
 
+                                ClientManager.AddIpBan(ipAddress, reason);
+                            }
                         }
                     }
+                    ClientManager.UpdateBanList();
 
                 }
 
-                    if (rawMessage.Do.Equals("SEND"))
+                if (rawMessage.Do.Equals("SEND"))
                 {
                     var user = rawMessage.From;
                     var timestamp = rawMessage.At;

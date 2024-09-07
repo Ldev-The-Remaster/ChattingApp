@@ -76,6 +76,24 @@ namespace LSMP
             return msg;
         }
 
+        public static string FetchBanUsersMessage()
+        {
+            string msg = "DO FETCHBANS";
+            msg += NEW_LINE;
+            msg += "FROM BANNEDUSERS";
+            msg += NEW_LINE;
+            return msg;
+        }
+
+        public static string FetchBanIpsMessage()
+        {
+            string msg = "DO FETCHBANS";
+            msg += NEW_LINE;
+            msg += "FROM BANNEDIPS";
+            msg += NEW_LINE;
+            return msg;
+        }
+
         public static string BanMessage(string targetUser, string reason)
         {
             string msg = "DO BAN";
