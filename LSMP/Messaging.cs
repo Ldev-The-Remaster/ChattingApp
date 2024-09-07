@@ -88,6 +88,22 @@ namespace LSMP
             return msg;
         }
 
+        public static string UnbanMessage(string targetUser)
+        {
+            string msg = "DO UNBAN";
+            msg += NEW_LINE;
+            msg += "TO " + targetUser;
+            return msg;
+        }
+
+        public static string UnbanIpMessage(string targetUser)
+        {
+            string msg = "DO UNBANIP";
+            msg += NEW_LINE;
+            msg += "TO " + targetUser;
+            return msg;
+        }
+
         public static string KickMessage(string targetUser, string reason)
         {
             string msg = "DO KICK";
