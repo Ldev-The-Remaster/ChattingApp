@@ -214,14 +214,13 @@ input {
 }
 
 .main-top button {
-    left: auto;
-    right: 10px;
+    margin-left: auto;
+    margin-right: 10px;
     font-size: 0.9rem;
     font-weight: bolder;
     color: #D9D9D9;
     height: 2.8rem;
     width: 5.8rem;
-    position:absolute;
     border: 1px;
     border-radius: 6px;
     background-color: #525CEB;

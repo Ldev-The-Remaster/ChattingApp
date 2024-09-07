@@ -104,11 +104,16 @@ namespace Backend.Models.Messages
         {
             int messageCount = to - from + 1;
             var filteredMessages = context.TextMessages
-                .Where(m => m.Channel.Equals(channel))
+                .Where(m => m.Channel.Equals(channel))  
                 .ToList();
+            int numOfRequestedMessages = to - from + 1;
+            //if ( filteredMessages.Count < numOfRequestedMessages)
+            //{
+            //    return filteredMessages;
+            //}
 
             int skipAmount = filteredMessages.Count - to;
-            if(skipAmount < 0)
+            if(skipAmount <= -numOfRequestedMessages)
             {
                 return new List<TextMessage>();
             }
