@@ -4,7 +4,10 @@
 
 ## Features
 - **Real-time Messaging**: Experience seamless chat with real-time updates.
-- **User Authentication**: Secure login and registration.
+- **Open channel for all users**: Enjoy text messaging between all users connected to the server.
+- **Direct messages**: Message individual users privately.
+- **Message history**: Retrieve previous messages through our sqlite persistence.
+- **Admin functionality**: Manage your server via Admin commands like Mute, Kick, Ban and IP Ban.
 - **Modern UI/UX**: Clean and intuitive interface.
 
 ## Technologies Used
