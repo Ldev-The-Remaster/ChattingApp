@@ -38,7 +38,7 @@ namespace LSMP
             return msg;
         }
 
-        public static string RequestMessageHistory(string channel, int from, int to)
+        public static string RememberMessage(string channel, int from, int to)
         {
             string msg = "DO REMEMBER";
             msg += NEW_LINE;
@@ -91,6 +91,17 @@ namespace LSMP
             msg += NEW_LINE;
             msg += "FROM BANNEDIPS";
             msg += NEW_LINE;
+		}
+		
+        public static string UnmuteMessage(string targetUser, string reason)
+        {
+            string msg = "DO UNMUTE";
+            msg += NEW_LINE;
+            msg += "TO " + targetUser;
+            msg += NEW_LINE;
+            msg += "WITH";
+            msg += NEW_LINE;
+            msg += reason;
             return msg;
         }
 
