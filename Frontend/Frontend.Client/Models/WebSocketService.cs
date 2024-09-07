@@ -73,6 +73,8 @@ namespace Frontend.Client.Models
                 if (rawMessage.Do.Equals("RETRIEVE"))
                 {
                     List<string> banWithReason = rawMessage.With.Split(new[] {"/*$*/"}, StringSplitOptions.RemoveEmptyEntries).ToList();
+                    ClientManager.ipBans.Clear();
+                    ClientManager.userBans.Clear();
 
                     if (rawMessage.From.Equals("BANNEDUSERS"))
                     {
