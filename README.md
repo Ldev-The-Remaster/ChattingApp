@@ -20,18 +20,29 @@ This project was developed through weekly standups, using:
 - **Figma**: For UI/UX design prototypes
 
 ### Contributors
-- [@Ldev-The-Remaster](https://github.com/Ldev-The-Remaster)
-- [@Contributor2](https://github.com/contributor2)
-- [@Contributor3](https://github.com/contributor3)
+- [@OmarQurashi868](https://github.com/OmarQurashi868)
+- [@ahmed-okkio](https://github.com/ahmed-okkio)
+- [@Midfield](https://github.com/MidfieId)
+- [@aeltoum](https://github.com/aeltoum)
+- [@defintelyNotKabi](https://github.com/defintelyNotKabi)
+- [@Dxl22](https://github.com/Dxl22)
 
 ## Screenshots
 1. **Login Page**
-   ![Screenshot 1]()
-   
+![localhost_5116_(Desktop)](https://github.com/user-attachments/assets/6beaf136-7bbb-4fc4-957b-e056d6c260a7)
+
+
 2. **Chat Interface**
-   ![Screenshot 2]()
+![localhost_5116_(Desktop) (1)](https://github.com/user-attachments/assets/70c44721-62e5-4894-8ab0-c28ae1793dd0)
+![localhost_5116_channel_general-chat(Desktop)](https://github.com/user-attachments/assets/75ff45a7-0387-466b-b6b4-82a95b6e47b6)
+![localhost_5116_settings(Desktop) (1)](https://github.com/user-attachments/assets/bbba97cd-6e49-4745-a717-8197786c3b94)
+
 
 ## Setup and Installation
 1. Clone the repository:
    ```bash
    git clone https://github.com/Ldev-The-Remaster/ChattingApp.git
+2. Run the solution file `ChattingApp.sln`
+3. Run the "Backend" project and enter a port
+4. Run the "Frontend" project and connect to localhost with the port you entered.
+
