@@ -20,6 +20,7 @@ namespace Backend.Models.Messages
             Unbanip,
             Remember,
             Unmute,
+            Retrieve,
             Unknown
         }
 
@@ -66,6 +67,8 @@ namespace Backend.Models.Messages
                     return CommandType.Remember;
                 case "unmute":
                     return CommandType.Unmute;
+                case "retrieve":
+                    return CommandType.Retrieve;
                 default:
                     return CommandType.Unknown;
             }
@@ -98,6 +101,9 @@ namespace Backend.Models.Messages
                     break;
                 case CommandType.Unmute:
                     ProcessUnmute();
+                    break;
+                case CommandType.Retrieve:
+                    ProcessRetrieve();
                     break;
                 case CommandType.Unknown:
                     break;
@@ -506,6 +512,43 @@ namespace Backend.Models.Messages
             if (_sender != null)
             {
                 _sender.Socket.Send(Messaging.RemindMessage(messageHistory, channel));
+            }
+        }
+
+        private void ProcessRetrieve()
+        {
+            string bans = "";
+            if (_from == null)
+            {
+                SendRefuse("Error: No target for retrival found");
+                return;
+            }
+
+            if (_from == "BANNEDUSERS")
+            {
+                List<User> BannedUsernames = User.GetBannedUsersFromDB();
+                if (BannedUsernames.Count == 0)
+                {
+                    SendRefuse("No banned users found");
+                    return;
+                }
+                bans = "DO RETRIEVE\r\n" + "WITH\r\n" + User.UserListToString(BannedUsernames);
+            }
+
+            if (_from == "BANNEDIPS")
+            {
+                List<BannedIp> BannedIps = BannedIp.GetAllBannedIps();
+                if (BannedIps.Count == 0)
+                {
+                    SendRefuse("No banned IPs found");
+                    return;
+                }
+                bans = "DO RETRIEVE\r\n" + "WITH\r\n" + BannedIp.BannedIpListToString(BannedIps);
+            }
+
+            if (_sender != null) 
+            {
+                _sender.Socket.Send(bans);
             }
         }
 
