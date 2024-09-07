@@ -3,7 +3,7 @@
 **Two Cent Discord** is a collaborative chat application built with a robust backend, dynamic frontend, and efficient messaging protocols. This project was developed as part of a team effort, utilizing Agile methodology with weekly standups and task management tools such as Miro, Trello, and Figma for planning, tracking, and UI design.
 
 ## Features
-- ***Custom messaging protocol**: Built and designed a custom messaging protocl "LSMP" as a language between client and server.
+- **Custom messaging protocol**: Built and designed a custom messaging protocl "LSMP" as a language between client and server.
 - **Real-time Messaging**: Experience seamless chat with real-time updates.
 - **Open channel for all users**: Enjoy text messaging between all users connected to the server.
 - **Direct messages**: Message individual users privately.
