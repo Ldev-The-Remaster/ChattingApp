@@ -131,6 +131,26 @@ namespace Backend.Models.Users
             return usersFromDB.First();
         }
 
+        public static List<User> GetBannedUsersFromDB()
+        {
+            List<User> usersFromDB = context.Users.Where(m => m.IsBanned).ToList();
+            return usersFromDB;
+        }
+
+        public static string UserListToString(List<User> users)
+        {
+            string arrString = "/*$*/";
+
+            foreach (User user in users)
+            {
+                arrString += user.Username;
+                arrString += "\r\n";
+                arrString += user.BanReason;
+                arrString += "/*$*/";
+            }
+            return arrString;
+        }
+
         #endregion
     }
 }

@@ -20,6 +20,7 @@ namespace Backend.Models.Messages
             Unbanip,
             Remember,
             Unmute,
+            Fetchbans,
             Unknown
         }
 
@@ -66,6 +67,8 @@ namespace Backend.Models.Messages
                     return CommandType.Remember;
                 case "unmute":
                     return CommandType.Unmute;
+                case "fetchbans":
+                    return CommandType.Fetchbans;
                 default:
                     return CommandType.Unknown;
             }
@@ -98,6 +101,9 @@ namespace Backend.Models.Messages
                     break;
                 case CommandType.Unmute:
                     ProcessUnmute();
+                    break;
+                case CommandType.Fetchbans:
+                    ProcessFetchBan();
                     break;
                 case CommandType.Unknown:
                     break;
@@ -334,7 +340,7 @@ namespace Backend.Models.Messages
                 return;
             }
 
-            UserManager.Ban(userToBan);
+            UserManager.Ban(userToBan,_with);
             SendAccept();
             CLogger.Event($"User has been Banned: {_target}. Reason: {_with}");
             SendAlert($"User {_target} has been Banned for: {_with}");
@@ -436,7 +442,7 @@ namespace Backend.Models.Messages
                 return;
             }
 
-            UserManager.BanIp(ipToBan);
+            UserManager.BanIp(ipToBan, _with);
             SendAccept();
             CLogger.Event($"IP has been Banned: {ipToBan}. Reason: {_with}");
             SendAlert($"IP {ipToBan} has been Banned: Reason: {_with}");
@@ -506,6 +512,43 @@ namespace Backend.Models.Messages
             if (_sender != null)
             {
                 _sender.Socket.Send(Messaging.RemindMessage(messageHistory, channel));
+            }
+        }
+
+        private void ProcessFetchBan()
+        {
+            string bans = "";
+            if (_from == null)
+            {
+                SendRefuse("Error: No target for Fetch found");
+                return;
+            }
+
+            if (_from == "BANNEDUSERS")
+            {
+                List<User> BannedUsernames = User.GetBannedUsersFromDB();
+                if (BannedUsernames.Count == 0)
+                {
+                    SendRefuse("No banned users found");
+                    return;
+                }
+                bans = "DO RETRIEVE\r\n" + "FROM BANNEDUSERS\r\n" + "WITH\r\n" + User.UserListToString(BannedUsernames);
+            }
+
+            if (_from == "BANNEDIPS")
+            {
+                List<BannedIp> BannedIps = BannedIp.GetAllBannedIps();
+                if (BannedIps.Count == 0)
+                {
+                    SendRefuse("No banned IPs found");
+                    return;
+                }
+                bans = "DO RETRIEVE\r\n" + "FROM BANNEDIPS\r\n" + "WITH\r\n" + BannedIp.BannedIpListToString(BannedIps);
+            }
+
+            if (_sender != null) 
+            {
+                _sender.Socket.Send(bans);
             }
         }
 

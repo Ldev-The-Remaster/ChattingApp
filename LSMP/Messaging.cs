@@ -76,6 +76,24 @@ namespace LSMP
             return msg;
         }
 
+        public static string FetchBanUsersMessage()
+        {
+            string msg = "DO FETCHBANS";
+            msg += NEW_LINE;
+            msg += "FROM BANNEDUSERS";
+            msg += NEW_LINE;
+            return msg;
+        }
+
+        public static string FetchBanIpsMessage()
+        {
+            string msg = "DO FETCHBANS";
+            msg += NEW_LINE;
+            msg += "FROM BANNEDIPS";
+            msg += NEW_LINE;
+            return msg;
+		}
+		
         public static string UnmuteMessage(string targetUser, string reason)
         {
             string msg = "DO UNMUTE";
@@ -97,6 +115,22 @@ namespace LSMP
             msg += "WITH";
             msg += NEW_LINE;
             msg += reason;
+            return msg;
+        }
+
+        public static string UnbanMessage(string targetUser)
+        {
+            string msg = "DO UNBAN";
+            msg += NEW_LINE;
+            msg += "TO " + targetUser;
+            return msg;
+        }
+
+        public static string UnbanIpMessage(string targetUser)
+        {
+            string msg = "DO UNBANIP";
+            msg += NEW_LINE;
+            msg += "TO " + targetUser;
             return msg;
         }
 

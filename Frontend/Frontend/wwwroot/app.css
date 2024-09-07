@@ -214,14 +214,13 @@ input {
 }
 
 .main-top button {
-    left: auto;
-    right: 10px;
+    margin-left: auto;
+    margin-right: 10px;
     font-size: 0.9rem;
     font-weight: bolder;
     color: #D9D9D9;
     height: 2.8rem;
     width: 5.8rem;
-    position:absolute;
     border: 1px;
     border-radius: 6px;
     background-color: #525CEB;
@@ -466,7 +465,7 @@ input {
 
 .ban-popup-button {
     padding: 10px 20px;
-    background-color: #007bff;
+    background-color: #525CEB;
     color: white;
     border: none;
     cursor: pointer;
@@ -474,7 +473,7 @@ input {
 }
 
     .ban-popup-button:hover {
-        background-color: #0056b3;
+        background-color: #525CEB;
     }
 
     .ban-popup-button.unban {

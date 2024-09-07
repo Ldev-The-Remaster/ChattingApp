@@ -37,14 +37,14 @@
         ContextMenuService.OnChange += StateHasChanged;
     }
 
-    public async void MessageUser()
+    public void MessageUser()
     {
         ChannelManager.SetCurrentChannel(ChannelManager.CreateDmChannel(ContextMenuService.TargetUser));
         hideOnAction();
         return;
     }
 
-    public async void MuteUser()
+    public void MuteUser()
     {
         ContextMenuModalService.Type = "mute";
         ContextMenuModalService.showModal();
@@ -60,7 +60,7 @@
         return;
     }
 
-    public async void KickUser()
+    public void KickUser()
     {
         ContextMenuModalService.Type = "kick";
         ContextMenuModalService.showModal();
@@ -68,7 +68,7 @@
         return;
     }
 
-    public async void BanUser()
+    public void BanUser()
     {
         ContextMenuModalService.Type = "ban";
         ContextMenuModalService.showModal();
@@ -76,7 +76,7 @@
         return;
     }
 
-    public async void IpBanUser()
+    public void IpBanUser()
     {
         ContextMenuModalService.Type = "ipBan";
         ContextMenuModalService.showModal();

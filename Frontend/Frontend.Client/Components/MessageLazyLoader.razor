@@ -17,17 +17,29 @@
     private bool loading = false;
     private ElementReference observedElement;
 
+    protected override void OnInitialized()
+    {
+        
+    }
+
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         if (firstRender)
         {
-            await JSRuntime.InvokeVoidAsync("intersectionObserver.observeElement",
-                                             observedElement,
-                                             DotNetObjectReference.Create(this));
-
+            Observe();
+            ChannelManager.OnChannelChanged += Observe;
             ChannelManager.OnFinishLoadingFullMessageHistory += UnObserve;
             ChannelManager.OnFinishedCurrentLoadingOperation += OnFinishedLoadingOperation;
         }
+    }
+
+    public void Observe()
+    {
+        loading = true;
+        JSRuntime.InvokeVoidAsync("intersectionObserver.observeElement",
+                                             observedElement,
+                                             DotNetObjectReference.Create(this));
+        StateHasChanged();
     }
 
     public void UnObserve()
@@ -42,7 +54,7 @@
 
     public async void OnFinishedLoadingOperation()
     {
-        if (await IsLazyLoaderOnScreen())
+        if (await IsLazyLoaderOnScreen() && loading)
         {
             ChannelManager.RequestMessageHistory(ChannelManager.CurrentChannel, 10);
         }

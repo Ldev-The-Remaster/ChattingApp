@@ -55,10 +55,29 @@ namespace Backend.Models.Users
             return bannedIpsFromDb.First();
         }
 
+        public static List<BannedIp> GetAllBannedIps()
+        {
+            return context.BannedIps.ToList();
+        }
+
         public static bool AlreadyExists(string ip)
         {
             List<BannedIp> ipsFromDb = context.BannedIps.Where(m => m.IpAddress == ip).ToList();
             return ipsFromDb.Count > 0;
+        }
+
+        public static string BannedIpListToString(List<BannedIp> bannedIps)
+        {
+            string arrString = "/*$*/";
+
+            foreach (BannedIp bannedIp in bannedIps)
+            {
+                arrString += bannedIp.IpAddress;
+                arrString += "\r\n";
+                arrString += bannedIp.BanReason;
+                arrString += "/*$*/";
+            }
+            return arrString;
         }
 
         #endregion

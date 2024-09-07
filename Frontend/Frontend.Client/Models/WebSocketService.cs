@@ -1,5 +1,6 @@
 ﻿using System.Net.WebSockets;
 using System.Text;
+using Frontend.Client.Pages;
 using LSMP;
 using LSMP.Utils;
 
@@ -54,19 +55,63 @@ namespace Frontend.Client.Models
                     return;
                 }
 
-                if (rawMessage.Do.Equals("REMIND")){
+                if (rawMessage.Do.Equals("REMIND"))
+                {
                     List<UserMessage> messagesDetails = new List<UserMessage>();
-                    foreach (var item in Messaging.DecodeMessageHistory(rawMessage.With)) {
+                    foreach (var item in Messaging.DecodeMessageHistory(rawMessage.With))
+                    {
                         MessageParser messageDetails = new MessageParser(item);
                         (string hash, string content) = Messaging.GetHashAndMessage(messageDetails.With);
-                        UserMessage message = new UserMessage(messageDetails.From, hash, messageDetails.In, content, messageDetails.At, true);
-                        messagesDetails.Insert(0, message);
+                        UserMessage message = new UserMessage(messageDetails.From, messageDetails.In, hash, content, messageDetails.At, true);
+                        messagesDetails.Add(message);
                     }
 
                     ChannelManager.UpdateChannelMessageHistory(rawMessage.In, messagesDetails);
                 }
 
-                if(rawMessage.Do.Equals("SEND"))
+
+                if (rawMessage.Do.Equals("RETRIEVE"))
+                {
+                    List<string> banWithReason = rawMessage.With.Split(new[] {"/*$*/"}, StringSplitOptions.RemoveEmptyEntries).ToList();
+                    ClientManager.ipBans.Clear();
+                    ClientManager.userBans.Clear();
+
+                    if (rawMessage.From.Equals("BANNEDUSERS"))
+                    {
+                        foreach (var ban in banWithReason)
+                        {
+                            var user = ban.Split(new[] {"\r\n"},StringSplitOptions.None);
+
+                            if (user.Length == 2)
+                            {
+                                var username = user[0];
+                                var reason = user[1];
+
+                                ClientManager.AddUserBan(username, reason);
+                            }
+
+                        }
+                    }
+                    else 
+                    {
+                        foreach (var ban in banWithReason)
+                        {
+                            var ip = ban.Split(new[] {"\r\n"}, StringSplitOptions.None);
+
+                            if (ip.Length == 2)
+                            {
+                                var ipAddress = ip[0];
+                                var reason = "" + ip[1];
+
+                                ClientManager.AddIpBan(ipAddress, reason);
+                            }
+                        }
+                    }
+                    ClientManager.UpdateBanList();
+
+                }
+
+                if (rawMessage.Do.Equals("SEND"))
                 {
                     var user = rawMessage.From;
                     var timestamp = rawMessage.At;
@@ -106,7 +151,7 @@ namespace Frontend.Client.Models
                     return;
                 }
 
-                 Console.WriteLine("Error: Message format is invalid.");
+                    Console.WriteLine("Error: Message format is invalid.");
             }
             catch (Exception e)
             {

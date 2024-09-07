@@ -1,5 +1,6 @@
 ﻿@page "/settings"
 @using Models
+@using LSMP
 @inject NavigationManager NavigationManager
 
 <PageTitle>Settings - Ban List</PageTitle>
@@ -11,6 +12,8 @@
             <h1>Ban List</h1>
         </div>
         <div class="settings-main-content">
+
+            <!-- Banned Usernames Table -->
             <table class="settings-ban-table">
                 <thead>
                     <tr>
@@ -18,14 +21,25 @@
                     </tr>
                 </thead>
                 <tbody>
-                    @foreach (var ban in bans)
+                    @if (ClientManager.userBans != null && ClientManager.userBans.Any())
                     {
-                        <tr @onclick="() => ShowBanDetails(ban)">
-                            <td>@ban.Username</td>
+                        @foreach (var userBan in ClientManager.userBans)
+                        {
+                            <tr @onclick="() => ShowUserBanDetails(userBan)">
+                                <td>@userBan.Username</td>
+                            </tr>
+                        }
+                    }
+                    else
+                    {
+                        <tr>
+                            <td>No banned users.</td>
                         </tr>
                     }
                 </tbody>
             </table>
+
+            <!-- Banned IP Addresses Table -->
             <table class="settings-ban-table">
                 <thead>
                     <tr>
@@ -33,49 +47,91 @@
                     </tr>
                 </thead>
                 <tbody>
-                    @foreach (var ban in bans)
+                    @if (ClientManager.ipBans != null && ClientManager.ipBans.Any())
                     {
-                        <tr @onclick="() => ShowBanDetails(ban)">
-                            <td>@ban.IpAddress</td>
+                        @foreach (var ipBan in ClientManager.ipBans)
+                        {
+                            <tr @onclick="() => ShowIpBanDetails(ipBan)">
+                                <td>@ipBan.IpAddress</td>
+                            </tr>
+                        }
+                    }
+                    else
+                    {
+                        <tr>
+                            <td>No banned IP addresses.</td>
                         </tr>
                     }
                 </tbody>
-                </table>
+            </table>
         </div>
     </div>
 </div>
 
-@if (showPopup)
+@if (showUserPopup)
 {
     <div class="ban-popup-overlay" @onclick="HandleOverlayClick">
         <div class="ban-popup-content" @onclick:stopPropagation="true">
             <h2>Ban Details</h2>
-            <p><strong>Username:</strong> @selectedBan.Username</p>
-            <p><strong>IP Address:</strong> @selectedBan.IpAddress</p>
-            <p><strong>Reason:</strong> @selectedBan.Reason</p>
+            <p><strong>Username:</strong> @selectedUserBan.Username</p>
+            <p><strong>Reason:</strong> @selectedUserBan.Reason</p>
             <div class="ban-popup-buttons">
                 <button class="ban-popup-button" @onclick="ClosePopup">Back</button>
-                <button class="ban-popup-button unban" @onclick="() => UnbanUser(selectedBan)">Unban</button>
+                <button class="ban-popup-button unban" @onclick="() => UnbanUser(selectedUserBan)">Unban</button>
             </div>
         </div>
     </div>
 }
 
+@if (showIpPopup)
+{
+    <div class="ban-popup-overlay" @onclick="HandleOverlayClick">
+        <div class="ban-popup-content" @onclick:stopPropagation="true">
+            <h2>Ban Details</h2>
+            <p><strong>IP Address:</strong> @selectedIpBan.IpAddress</p>
+            <p><strong>Reason:</strong> @selectedIpBan.Reason</p>
+            <div class="ban-popup-buttons">
+                <button class="ban-popup-button" @onclick="ClosePopup">Back</button>
+                <button class="ban-popup-button unban" @onclick="() => UnbanIp(selectedIpBan)">Unban</button>
+            </div>
+        </div>
+    </div>
+}
+
+
 @code {
-    private List<Ban> bans = new List<Ban>
-    {
-        new Ban { Id = 1, Username = "JohnDoe", IpAddress = "192.168.1.1", Reason = "Spamming", IsBanned = true },
-        new Ban { Id = 2, Username = "JaneDoe", IpAddress = "192.168.1.2", Reason = "Abusive Language", IsBanned = true }
-    };
 
-    private Ban selectedBan;
-    private bool showPopup = false;
+    private UserBan selectedUserBan;
+    private IpBan selectedIpBan;
 
-    private void ShowBanDetails(Ban ban)
+    private bool showUserPopup = false;
+    private bool showIpPopup = false;
+
+
+    protected override void OnInitialized()
     {
-        selectedBan = ban;
-        showPopup = true;
+        _ = RetrieveBans();
+        ClientManager.OnBanListUpdate += StateHasChanged;
     }
+
+    private async Task RetrieveBans()
+    {
+        await WebSocketService.SendMessageAsync(Messaging.FetchBanUsersMessage());
+        await WebSocketService.SendMessageAsync(Messaging.FetchBanIpsMessage());
+        StateHasChanged();
+    }
+
+    private void ShowUserBanDetails(UserBan ban)
+    {
+        selectedUserBan = ban;
+        showUserPopup = true;
+    }
+
+    private void ShowIpBanDetails(IpBan ban)
+	{
+		selectedIpBan = ban;
+		showIpPopup = true;
+	}
 
     private void HandleOverlayClick()
     {
@@ -84,27 +140,41 @@
 
     private void ClosePopup()
     {
-        showPopup = false;
+        showUserPopup = false;
+        showIpPopup = false;
     }
 
-    private void UnbanUser(Ban ban)
+    private void UnbanUser(UserBan userban)
     {
-        // Add your unban logic here
-        bans.Remove(ban);
+        _ = WebSocketService.SendMessageAsync(Messaging.UnbanMessage(userban.Username));
+        ClientManager.userBans.Remove(userban);
         ClosePopup();
     }
+
+    private void UnbanIp(IpBan ipban)
+	{
+        _ = WebSocketService.SendMessageAsync(Messaging.UnbanIpMessage(ipban.IpAddress));
+		ClientManager.ipBans.Remove(ipban);
+		ClosePopup();
+	}
 
     private void GoBack()
     {
         NavigationManager.NavigateTo("/channel/" + ChannelManager.CurrentChannel);
     }
 
-    public class Ban
+
+    public class UserBan
     {
-        public int Id { get; set; }
-        public string? Username { get; set; }
-        public string? IpAddress { get; set; }
-        public string? Reason { get; set; }
-        public bool? IsBanned { get; set; }
+        public string Username { get; set; }
+        public string Reason { get; set; }
     }
-}
+
+    public class IpBan
+    {
+        public string IpAddress { get; set; }
+        public string Reason { get; set; }
+    }
+
+
+ }
