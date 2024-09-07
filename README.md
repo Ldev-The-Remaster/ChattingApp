@@ -11,7 +11,7 @@
 - **Modern UI/UX**: Clean and intuitive interface.
 
 ## Technologies Used
-- **Frontend**: HTML, CSS, JavaScript
+- **Frontend**: Blazor
 - **Backend**: C#
 - **Database**: SQLite
 
