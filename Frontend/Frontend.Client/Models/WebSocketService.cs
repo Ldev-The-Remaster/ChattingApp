@@ -62,8 +62,8 @@ namespace Frontend.Client.Models
                     {
                         MessageParser messageDetails = new MessageParser(item);
                         (string hash, string content) = Messaging.GetHashAndMessage(messageDetails.With);
-                        UserMessage message = new UserMessage(messageDetails.From, hash, messageDetails.In, content, messageDetails.At, true);
-                        messagesDetails.Insert(0, message);
+                        UserMessage message = new UserMessage(messageDetails.From, messageDetails.In, hash, content, messageDetails.At, true);
+                        messagesDetails.Add(message);
                     }
 
                     ChannelManager.UpdateChannelMessageHistory(rawMessage.In, messagesDetails);

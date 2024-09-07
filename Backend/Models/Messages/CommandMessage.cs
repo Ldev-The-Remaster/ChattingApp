@@ -442,7 +442,7 @@ namespace Backend.Models.Messages
                 return;
             }
 
-            UserManager.BanIp(ipToBan);
+            UserManager.BanIp(ipToBan, _with);
             SendAccept();
             CLogger.Event($"IP has been Banned: {ipToBan}. Reason: {_with}");
             SendAlert($"IP {ipToBan} has been Banned: Reason: {_with}");

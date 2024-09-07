@@ -91,6 +91,7 @@ namespace LSMP
             msg += NEW_LINE;
             msg += "FROM BANNEDIPS";
             msg += NEW_LINE;
+            return msg;
 		}
 		
         public static string UnmuteMessage(string targetUser, string reason)
