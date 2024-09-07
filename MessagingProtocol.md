@@ -73,6 +73,11 @@ WITH
 - ### UNBANIP: Unban an IP
    > Required params: `TO <ip>`  
    > With reason: `WITH <reason>`
+- ### FETCHBANS: Request list of banned users/IPs
+   > Required params: `FROM <BANNEDUSERS|BANNEDIPS>`
+- ### Retrieve: Send list of banned users or IPs
+   > Required params: `FROM <BANNEDUSERS|BANNEDIPS>`
+   > With `WITH <List of bans>`
 
 
 ## Example messages
@@ -117,6 +122,25 @@ WITH
 Advertising is prohibited...
 ```
 > Requests a ban on user with username `Forki`, with the reason being `Advertising is prohibited...`
+
+```
+DO FETCHBANS
+FROM BannedUsers
+```
+> Requests the list of banned users from the server.
+
+```
+DO RETRIEVE
+FROM BannedIps
+WITH
+/*$*/
+192.168.1.1
+Spamming
+/*$*/
+10.0.0.1
+Abusive Language
+```
+> Sends the list of banned Ips, including reasons for each ban.
 
 # Server -> Client
 The server sends messages to the client in a similar way, with a few minor differences.
